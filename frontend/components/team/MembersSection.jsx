@@ -1,0 +1,213 @@
+"use client";
+import { useState } from "react";
+import { useTranslations } from "next-intl";
+import {
+  UserPlus, Pencil, Trash2, Send, Crown, CircleCheck, MailQuestion, TriangleAlert, Users,
+} from "lucide-react";
+import Field from "@/components/ui/Field";
+import { Alert, ErrorAlert } from "@/components/ui/Alert";
+import { btn, card, sectionTitle } from "@/components/ui/styles";
+import { api } from "@/lib/api";
+
+const EMPTY = { nom: "", prenom: "", email: "", niveau: "", filiere: "" };
+
+// Formulaire d'ajout ou de modification d'un membre
+function MemberForm({ initial, isNew, onCancel, onSubmit }) {
+  const t = useTranslations("members");
+  const tc = useTranslations("common");
+  const [form, setForm] = useState(initial);
+  const [error, setError] = useState(null);
+  const [busy, setBusy] = useState(false);
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      await onSubmit(form);
+    } catch (err) {
+      setError(err);
+      setBusy(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-xl border border-accent/30 bg-accent-light/40 p-4">
+      {isNew && (
+        <div>
+          <p className="font-semibold text-primary">{t("addTitle")}</p>
+          <p className="text-xs text-slate-500">{t("addHint")}</p>
+        </div>
+      )}
+      <ErrorAlert error={error} />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label={t("nom")} name="nom" value={form.nom} onChange={handleChange} required />
+        <Field label={t("prenom")} name="prenom" value={form.prenom} onChange={handleChange} required />
+        <Field label={t("email")} type="email" name="email" value={form.email} onChange={handleChange}
+          required disabled={!isNew} hint={!isNew ? t("emailLocked") : undefined} className="sm:col-span-2" />
+        <Field label={t("niveau")} name="niveau" placeholder={t("niveauPlaceholder")}
+          value={form.niveau} onChange={handleChange} required />
+        <Field label={t("filiere")} name="filiere" placeholder={t("filierePlaceholder")}
+          value={form.filiere} onChange={handleChange} required />
+      </div>
+      <div className="flex justify-end gap-2">
+        <button type="button" onClick={onCancel} className={btn.outline}>{tc("cancel")}</button>
+        <button type="submit" disabled={busy} className={btn.primary}>
+          {busy ? tc("saving") : isNew ? t("add") : tc("save")}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+// F2.3 : membres de l'équipe
+export default function MembersSection({ team, canEdit, onChange }) {
+  const t = useTranslations("members");
+  const tc = useTranslations("common");
+  const { min, max } = team.edition.teamSize;
+
+  const [mode, setMode] = useState(null); // null | "add" | id du membre en modification
+  const [error, setError] = useState(null);
+  const [notice, setNotice] = useState(null);
+
+  const addMember = async (form) => {
+    await api("/api/teams/me/members", { method: "POST", body: form });
+    setMode(null);
+    await onChange();
+  };
+
+  const updateMember = (id) => async (form) => {
+    const { email, ...body } = form;
+    await api(`/api/teams/me/members/${id}`, { method: "PUT", body });
+    setMode(null);
+    await onChange();
+  };
+
+  const removeMember = async (m) => {
+    if (!window.confirm(t("confirmRemove", { name: `${m.prenom} ${m.nom}` }))) return;
+    setError(null);
+    try {
+      await api(`/api/teams/me/members/${m._id}`, { method: "DELETE" });
+      await onChange();
+    } catch (err) {
+      setError(err);
+    }
+  };
+
+  const resend = async (m) => {
+    setError(null);
+    try {
+      await api(`/api/teams/me/members/${m._id}/resend`, { method: "POST" });
+      setNotice(m._id);
+    } catch (err) {
+      setError(err);
+    }
+  };
+
+  const isFull = team.members.length >= max;
+
+  return (
+    <section className={card}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className={sectionTitle}><Users className="size-5 text-accent" /> {t("title")}</h2>
+        <span className="text-sm font-semibold text-slate-500">
+          {t("count", { count: team.members.length, min, max })}
+        </span>
+      </div>
+
+      <ErrorAlert error={error} className="mt-4" />
+
+      <ul className="mt-4 divide-y divide-slate-100">
+        {team.members.map((m) => {
+          const verified = m.user?.isVerified;
+          const incomplete = !m.niveau || !m.filiere;
+
+          if (mode === m._id) {
+            return (
+              <li key={m._id} className="py-3">
+                <MemberForm
+                  initial={{ nom: m.nom, prenom: m.prenom, email: m.email, niveau: m.niveau || "", filiere: m.filiere || "" }}
+                  onCancel={() => setMode(null)}
+                  onSubmit={updateMember(m._id)}
+                />
+              </li>
+            );
+          }
+
+          return (
+            <li key={m._id} className="flex flex-col gap-2 py-4 sm:flex-row sm:items-center">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary font-bold text-white">
+                {m.prenom[0]}{m.nom[0]}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="flex flex-wrap items-center gap-2 font-semibold text-ink">
+                  {m.prenom} {m.nom}
+                  {m.isChef && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-accent-light px-2 py-0.5 text-xs font-bold text-accent">
+                      <Crown className="size-3" /> {t("chef")}
+                    </span>
+                  )}
+                </p>
+                <p className="truncate text-sm text-slate-500">{m.email}</p>
+                <p className="text-sm text-slate-600">
+                  {incomplete ? (
+                    <span className="inline-flex items-center gap-1 text-amber-700">
+                      <TriangleAlert className="size-3.5" /> {t("incomplete")}
+                    </span>
+                  ) : (
+                    `${m.niveau} · ${m.filiere}`
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-1 sm:justify-end">
+                {!m.isChef && (
+                  verified ? (
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-green-700">
+                      <CircleCheck className="size-3.5" /> {t("active")}
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500">
+                      <MailQuestion className="size-3.5" /> {notice === m._id ? t("resent") : t("invited")}
+                    </span>
+                  )
+                )}
+                {canEdit && !m.isChef && !verified && notice !== m._id && (
+                  <button onClick={() => resend(m)} className={btn.ghost} title={t("resend")} aria-label={t("resend")}>
+                    <Send className="size-4" />
+                  </button>
+                )}
+                {canEdit && (
+                  <button onClick={() => setMode(m._id)} className={btn.ghost} title={tc("edit")} aria-label={tc("edit")}>
+                    <Pencil className="size-4" />
+                  </button>
+                )}
+                {canEdit && !m.isChef && (
+                  <button onClick={() => removeMember(m)} className={btn.danger} title={tc("delete")} aria-label={tc("delete")}>
+                    <Trash2 className="size-4" />
+                  </button>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+
+      {canEdit && (
+        <div className="mt-4">
+          {mode === "add" ? (
+            <MemberForm initial={EMPTY} isNew onCancel={() => setMode(null)} onSubmit={addMember} />
+          ) : isFull ? (
+            <Alert type="info">{t("full")}</Alert>
+          ) : (
+            <button onClick={() => setMode("add")} className={btn.outline}>
+              <UserPlus className="size-4" /> {t("add")}
+            </button>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}
