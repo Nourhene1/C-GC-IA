@@ -1,0 +1,31 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "API de la plateforme Compétition IA-GC",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "create-admin": "node scripts/createAdmin.js",
+    "create-edition": "node scripts/createEdition.js",
+    "seed-demo": "node scripts/seedDemo.js"
+  },
+  "author": "Eya",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.4",
+    "exceljs": "^4.4.0",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.10.2",
+    "multer": "^2.4.0",
+    "nodemailer": "^10.0.12",
+    "pdfkit": "^0.20.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
