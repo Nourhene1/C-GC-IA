@@ -12,6 +12,7 @@ import sponsorRoutes from "./routes/sponsorRoutes.js";
 import contentRoutes from "./routes/contentRoutes.js";
 import { PUBLIC_DIR } from "./utils/files.js";
 import { startNewsScheduler } from "./utils/newsNotifier.js";
+import { translateProvider } from "./utils/translate.js";
 
 const app = express();
 app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:3000" }));
@@ -62,7 +63,10 @@ for (const key of ["MONGO_URI", "JWT_SECRET", "FRONTEND_URL"]) {
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connecté");
-    app.listen(PORT, () => console.log(`API sur le port ${PORT}`));
+    app.listen(PORT, () => {
+      console.log(`API sur le port ${PORT}`);
+      console.log(`Traduction automatique : ${translateProvider}`);
+    });
     startNewsScheduler(); // F1.4 / F1.6 : envoi des annonces programmées
   })
   .catch((err) => console.error("Erreur MongoDB :", err.message));

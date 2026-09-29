@@ -235,11 +235,7 @@ export const getInvitation = async (req, res) => {
         .lean()
     : null;
 
-  res.json({
-    prenom: user.prenom,
-    email: user.email,
-    teamName: team?.name || ""
-  });
+   res.json({ prenom: user.prenom, email: user.email, role: user.role, teamName: team?.name || "" });
 };
 
 // POST /api/auth/activate

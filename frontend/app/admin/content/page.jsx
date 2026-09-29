@@ -29,6 +29,7 @@ function ContentAdmin() {
   const [tab, setTab] = useState("rules");
   const [error, setError] = useState(null);
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     api("/api/admin/content").then(setData).catch(setError);
@@ -38,12 +39,15 @@ function ContentAdmin() {
   const save = async (partial) => {
     setError(null);
     setSaved(false);
+    setSaving(true); // la traduction automatique peut prendre quelques secondes
     try {
       const res = await api("/api/admin/content", { method: "PUT", body: partial });
       setData((d) => ({ ...d, content: res.content }));
       setSaved(true);
     } catch (err) {
       setError(err);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -88,6 +92,7 @@ function ContentAdmin() {
         </div>
         <div className="mb-5 flex flex-col gap-3">
           <ErrorAlert error={error} />
+          {saving && <Alert type="info">{t("saving")}</Alert>}
           {saved && <Alert type="success">{t("saved")}</Alert>}
         </div>
         {/* key : l'onglet repart des données enregistrées quand on change d'onglet */}

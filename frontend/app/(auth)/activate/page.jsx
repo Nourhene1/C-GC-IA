@@ -42,7 +42,7 @@ function Activate() {
         body: { token, password: form.password, locale },
       });
       saveSession(jwt, user);
-      router.push("/team");
+            router.push(user.role === "jury" ? "/dashboard" : "/team");
     } catch (err) {
       setError(err);
       setLoading(false);

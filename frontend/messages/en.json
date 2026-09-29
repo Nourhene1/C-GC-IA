@@ -89,7 +89,9 @@
     "sentText": "We sent a confirmation link to {email}. Click it to activate your account.",
     "sentHint": "Remember to check your spam folder.",
     "resend": "Resend email",
-    "resent": "Email sent again!"
+    "resent": "Email sent again!",  
+      "subtitleJury": "Hello {name}, you have been invited as a jury member. Choose your password to activate your account.",
+    "errorText": "Ask the person who invited you to send the invitation again."
   },
   "verify": {
     "loading": "Confirming your email address…",
@@ -156,7 +158,10 @@
     "EDITION_EXISTS": "An edition already exists for this year",
     "TRANSLATION_FAILED": "Automatic translation failed",
     "TOO_MANY_REQUESTS": "Too many messages sent. Please try again in an hour.",
-    "INVALID_EMAIL": "Invalid email address"
+    "INVALID_EMAIL": "Invalid email address",
+        "JURY_EMAIL_TAKEN": "Cet email appartient déjà à un compte équipe ou administrateur",
+    "JURY_EMAIL_DUPLICATE": "Deux membres du jury ont le même email",
+    "ACCOUNT_ALREADY_ACTIVE": "Ce compte est déjà activé"
   },
   "dashboard": {
     "noTeamTitle": "You don't have a team yet",
@@ -321,14 +326,7 @@
     "confirmReject": "Reject this application permanently?",
     "chefEmail": "Leader's email",
     "filiere": "Field",
-    "createdAt": "Created on",
-    "confirm_validate": "Do you want to approve this team? A notification email will be sent.",
-    "confirm_revision": "Do you want to request changes from this team?",
-    "confirm_reject": "Are you sure you want to reject this team?",
-    "confirm_backToPending": "Do you want to move this team back to pending?",
-    "successTitle": "Action completed",
-    "reasonRequired": "A reason is required for this action.",
-    "close": "Close"
+    "createdAt": "Created on"
   },
   "footer": {
     "navigation": "Navigation",
@@ -418,9 +416,10 @@
     }
   },
   "adminCommon": {
-    "translate": "Translate automatically into English",
-    "translateError": "Translation unavailable right now",
-    "enPlaceholder": "English version (optional: French is shown if empty)"
+    "enPlaceholder": "Will be translated automatically when saving",
+    "autoEnglish": "English: translated automatically when saving",
+    "showEnglish": "View / correct the English translation",
+    "englishHint": "Automatically generated translation. A manual correction is kept as long as the French text does not change."
   },
   "adminNews": {
     "title": "News",
@@ -636,7 +635,15 @@
     "start": "Start",
     "end": "End (optional)",
     "moveUp": "Move up",
-    "moveDown": "Move down"
+    "moveDown": "Move down",
+    "saving": "Saving and translating…",    
+    "juryEmail": "Email (jury account invitation)",
+    "juryEmailHint": "Optional and never shown on the site. When saving, an activation link is sent to this address.",
+    "juryInvited": "Invitation sent",
+    "juryActive": "Account activated",
+    "resendInvite": "Resend invitation",
+    "inviteSending": "Sending…",
+    "inviteSent": "Invitation resent"
   },
   "adminFaq": {
     "title": "FAQ",
@@ -660,15 +667,5 @@
     "reply": "Reply",
     "markUnread": "Mark as unread",
     "confirmDelete": "Delete this message?"
-  },
-  "forgotPassword": {
-    "title": "Forgot your password?",
-    "subtitle": "Enter your email address and we will send you a code to reset your password.",
-    "email": "Email address",
-    "submit": "Send code",
-    "submitting": "Sending...",
-    "success": "A recovery code has been sent to your email address.",
-    "backToLogin": "Back to login"
-  },
-  "resetCode": { "title": "Verify the code", "subtitle": "Enter the 6-digit code you received by email to continue.", "code": "Recovery code", "submit": "Verify code", "submitting": "Verifying...", "backToLogin": "Back to login" }, "newPassword": { "title": "New password", "subtitle": "Choose a new password to secure your account.", "password": "New password", "confirmPassword": "Confirm new password", "submit": "Change password", "submitting": "Updating...", "success": "Your password has been changed successfully. Redirecting to login...", "backToLogin": "Back to login", "PASSWORDS_DO_NOT_MATCH": "Passwords do not match." }
+  }
 }

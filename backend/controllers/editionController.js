@@ -1,6 +1,7 @@
 import Edition from "../models/Edition.js";
 import Sponsor from "../models/Sponsor.js";
 import { removeFile, publicPath } from "../utils/files.js";
+import { withEnglish } from "../utils/autoTranslate.js";
 
 // Champs visibles par le public (pas la configuration interne)
 const PUBLIC_FIELDS = "year title theme dates stats poster subjectSummary winners teamSize";
@@ -58,10 +59,14 @@ export const getEdition = async (req, res) => {
 };
 
 // Copie uniquement les champs modifiables depuis le formulaire
-function applyBody(edition, body) {
-  const fields = ["year", "title", "theme", "dates", "teamSize", "stats", "subjectSummary"];
+async function applyBody(edition, body) {
+  const fields = ["year", "dates", "teamSize", "stats"];
   for (const f of fields) {
     if (body[f] !== undefined) edition[f] = body[f];
+  }
+  // Textes : l'admin écrit en français, l'anglais est traduit automatiquement
+  for (const f of ["title", "theme", "subjectSummary"]) {
+    if (body[f] !== undefined) edition[f] = await withEnglish(body[f], edition[f]);
   }
   if (Array.isArray(body.winners)) {
     edition.winners = body.winners
@@ -76,7 +81,7 @@ export const createEdition = async (req, res) => {
     return res.status(409).json({ code: "EDITION_EXISTS" });
   }
   const edition = new Edition({ isCurrent: false });
-  applyBody(edition, req.body);
+  await applyBody(edition, req.body);
   await edition.save(); // les validations du modèle (ordre des dates…) s'appliquent
   res.status(201).json({ edition });
 };
@@ -91,7 +96,7 @@ export const updateEdition = async (req, res) => {
     return res.status(409).json({ code: "EDITION_EXISTS" });
   }
 
-  applyBody(edition, req.body);
+  await applyBody(edition, req.body);
   await edition.save();
   res.json({ edition });
 };

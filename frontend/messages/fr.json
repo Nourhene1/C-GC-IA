@@ -109,7 +109,8 @@
     "submit": "Activer mon compte",
     "submitting": "Activation…",
     "errorTitle": "Invitation invalide ou expirée",
-    "errorText": "Demandez à votre chef d'équipe de vous renvoyer l'invitation.",
+        "subtitleJury": "Bonjour {name}, vous avez été invité(e) comme membre du jury. Choisissez votre mot de passe pour activer votre compte.",
+    "errorText": "Demandez à la personne qui vous a invité(e) de vous renvoyer l'invitation.",
     "toLogin": "Aller à la connexion"
   },
   "errors": {
@@ -156,7 +157,10 @@
     "EDITION_EXISTS": "Une édition existe déjà pour cette année",
     "TRANSLATION_FAILED": "La traduction automatique a échoué",
     "TOO_MANY_REQUESTS": "Trop de messages envoyés. Réessayez dans une heure.",
-    "INVALID_EMAIL": "Adresse email invalide"
+    "INVALID_EMAIL": "Adresse email invalide",   
+     "JURY_EMAIL_TAKEN": "Cet email appartient déjà à un compte équipe ou administrateur",
+    "JURY_EMAIL_DUPLICATE": "Deux membres du jury ont le même email",
+    "ACCOUNT_ALREADY_ACTIVE": "Ce compte est déjà activé"
   },
   "dashboard": {
     "noTeamTitle": "Vous n'avez pas encore d'équipe",
@@ -321,14 +325,7 @@
     "confirmReject": "Rejeter définitivement ce dossier ?",
     "chefEmail": "Email du chef",
     "filiere": "Filière",
-    "createdAt": "Créé le",
-    "confirm_validate": "Voulez-vous approuver cette équipe ? Un e-mail de notification sera envoyé.",
-    "confirm_revision": "Voulez-vous demander des modifications à cette équipe ?",
-    "confirm_reject": "Voulez-vous vraiment rejeter cette équipe ?",
-    "confirm_backToPending": "Voulez-vous remettre cette équipe en attente ?",
-    "successTitle": "Action effectuée",
-    "reasonRequired": "Le motif est obligatoire pour cette action.",
-    "close": "Fermer"
+    "createdAt": "Créé le"
   },
   "footer": {
     "navigation": "Navigation",
@@ -418,9 +415,10 @@
     }
   },
   "adminCommon": {
-    "translate": "Traduire automatiquement en anglais",
-    "translateError": "Traduction impossible pour le moment",
-    "enPlaceholder": "Version anglaise (facultatif : le français s'affiche si vide)"
+    "enPlaceholder": "Sera traduit automatiquement à l'enregistrement",
+    "autoEnglish": "Anglais : traduit automatiquement à l'enregistrement",
+    "showEnglish": "Voir / corriger la traduction anglaise",
+    "englishHint": "Traduction générée automatiquement. Une correction manuelle est conservée tant que le texte français ne change pas."
   },
   "adminNews": {
     "title": "Actualités",
@@ -636,7 +634,15 @@
     "start": "Début",
     "end": "Fin (facultatif)",
     "moveUp": "Monter",
-    "moveDown": "Descendre"
+    "moveDown": "Descendre",
+    "saving": "Enregistrement et traduction en cours…",   
+     "juryEmail": "Email (invitation au compte jury)",
+    "juryEmailHint": "Facultatif et non affiché sur le site. À l'enregistrement, un lien d'activation est envoyé à cette adresse.",
+    "juryInvited": "Invitation envoyée",
+    "juryActive": "Compte activé",
+    "resendInvite": "Renvoyer l'invitation",
+    "inviteSending": "Envoi…",
+    "inviteSent": "Invitation renvoyée"
   },
   "adminFaq": {
     "title": "FAQ",
@@ -660,16 +666,5 @@
     "reply": "Répondre",
     "markUnread": "Marquer non lu",
     "confirmDelete": "Supprimer ce message ?"
-  },
-  "forgotPassword": {
-    "title": "Mot de passe oublié ?",
-    "subtitle": "Entrez votre adresse email et nous vous enverrons un code pour réinitialiser votre mot de passe.",
-    "email": "Adresse email",
-    "submit": "Envoyer le code",
-    "submitting": "Envoi en cours...",
-    "success": "Un code de récupération a été envoyé à votre adresse email.",
-    "backToLogin": "Retour à la connexion"
-  },
-  "resetCode": { "title": "Vérifier le code", "subtitle": "Entrez le code à 6 chiffres que vous avez reçu par email pour continuer.", "code": "Code de récupération", "submit": "Vérifier le code", "submitting": "Vérification...", "backToLogin": "Retour à la connexion" }, "newPassword": { "title": "Nouveau mot de passe", "subtitle": "Choisissez un nouveau mot de passe pour sécuriser votre compte.", "password": "Nouveau mot de passe", "confirmPassword": "Confirmer le nouveau mot de passe", "submit": "Modifier le mot de passe", "submitting": "Modification...", "success": "Votre mot de passe a été modifié avec succès. Redirection vers la connexion...", "backToLogin": "Retour à la connexion", "PASSWORDS_DO_NOT_MATCH": "Les mots de passe ne correspondent pas." }
-
+  }
 }

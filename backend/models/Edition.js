@@ -52,8 +52,7 @@ const editionSchema = new mongoose.Schema(
       type: [requiredDocumentSchema],
       default: [
         { kind: "carte_etudiant", perMember: true },
-        { kind: "attestation_scolarite", perMember: true },
-        { kind: "autorisation", perMember: false },
+        { kind: "attestation_scolarite", perMember: true }
       ],
     },
 

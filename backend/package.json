@@ -9,7 +9,8 @@
     "start": "node server.js",
     "create-admin": "node scripts/createAdmin.js",
     "create-edition": "node scripts/createEdition.js",
-    "seed-demo": "node scripts/seedDemo.js"
+        "seed-demo": "node scripts/seedDemo.js",
+    "remove-autorisation": "node scripts/removeAutorisation.js"
   },
   "author": "Eya",
   "license": "ISC",

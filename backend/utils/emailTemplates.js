@@ -197,3 +197,25 @@ export function forgotPasswordMail(user, code) {
     user.locale === "en" ? en : fr
   );
 }
+// Invitation d'un membre du jury ajouté par l'administrateur
+export function juryInvitationMail({ name, link, locale }) {
+  const fr = {
+    subject: "Invitation : membre du jury — Compétition IA & Génie Civil",
+    title: `Bonjour ${name},`,
+    lines: [
+      "Vous avez été ajouté(e) au jury de la Compétition IA & Génie Civil — ISET Sfax 2026.",
+      "Choisissez votre mot de passe pour activer votre compte jury. Ce lien est valable 7 jours.",
+    ],
+    button: { label: "Activer mon compte", url: link },
+  };
+  const en = {
+    subject: "Invitation: jury member — AI & Civil Engineering Competition",
+    title: `Hello ${name},`,
+    lines: [
+      "You have been added to the jury of the AI & Civil Engineering Competition — ISET Sfax 2026.",
+      "Choose your password to activate your jury account. This link is valid for 7 days.",
+    ],
+    button: { label: "Activate my account", url: link },
+  };
+  return build(locale, locale === "en" ? en : fr);
+}

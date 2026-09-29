@@ -1,6 +1,7 @@
 import News, { NEWS_CATEGORIES } from "../models/News.js";
 import { getCurrentEdition } from "../utils/edition.js";
 import { runNewsNotifications } from "../utils/newsNotifier.js";
+import { withEnglish } from "../utils/autoTranslate.js";
 
 // ---------------------------------------------------------------------------
 // Public — F1.2
@@ -66,15 +67,17 @@ export const getAdminNews = async (req, res) => {
 
 // Applique le formulaire à l'annonce.
 // mode : "draft" (brouillon), "now" (publier maintenant), "schedule" (programmer)
-function applyBody(news, body) {
+async function applyBody(news, body) {
   const { category, title = {}, content = {}, notifyTeams, mode, publishAt } = body;
 
   if (!title.fr?.trim() || !content.fr?.trim()) return "FIELDS_REQUIRED";
   if (category && !NEWS_CATEGORIES.includes(category)) return "VALIDATION_ERROR";
 
   news.category = category || "general";
-  news.title = { fr: title.fr, en: title.en || "" };
-  news.content = { fr: content.fr, en: content.en || "" };
+  // L'admin écrit en français : l'anglais est traduit automatiquement
+  const [en1, en2] = await Promise.all([withEnglish(title, news.title), withEnglish(content, news.content)]);
+  news.title = en1;
+  news.content = en2;
   news.notifyTeams = Boolean(notifyTeams);
 
   if (mode === "draft") {
@@ -98,7 +101,7 @@ export const createNews = async (req, res) => {
   const edition = await getCurrentEdition();
   const news = new News({ edition: edition?._id, author: req.user._id });
 
-  const error = applyBody(news, req.body);
+  const error = await applyBody(news, req.body);
   if (error) return res.status(400).json({ code: error });
 
   await news.save();
@@ -111,7 +114,7 @@ export const updateNews = async (req, res) => {
   const news = await News.findById(req.params.id);
   if (!news) return res.status(404).json({ code: "NOT_FOUND" });
 
-  const error = applyBody(news, req.body);
+  const error = await applyBody(news, req.body);
   if (error) return res.status(400).json({ code: error });
 
   await news.save();

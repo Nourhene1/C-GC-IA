@@ -14,13 +14,16 @@ const prizeSchema = new mongoose.Schema({
 });
 
 // F3.6 : un membre du jury
+// F3.6 : un membre du jury
 const jurySchema = new mongoose.Schema({
   name:         { type: String, required: true, trim: true },
   role:         text,            // ex. "Présidente du jury"
   organization: { type: String, trim: true, default: "" },
   photo:        { type: String, default: null }, // /uploads/jury/xxx.jpg
+  // Privé (jamais affiché sur le site) : sert à inviter le juré à créer son compte
+  email:        { type: String, trim: true, lowercase: true, default: "" },
+  user:         { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
 });
-
 // F3.4 : un référent à contacter
 const contactSchema = new mongoose.Schema({
   name:  { type: String, required: true, trim: true },

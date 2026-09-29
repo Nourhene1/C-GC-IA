@@ -15,7 +15,7 @@ import {
   listEditions, getEdition, createEdition, updateEdition, setCurrent, uploadPoster, deletePoster,
 } from "../controllers/editionController.js";
 import {
-  getAdminContent, updateContent, uploadRulesPdf, deleteRulesPdf, uploadJuryPhoto,
+  getAdminContent, updateContent, uploadRulesPdf, deleteRulesPdf, uploadJuryPhoto, resendJuryInvite,
 } from "../controllers/contentController.js";
 import { listAdminFaq, createFaq, updateFaq, deleteFaq } from "../controllers/faqController.js";
 import { listMessages, markMessage, deleteMessage } from "../controllers/contactController.js";
@@ -63,6 +63,7 @@ router.put("/content", updateContent);
 router.post("/content/rules-pdf", uploadRulesPdfFile, uploadRulesPdf);
 router.delete("/content/rules-pdf", deleteRulesPdf);
 router.post("/content/jury-photo", uploadJuryPhotoFile, uploadJuryPhoto);
+router.post("/content/jury/:id/invite", resendJuryInvite); // renvoyer l'invitation d'un juré
 
 // Module 3 — FAQ (F3.3)
 router.get("/faq", listAdminFaq);

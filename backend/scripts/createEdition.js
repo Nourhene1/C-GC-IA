@@ -30,7 +30,6 @@ const data = {
   requiredDocuments: [
     { kind: "carte_etudiant", perMember: true },
     { kind: "attestation_scolarite", perMember: true },
-    { kind: "autorisation", perMember: false },
   ],
   stats: { teams: 24, participants: 96, schools: 8 },
 };
