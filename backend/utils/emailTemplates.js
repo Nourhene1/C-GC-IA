@@ -164,3 +164,36 @@ export function contactMail(msg) {
     button: { label: "Voir dans l'espace admin", url: `${process.env.FRONTEND_URL}/admin/messages` },
   });
 }
+
+
+// F2.X : récupération du mot de passe
+export function forgotPasswordMail(user, code) {
+  const fr = {
+    subject: "Code de récupération de votre mot de passe",
+    title: `Bonjour ${user.prenom},`,
+    lines: [
+      "Vous avez demandé la réinitialisation de votre mot de passe pour la Compétition IA & Génie Civil.",
+      `Votre code de récupération est : ${code}`,
+      "Ce code est valable pendant 15 minutes.",
+      "Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet email.",
+    ],
+    button: null,
+  };
+
+  const en = {
+    subject: "Your password recovery code",
+    title: `Hello ${user.prenom},`,
+    lines: [
+      "You requested a password reset for the AI & Civil Engineering Competition.",
+      `Your recovery code is: ${code}`,
+      "This code is valid for 15 minutes.",
+      "If you did not request this, you can safely ignore this email.",
+    ],
+    button: null,
+  };
+
+  return build(
+    user.locale,
+    user.locale === "en" ? en : fr
+  );
+}

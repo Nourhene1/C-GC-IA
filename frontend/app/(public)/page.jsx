@@ -32,50 +32,110 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ---------- Bandeau principal ---------- */}
-      <section className="relative overflow-hidden bg-primary text-white">
-        <span aria-hidden className="absolute -left-20 top-10 h-5 w-96 -rotate-12 bg-accent" />
-        <span aria-hidden className="absolute -left-16 top-20 h-2 w-80 -rotate-12 bg-white/15" />
-        <span aria-hidden className="absolute -bottom-6 -right-20 h-5 w-96 -rotate-12 bg-accent" />
+      {/* ---------- Bandeau principal (100 % Tailwind) ---------- */}
+      <section className="group relative overflow-hidden bg-gradient-to-br from-primary via-primary to-slate-900 text-white [clip-path:polygon(0_0,100%_0,100%_93%,0_100%)]">
+        {/* Trame plan d'ingénieur */}
+        <span
+          aria-hidden
+          className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.10)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.10)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_at_30%_40%,#000,transparent_70%)]"
+        />
 
-        <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 pb-28 pt-16 md:grid-cols-[1fr_auto]">
+        {/* Grand panneau orange incliné derrière le logo (desktop) */}
+        <span
+          aria-hidden
+          className="absolute -right-32 inset-y-0 hidden w-[46%] skew-x-[-10deg] bg-accent transition-transform duration-700 group-hover:translate-x-3 md:block"
+        />
+        <span
+          aria-hidden
+          className="absolute inset-y-0 right-[44%] hidden w-5 skew-x-[-10deg] bg-white/15 transition-transform duration-700 group-hover:-translate-x-2 md:block"
+        />
+
+        {/* Halo qui pulse derrière le logo */}
+        <span
+          aria-hidden
+          className="absolute right-[6%] top-1/2 hidden size-[30rem] -translate-y-1/2 rounded-full bg-white/20 blur-3xl motion-safe:animate-[pulse_5s_ease-in-out_infinite] md:block"
+        />
+
+        {/* Petites pièces animées */}
+        <span aria-hidden className="absolute left-[46%] top-16 hidden size-4 rotate-45 bg-accent motion-safe:animate-bounce md:block" />
+        <span aria-hidden className="absolute left-[52%] bottom-32 hidden size-3 rounded-full bg-white/60 motion-safe:animate-[bounce_2.6s_infinite] [animation-delay:.6s] md:block" />
+        <span aria-hidden className="absolute left-[42%] bottom-40 hidden size-2.5 bg-white/40 motion-safe:animate-ping md:block" />
+
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 pb-36 pt-16 md:grid-cols-[1fr_auto] md:pb-40 md:pt-20">
+          {/* ----- Texte ----- */}
           <div>
             {edition && (
-              <span className="inline-block rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold ring-1 ring-white/20">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold ring-1 ring-white/25 backdrop-blur">
+                {registrationOpen && (
+                  <span className="relative flex size-2.5">
+                    <span className="absolute inline-flex size-full rounded-full bg-accent motion-safe:animate-ping" />
+                    <span className="relative inline-flex size-2.5 rounded-full bg-accent" />
+                  </span>
+                )}
                 {t("edition", { year: edition.year })}
               </span>
             )}
-            <h1 className="mt-5 text-4xl font-extrabold uppercase leading-tight sm:text-5xl">
-              {tc("competition")}
-              <span className="block text-accent">IA &amp; {t("civilEngineering")}</span>
-            </h1>
-            <p className="mt-4 max-w-xl text-lg text-white/85">
+
+            <div className="mt-6 border-l-8 border-accent pl-5">
+              <h1 className="text-4xl font-black uppercase leading-[1.05] sm:text-5xl xl:text-6xl">
+                {tc("competition")}
+                <span className="mt-1 block text-accent">IA &amp; {t("civilEngineering")}</span>
+              </h1>
+            </div>
+
+            <p className="mt-6 max-w-xl text-lg text-white/85">
               {edition ? pick(edition.theme, locale) : tc("tagline")}
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-9 flex flex-wrap gap-4">
               {registrationOpen && (
-                <Link href="/register"
-                  className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-3.5 font-semibold text-white shadow-lg shadow-black/20 transition hover:bg-white hover:text-primary">
-                  {t("cta")} <ArrowRight className="size-5" />
+                <Link
+                  href="/register"
+                  className="group/btn inline-flex items-center gap-3 rounded-full bg-accent py-3.5 pl-7 pr-3.5 font-bold text-white shadow-xl shadow-black/30 transition hover:-translate-y-1 hover:bg-white hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  {t("cta")}
+                  <span className="flex size-9 items-center justify-center rounded-full bg-white/25 transition group-hover/btn:bg-primary group-hover/btn:text-white">
+                    <ArrowRight className="size-5 transition-transform group-hover/btn:translate-x-0.5" />
+                  </span>
                 </Link>
               )}
-              <a href="#dates"
-                className="inline-flex items-center gap-2 rounded-xl px-6 py-3.5 font-semibold text-white ring-1 ring-white/30 transition hover:bg-white/10">
-                <CalendarDays className="size-5" /> {t("keyDates")}
+              <a
+                href="#dates"
+                className="group/btn inline-flex items-center gap-2 rounded-full px-7 py-3.5 font-bold text-white ring-2 ring-white/40 backdrop-blur transition hover:-translate-y-1 hover:bg-white/10 hover:ring-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                <CalendarDays className="size-5 transition-transform group-hover/btn:-rotate-12 group-hover/btn:scale-110" />
+                {t("keyDates")}
               </a>
             </div>
           </div>
 
-          <div className="mx-auto rounded-full bg-white p-2 shadow-2xl shadow-black/30 ring-8 ring-white/10">
-            <Image src="/logo.png" alt={tc("logoAlt")} width={280} height={280} priority className="rounded-full" />
+          {/* ----- Logo entouré d'anneaux animés ----- */}
+          <div className="relative mx-auto">
+            <span
+              aria-hidden
+              className="absolute -inset-8 rounded-full border-2 border-dashed border-white/50 motion-safe:animate-[spin_45s_linear_infinite]"
+            />
+            <span
+              aria-hidden
+              className="absolute -inset-4 rounded-full border-[5px] border-transparent border-t-white motion-safe:animate-[spin_8s_linear_infinite_reverse]"
+            />
+            <div className="relative rounded-full bg-white p-2 shadow-2xl shadow-black/50 ring-8 ring-white/20 transition-transform duration-500 hover:scale-105 hover:rotate-3">
+              <Image
+                src="/logo.png"
+                alt={tc("logoAlt")}
+                width={300}
+                height={300}
+                priority
+                className="h-auto w-56 rounded-full sm:w-72"
+              />
+            </div>
           </div>
         </div>
       </section>
 
       {/* ---------- Compte à rebours (F1.3) ---------- */}
       {edition && (
-        <section className="relative mx-auto -mt-16 max-w-3xl px-4">
+        <section className="relative mx-auto -mt-20 max-w-3xl px-4">
           <div className="rounded-3xl bg-white p-6 shadow-2xl shadow-primary/10 sm:p-8">
             <Countdown dates={edition.dates} serverNow={current.now} />
           </div>

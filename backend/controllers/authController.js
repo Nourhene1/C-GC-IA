@@ -2,15 +2,33 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import Team from "../models/Team.js";
 import { sendMailSafe } from "../utils/mailer.js";
-import { verifyEmailMail } from "../utils/emailTemplates.js";
-import { getCurrentEdition, isRegistrationOpen } from "../utils/edition.js";
+import {
+  verifyEmailMail,
+  forgotPasswordMail,
+} from "../utils/emailTemplates.js";
+import {
+  getCurrentEdition,
+  isRegistrationOpen
+} from "../utils/edition.js";
+import { randomToken, hashToken } from "../utils/tokens.js";
+
 
 const pickLocale = (l) => (l === "en" ? "en" : "fr");
 
 const signToken = (user) =>
-  jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
+  jwt.sign(
+    {
+      id: user._id,
+      role: user.role
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "7d"
+    }
+  );
 
-// Ce qu'on renvoie au frontend (jamais le mot de passe ni les jetons)
+// Ce qu'on renvoie au frontend
+// jamais le mot de passe ni les jetons
 export const publicUser = (user) => ({
   id: user._id,
   nom: user.nom,
@@ -21,37 +39,70 @@ export const publicUser = (user) => ({
   locale: user.locale,
 });
 
-const session = (user) => ({ token: signToken(user), user: publicUser(user) });
+const session = (user) => ({
+  token: signToken(user),
+  user: publicUser(user)
+});
 
-// Crée un jeton de confirmation (24 h), enregistre l'utilisateur et envoie l'email
+// Crée un jeton de confirmation (24 h),
+// enregistre l'utilisateur et envoie l'email
 async function sendVerification(user) {
   const token = user.createEmailToken(24);
+
   await user.save();
+
   const link = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
-  await sendMailSafe({ to: user.email, ...verifyEmailMail(user, link) });
+
+  await sendMailSafe({
+    to: user.email,
+    ...verifyEmailMail(user, link)
+  });
 }
 
-// POST /api/auth/register — F2.1 : le chef crée le compte de son équipe
+// POST /api/auth/register
+// F2.1 : le chef crée le compte de son équipe
 export const register = async (req, res) => {
-  const { nom, prenom, email, password, locale } = req.body;
+  const {
+    nom,
+    prenom,
+    email,
+    password,
+    locale
+  } = req.body;
 
   if (!nom || !prenom || !email || !password) {
-    return res.status(400).json({ code: "FIELDS_REQUIRED" });
+    return res.status(400).json({
+      code: "FIELDS_REQUIRED"
+    });
   }
+
   if (password.length < 8) {
-    return res.status(400).json({ code: "PASSWORD_TOO_SHORT" });
+    return res.status(400).json({
+      code: "PASSWORD_TOO_SHORT"
+    });
   }
 
   // F2.5 : pas de nouvelle inscription hors période
   const edition = await getCurrentEdition();
+
   if (!isRegistrationOpen(edition)) {
-    return res.status(403).json({ code: "REGISTRATION_CLOSED" });
+    return res.status(403).json({
+      code: "REGISTRATION_CLOSED"
+    });
   }
 
-  const exists = await User.exists({ email: email.toLowerCase().trim() });
-  if (exists) return res.status(409).json({ code: "EMAIL_TAKEN" });
+  const exists = await User.exists({
+    email: email.toLowerCase().trim()
+  });
 
-  // Le rôle est imposé : on ne lit JAMAIS req.body.role
+  if (exists) {
+    return res.status(409).json({
+      code: "EMAIL_TAKEN"
+    });
+  }
+
+  // Le rôle est imposé :
+  // on ne lit JAMAIS req.body.role
   const user = new User({
     nom,
     prenom,
@@ -61,22 +112,43 @@ export const register = async (req, res) => {
     locale: pickLocale(locale),
     isVerified: false,
   });
+
   await sendVerification(user);
 
-  res.status(201).json({ code: "VERIFY_EMAIL_SENT", email: user.email });
+  res.status(201).json({
+    code: "VERIFY_EMAIL_SENT",
+    email: user.email
+  });
 };
 
-// POST /api/auth/verify-email — clic sur le lien reçu par email
+// POST /api/auth/verify-email
+// clic sur le lien reçu par email
 export const verifyEmail = async (req, res) => {
   const { token } = req.body;
-  if (!token) return res.status(400).json({ code: "INVALID_TOKEN" });
+
+  if (!token) {
+    return res.status(400).json({
+      code: "INVALID_TOKEN"
+    });
+  }
 
   // Seuls les comptes qui ont déjà un mot de passe passent par ici
-  const user = await User.findByEmailToken(token, { password: { $exists: true } });
-  if (!user) return res.status(400).json({ code: "INVALID_TOKEN" });
+  const user = await User.findByEmailToken(
+    token,
+    {
+      password: { $exists: true }
+    }
+  );
+
+  if (!user) {
+    return res.status(400).json({
+      code: "INVALID_TOKEN"
+    });
+  }
 
   user.isVerified = true;
   user.clearEmailToken();
+
   await user.save();
 
   // Connexion automatique après confirmation
@@ -85,60 +157,239 @@ export const verifyEmail = async (req, res) => {
 
 // POST /api/auth/resend-verification
 export const resendVerification = async (req, res) => {
-  const email = String(req.body.email || "").toLowerCase().trim();
-  const user = await User.findOne({ email, isVerified: false, password: { $exists: true } });
-  if (user) await sendVerification(user);
+  const email = String(
+    req.body.email || ""
+  ).toLowerCase().trim();
 
-  // Même réponse que le compte existe ou non : on ne révèle pas les emails inscrits
-  res.json({ code: "VERIFY_EMAIL_SENT" });
+  const user = await User.findOne({
+    email,
+    isVerified: false,
+    password: { $exists: true }
+  });
+
+  if (user) {
+    await sendVerification(user);
+  }
+
+  // Même réponse que le compte existe ou non
+  // afin de ne pas révéler les emails inscrits
+  res.json({
+    code: "VERIFY_EMAIL_SENT"
+  });
 };
 
 // POST /api/auth/login
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  const {
+    email,
+    password
+  } = req.body;
+
   if (!email || !password) {
-    return res.status(400).json({ code: "CREDENTIALS_REQUIRED" });
+    return res.status(400).json({
+      code: "CREDENTIALS_REQUIRED"
+    });
   }
 
-  const user = await User.findOne({ email: email.toLowerCase().trim() }).select("+password");
-  if (!user || !(await user.comparePassword(password))) {
-    return res.status(401).json({ code: "INVALID_CREDENTIALS" });
+  const user = await User.findOne({
+    email: email.toLowerCase().trim()
+  }).select("+password");
+
+  if (
+    !user ||
+    !(await user.comparePassword(password))
+  ) {
+    return res.status(401).json({
+      code: "INVALID_CREDENTIALS"
+    });
   }
+
   if (!user.isVerified) {
-    return res.status(403).json({ code: "EMAIL_NOT_VERIFIED" });
+    return res.status(403).json({
+      code: "EMAIL_NOT_VERIFIED"
+    });
   }
 
   res.json(session(user));
 };
 
-// GET /api/auth/invitation/:token — infos affichées sur la page d'activation
+// GET /api/auth/invitation/:token
+// infos affichées sur la page d'activation
 export const getInvitation = async (req, res) => {
-  const user = await User.findByEmailToken(req.params.token, { password: { $exists: false } });
-  if (!user) return res.status(400).json({ code: "INVALID_TOKEN" });
+  const user = await User.findByEmailToken(
+    req.params.token,
+    {
+      password: { $exists: false }
+    }
+  );
 
-  const team = user.team ? await Team.findById(user.team).select("name").lean() : null;
-  res.json({ prenom: user.prenom, email: user.email, teamName: team?.name || "" });
+  if (!user) {
+    return res.status(400).json({
+      code: "INVALID_TOKEN"
+    });
+  }
+
+  const team = user.team
+    ? await Team.findById(user.team)
+        .select("name")
+        .lean()
+    : null;
+
+  res.json({
+    prenom: user.prenom,
+    email: user.email,
+    teamName: team?.name || ""
+  });
 };
 
-// POST /api/auth/activate — F2.3 : le membre invité choisit son mot de passe
+// POST /api/auth/activate
+// F2.3 : le membre invité choisit son mot de passe
 export const activate = async (req, res) => {
-  const { token, password, locale } = req.body;
-  if (!token || !password) return res.status(400).json({ code: "FIELDS_REQUIRED" });
-  if (password.length < 8) return res.status(400).json({ code: "PASSWORD_TOO_SHORT" });
+  const {
+    token,
+    password,
+    locale
+  } = req.body;
 
-  const user = await User.findByEmailToken(token, { password: { $exists: false } });
-  if (!user) return res.status(400).json({ code: "INVALID_TOKEN" });
+  if (!token || !password) {
+    return res.status(400).json({
+      code: "FIELDS_REQUIRED"
+    });
+  }
+
+  if (password.length < 8) {
+    return res.status(400).json({
+      code: "PASSWORD_TOO_SHORT"
+    });
+  }
+
+  const user = await User.findByEmailToken(
+    token,
+    {
+      password: { $exists: false }
+    }
+  );
+
+  if (!user) {
+    return res.status(400).json({
+      code: "INVALID_TOKEN"
+    });
+  }
 
   user.password = password;
   user.isVerified = true;
-  if (locale) user.locale = pickLocale(locale);
+
+  if (locale) {
+    user.locale = pickLocale(locale);
+  }
+
   user.clearEmailToken();
+
   await user.save();
 
   res.json(session(user));
 };
 
+// POST /api/auth/forgot-password
+// Envoie un code numérique de récupération
+export const forgotPassword = async (req, res) => {
+  const email = String(
+    req.body.email || ""
+  ).toLowerCase().trim();
+
+  if (!email) {
+    return res.status(400).json({
+      code: "EMAIL_REQUIRED"
+    });
+  }
+
+  // Vérification de l'existence du compte
+  const user = await User.findOne({
+    email
+  });
+
+  if (!user) {
+    return res.status(404).json({
+      code: "EMAIL_NOT_FOUND"
+    });
+  }
+
+  // Génération d'un code à 6 chiffres
+  // valable 15 minutes
+  const code = user.createResetPasswordCode(15);
+
+  await user.save();
+
+  // Envoi du code par email
+  await sendMailSafe({
+    to: user.email,
+    ...forgotPasswordMail(user, code)
+  });
+
+  res.json({
+    code: "RESET_CODE_SENT"
+  });
+};
+
+// POST /api/auth/reset-password
+// Vérifie le code et change le mot de passe
+// POST /api/auth/reset-password
+// Change le mot de passe avec le jeton obtenu après vérification du code
+export const resetPassword = async (req, res) => {
+  const { email, resetToken, password } = req.body;
+
+  if (!email || !resetToken || !password) {
+    return res.status(400).json({ code: "FIELDS_REQUIRED" });
+  }
+
+  if (password.length < 8) {
+    return res.status(400).json({ code: "PASSWORD_TOO_SHORT" });
+  }
+
+  const user = await User.findByResetPasswordCode(String(resetToken), {
+    email: String(email).toLowerCase().trim(),
+  });
+
+  if (!user) {
+    return res.status(400).json({ code: "INVALID_RESET_CODE" });
+  }
+
+  user.password = password;
+  user.clearResetPasswordCode();
+  await user.save();
+
+  res.json({ code: "PASSWORD_RESET_SUCCESS" });
+};
+
 // GET /api/auth/me
 export const me = (req, res) => {
-  res.json({ user: publicUser(req.user) });
+  res.json({
+    user: publicUser(req.user)
+  });
+};
+
+// POST /api/auth/verify-reset-code
+// Vérifie le code, puis le remplace par un jeton à usage unique
+export const verifyResetCode = async (req, res) => {
+  const { email, code } = req.body;
+
+  if (!email || !code) {
+    return res.status(400).json({ code: "FIELDS_REQUIRED" });
+  }
+
+  const user = await User.findByResetPasswordCode(String(code), {
+    email: String(email).toLowerCase().trim(),
+  });
+
+  if (!user) {
+    return res.status(400).json({ code: "INVALID_RESET_CODE" });
+  }
+
+  // Le code est consommé : on stocke à la place le hash du jeton (10 min)
+  const resetToken = randomToken();
+  user.resetPasswordCode = hashToken(resetToken);
+  user.resetPasswordCodeExpires = new Date(Date.now() + 10 * 60 * 1000);
+  await user.save();
+
+  res.json({ code: "RESET_CODE_VALID", resetToken });
 };

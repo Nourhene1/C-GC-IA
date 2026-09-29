@@ -321,7 +321,14 @@
     "confirmReject": "Rejeter définitivement ce dossier ?",
     "chefEmail": "Email du chef",
     "filiere": "Filière",
-    "createdAt": "Créé le"
+    "createdAt": "Créé le",
+    "confirm_validate": "Voulez-vous approuver cette équipe ? Un e-mail de notification sera envoyé.",
+    "confirm_revision": "Voulez-vous demander des modifications à cette équipe ?",
+    "confirm_reject": "Voulez-vous vraiment rejeter cette équipe ?",
+    "confirm_backToPending": "Voulez-vous remettre cette équipe en attente ?",
+    "successTitle": "Action effectuée",
+    "reasonRequired": "Le motif est obligatoire pour cette action.",
+    "close": "Fermer"
   },
   "footer": {
     "navigation": "Navigation",
@@ -653,5 +660,16 @@
     "reply": "Répondre",
     "markUnread": "Marquer non lu",
     "confirmDelete": "Supprimer ce message ?"
-  }
+  },
+  "forgotPassword": {
+    "title": "Mot de passe oublié ?",
+    "subtitle": "Entrez votre adresse email et nous vous enverrons un code pour réinitialiser votre mot de passe.",
+    "email": "Adresse email",
+    "submit": "Envoyer le code",
+    "submitting": "Envoi en cours...",
+    "success": "Un code de récupération a été envoyé à votre adresse email.",
+    "backToLogin": "Retour à la connexion"
+  },
+  "resetCode": { "title": "Vérifier le code", "subtitle": "Entrez le code à 6 chiffres que vous avez reçu par email pour continuer.", "code": "Code de récupération", "submit": "Vérifier le code", "submitting": "Vérification...", "backToLogin": "Retour à la connexion" }, "newPassword": { "title": "Nouveau mot de passe", "subtitle": "Choisissez un nouveau mot de passe pour sécuriser votre compte.", "password": "Nouveau mot de passe", "confirmPassword": "Confirmer le nouveau mot de passe", "submit": "Modifier le mot de passe", "submitting": "Modification...", "success": "Votre mot de passe a été modifié avec succès. Redirection vers la connexion...", "backToLogin": "Retour à la connexion", "PASSWORDS_DO_NOT_MATCH": "Les mots de passe ne correspondent pas." }
+
 }

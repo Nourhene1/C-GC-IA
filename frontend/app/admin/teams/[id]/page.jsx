@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTranslations, useFormatter } from "next-intl";
-import { ArrowLeft, Gavel, CircleCheck, RotateCcw, CircleX, Clock, ClipboardCheck } from "lucide-react";
+import { ArrowLeft, Gavel, CircleCheck, RotateCcw, CircleX, Clock, ClipboardCheck, X } from "lucide-react";
 import RequireAuth from "@/components/auth/RequireAuth";
 import AppShell from "@/components/layout/AppShell";
 import Spinner from "@/components/ui/Spinner";
@@ -18,33 +18,95 @@ import HistoryList from "@/components/team/HistoryList";
 import { api } from "@/lib/api";
 import { DATE_TIME } from "@/lib/format";
 
+// `style` = bouton, `header` = bandeau coloré des popups, `confirm` = bouton de confirmation
 const ACTIONS = [
-  { status: "valide", key: "validate", Icon: CircleCheck, style: "bg-green-600 hover:bg-green-700" },
-  { status: "en_revision", key: "revision", Icon: RotateCcw, style: "bg-blue-600 hover:bg-blue-700" },
-  { status: "rejete", key: "reject", Icon: CircleX, style: "bg-red-600 hover:bg-red-700" },
-  { status: "en_attente", key: "backToPending", Icon: Clock, style: "bg-slate-500 hover:bg-slate-600" },
+  { status: "valide", key: "validate", Icon: CircleCheck, needsReason: false,
+    style: "bg-green-600 hover:bg-green-700", header: "bg-green-600" },
+  { status: "en_revision", key: "revision", Icon: RotateCcw, needsReason: true,
+    style: "bg-blue-600 hover:bg-blue-700", header: "bg-blue-600" },
+  { status: "rejete", key: "reject", Icon: CircleX, needsReason: true,
+    style: "bg-red-600 hover:bg-red-700", header: "bg-red-600" },
+  { status: "en_attente", key: "backToPending", Icon: Clock, needsReason: false,
+    style: "bg-slate-500 hover:bg-slate-600", header: "bg-slate-600" },
 ];
+
+// Popup générique (même design que la popup de rejet d'origine)
+function Modal({ header, Icon, title, onClose, closable = true, children, footer }) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm"
+      onClick={() => closable && onClose()}
+    >
+      <div
+        role="alertdialog"
+        aria-modal="true"
+        className="relative w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl shadow-primary/20"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className={`relative overflow-hidden px-6 py-5 text-white ${header}`}>
+          <span className="absolute -right-8 -top-4 h-4 w-32 rotate-[-30deg] bg-white/25" />
+          <h3 className="flex items-center gap-3 text-lg font-bold">
+            <Icon className="size-5" /> {title}
+          </h3>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={!closable}
+            className="absolute right-4 top-4 rounded-full p-1 text-white/80 hover:bg-white/10 hover:text-white disabled:opacity-50"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-3 px-6 py-6 text-sm text-slate-600">{children}</div>
+
+        <div className="flex justify-end gap-3 bg-slate-50 px-6 py-4">{footer}</div>
+      </div>
+    </div>
+  );
+}
 
 // F2.6 : panneau de décision de l'admin
 function DecisionPanel({ team, onDone }) {
   const t = useTranslations("adminTeam");
+  const tc = useTranslations("common");
   const [reason, setReason] = useState("");
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
   const [busy, setBusy] = useState(null);
+  const [pending, setPending] = useState(null); // action en attente de confirmation
+  const [result, setResult] = useState(null); // action réussie (popup de succès)
 
-  const decide = async (status) => {
-    if (status === "rejete" && !window.confirm(t("confirmReject"))) return;
-    setBusy(status);
+  const closeConfirm = () => {
+    if (busy) return;
+    setPending(null);
     setError(null);
-    setSuccess(false);
+  };
+
+  // Ouvre la popup de confirmation pour n'importe quelle action
+  const ask = (action) => {
+    setError(null);
+    setPending(action);
+  };
+
+  const decide = async (action) => {
+    // Le motif est obligatoire pour "demander des modifications" et "rejeter"
+    if (action.needsReason && !reason.trim()) {
+      setError({ message: t("reasonRequired") });
+      return;
+    }
+    setBusy(action.status);
+    setError(null);
     try {
-      await api(`/api/admin/teams/${team._id}/status`, { method: "PATCH", body: { status, reason } });
+      await api(`/api/admin/teams/${team._id}/status`, {
+        method: "PATCH",
+        body: { status: action.status, reason },
+      });
       setReason("");
-      setSuccess(true);
+      setPending(null);
+      setResult(action);
       await onDone();
     } catch (err) {
-      setError(err);
+      setError(err); // affichée dans la popup de confirmation, qui reste ouverte
     } finally {
       setBusy(null);
     }
@@ -58,17 +120,77 @@ function DecisionPanel({ team, onDone }) {
         <Alert type="info" className="mt-4">{t("notSubmitted")}</Alert>
       ) : (
         <div className="mt-4 flex flex-col gap-3">
-          {success && <Alert type="success">{t("done")}</Alert>}
-          <ErrorAlert error={error} />
           <TextArea label={t("reason")} placeholder={t("reasonPlaceholder")}
             value={reason} onChange={(e) => setReason(e.target.value)} />
-          {ACTIONS.filter((a) => a.status !== team.status).map(({ status, key, Icon, style }) => (
-            <button key={status} onClick={() => decide(status)} disabled={!!busy}
-              className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition disabled:opacity-50 ${style}`}>
-              <Icon className="size-4" /> {t(key)}
+          {ACTIONS.filter((a) => a.status !== team.status).map((action) => (
+            <button key={action.status}
+              onClick={() => ask(action)}
+              disabled={!!busy}
+              className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition disabled:opacity-50 ${action.style}`}>
+              <action.Icon className="size-4" /> {t(action.key)}
             </button>
           ))}
         </div>
+      )}
+
+      {/* Popup de confirmation (valider, demander des modifications, rejeter, remettre en attente) */}
+      {pending && (
+        <Modal
+          header={pending.header}
+          Icon={pending.Icon}
+          title={t(pending.key)}
+          onClose={closeConfirm}
+          closable={!busy}
+          footer={
+            <>
+              <button
+                type="button"
+                onClick={closeConfirm}
+                disabled={!!busy}
+                className="rounded-full bg-slate-200 px-5 py-2.5 text-sm font-semibold text-primary transition hover:bg-slate-300 disabled:opacity-50"
+              >
+                {tc("cancel")}
+              </button>
+              <button
+                type="button"
+                onClick={() => decide(pending)}
+                disabled={!!busy}
+                autoFocus
+                className={`rounded-full px-6 py-2.5 text-sm font-semibold text-white transition disabled:opacity-50 ${pending.style}`}
+              >
+                {busy === pending.status ? tc("loading") : t(pending.key)}
+              </button>
+            </>
+          }
+        >
+          <p>{t(`confirm_${pending.key}`)}</p>
+          {pending.needsReason && reason.trim() && (
+            <p className="rounded-xl bg-slate-50 px-4 py-3 text-slate-700">« {reason.trim()} »</p>
+          )}
+          <ErrorAlert error={error} />
+        </Modal>
+      )}
+
+      {/* Popup de succès (remplace l'ancienne alerte "done") */}
+      {result && (
+        <Modal
+          header={result.header}
+          Icon={result.Icon}
+          title={t("successTitle")}
+          onClose={() => setResult(null)}
+        footer={
+            <button
+              type="button"
+              onClick={() => setResult(null)}
+              autoFocus
+              className={`rounded-full px-6 py-2.5 text-sm font-semibold text-white transition ${result.style}`}
+            >
+              {t("close")}
+            </button>
+          }
+        >
+          <p>{t("done")}</p>
+        </Modal>
       )}
     </section>
   );
