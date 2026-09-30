@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useLocale, useTranslations, useFormatter } from "next-intl";
 import {
   ArrowRight, Clock, UserCog, FolderKanban, Megaphone, Handshake, CalendarRange,
-  Plus, ExternalLink, CalendarCheck, CalendarX, Mail,
+  Plus, ExternalLink, CalendarCheck, CalendarX, Mail,BookOpen
 } from "lucide-react";
 import RequireAuth from "@/components/auth/RequireAuth";
 import AppShell from "@/components/layout/AppShell";
@@ -34,6 +34,7 @@ function AdminHome() {
       api("/api/admin/stats"),
       api("/api/admin/news"),
       api("/api/sponsors"),
+      api("/api/subject"),
       api("/api/editions/current").catch(() => null), // pas d'édition en cours : on continue
       api("/api/admin/messages?unread=1"),
     ])
@@ -145,7 +146,18 @@ function AdminHome() {
           <p className="mt-4 flex-1 text-sm text-slate-600">{t("editionsText")}</p>
           <Link href="/admin/editions" className={`${btn.outline} mt-5 w-fit`}>{t("manage")}</Link>
         </section>
+
+
+         <section className={`${card} flex flex-col`}>
+          <h2 className={sectionTitle}><BookOpen className="size-5 text-accent" /> {t("subject")}</h2>
+          <p className="mt-4 flex-1 text-sm text-slate-600">{t("subjectText")}</p>
+          <Link href="/admin/subject" className={`${btn.outline} mt-5 w-fit`}>{t("manage")}</Link>
+        </section>
       </div>
+
+
+
+      
 
       {/* ---- Comptes par rôle ---- */}
       <section className={card}>

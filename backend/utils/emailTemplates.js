@@ -41,7 +41,7 @@ function layout({ title, paragraphs, button }) {
   </td></tr></table></body></html>`;
 }
 
-function build(locale, { subject, title, lines, button }) {
+export function build(locale, { subject, title, lines, button }) {
   const html = layout({ title, paragraphs: lines.map(escapeHtml), button });
   const text = [title, "", ...lines, button ? `\n${button.label} : ${button.url}` : ""].join("\n");
   return { subject, html, text };

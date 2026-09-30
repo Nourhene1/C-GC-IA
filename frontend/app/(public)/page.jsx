@@ -61,32 +61,58 @@ export default async function HomePage() {
         <span aria-hidden className="absolute left-[52%] bottom-32 hidden size-3 rounded-full bg-white/60 motion-safe:animate-[bounce_2.6s_infinite] [animation-delay:.6s] md:block" />
         <span aria-hidden className="absolute left-[42%] bottom-40 hidden size-2.5 bg-white/40 motion-safe:animate-ping md:block" />
 
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 pb-36 pt-16 md:grid-cols-[1fr_auto] md:pb-40 md:pt-20">
-          {/* ----- Texte ----- */}
-          <div>
-            {edition && (
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold ring-1 ring-white/25 backdrop-blur">
-                {registrationOpen && (
-                  <span className="relative flex size-2.5">
-                    <span className="absolute inline-flex size-full rounded-full bg-accent motion-safe:animate-ping" />
-                    <span className="relative inline-flex size-2.5 rounded-full bg-accent" />
-                  </span>
-                )}
-                {t("edition", { year: edition.year })}
-              </span>
-            )}
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 pb-36 pt-14 md:grid-cols-[1fr_auto] md:pb-40 md:pt-16">
+          {/* ----- Colonne texte ----- */}
+          <div className="min-w-0">
+            {/* Ligne du haut : badge de l'édition
+                (sur petit écran, le logo ISET s'affiche ici à la place de la marge) */}
+            <div className="flex min-h-20 flex-wrap items-center gap-4">
+              <Image
+                src="/logo_iset.png"
+                alt="ISET Sfax"
+                width={200}
+                height={200}
+                className="h-auto w-16 shrink-0 rounded-2xl bg-white p-1.5 shadow-xl shadow-black/30 sm:w-20 min-[1440px]:hidden"
+              />
 
-            <div className="mt-6 border-l-8 border-accent pl-5">
+              {edition && (
+                <>
+                  <span aria-hidden className="h-10 w-px bg-white/30 min-[1440px]:hidden" />
+                  <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold ring-1 ring-white/25 backdrop-blur">
+                    {registrationOpen && (
+                      <span className="relative flex size-2.5">
+                        <span className="absolute inline-flex size-full rounded-full bg-accent motion-safe:animate-ping" />
+                        <span className="relative inline-flex size-2.5 rounded-full bg-accent" />
+                      </span>
+                    )}
+                    {t("edition", { year: edition.year })}
+                  </span>
+                </>
+              )}
+            </div>
+
+            {/* Titre avec barre orange
+                Le logo ISET est posé dans la marge gauche, centré sur le titre */}
+            <div className="relative mt-8 border-l-8 border-accent pl-5">
+              <Image
+                src="/logo_iset.png"
+                alt="ISET Sfax"
+                width={400}
+                height={400}
+                className="absolute right-full top-1/2 mr-5 hidden h-auto w-28 -translate-y-1/2 rounded-2xl bg-white p-2 shadow-xl shadow-black/30 transition-transform duration-300 hover:-rotate-3 hover:scale-105 min-[1440px]:block min-[1520px]:mr-6 min-[1520px]:w-40"
+              />
               <h1 className="text-4xl font-black uppercase leading-[1.05] sm:text-5xl xl:text-6xl">
                 {tc("competition")}
                 <span className="mt-1 block text-accent">IA &amp; {t("civilEngineering")}</span>
               </h1>
             </div>
 
+            {/* Thème de l'édition */}
             <p className="mt-6 max-w-xl text-lg text-white/85">
               {edition ? pick(edition.theme, locale) : tc("tagline")}
             </p>
 
+            {/* Boutons */}
             <div className="mt-9 flex flex-wrap gap-4">
               {registrationOpen && (
                 <Link
@@ -109,7 +135,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* ----- Logo entouré d'anneaux animés ----- */}
+          {/* ----- Logo de la compétition entouré d'anneaux animés ----- */}
           <div className="relative mx-auto">
             <span
               aria-hidden
@@ -157,8 +183,7 @@ export default async function HomePage() {
               return (
                 <li key={key}
                   className={`relative rounded-2xl p-5 ${past ? "bg-white/60 text-slate-500" : "bg-white shadow-lg shadow-primary/5"}`}>
-                  <span className={`flex size-9 items-center justify-center rounded-full text-sm font-extrabold ${
-                    past ? "bg-slate-200 text-slate-500" : "bg-accent text-white"}`}>
+                  <span className={`flex size-9 items-center justify-center rounded-full text-sm font-extrabold ${past ? "bg-slate-200 text-slate-500" : "bg-accent text-white"}`}>
                     {past ? <CircleCheck className="size-5" /> : i + 1}
                   </span>
                   <p className={`mt-3 font-bold ${past ? "" : "text-primary"}`}>{tcd(`label.${key}`)}</p>

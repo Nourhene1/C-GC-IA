@@ -2,7 +2,7 @@ import multer from "multer";
 import path from "node:path";
 import fs from "node:fs";
 import crypto from "node:crypto";
-import { PRIVATE_DIR, LOGO_DIR, SPONSOR_DIR, POSTER_DIR, RULES_DIR, JURY_DIR } from "../utils/files.js";
+import { PRIVATE_DIR, LOGO_DIR, SPONSOR_DIR, POSTER_DIR, RULES_DIR, JURY_DIR, SUBJECT_DIR } from "../utils/files.js";
 
 const MB = 1024 * 1024;
 
@@ -28,7 +28,9 @@ function makeUpload({ dir, types, maxMb }) {
       file.originalname = Buffer.from(file.originalname, "latin1").toString("utf8");
       const ext = path.extname(file.originalname).toLowerCase();
       // L'extension ET le type annoncé doivent correspondre à la liste autorisée
-      if (types[ext] !== file.mimetype) {
+      // (une extension peut accepter plusieurs types MIME : ex. .zip)
+      const allowed = [].concat(types[ext] ?? []);
+      if (!allowed.includes(file.mimetype)) {
         const err = new Error("INVALID_FILE_TYPE");
         err.code = "INVALID_FILE_TYPE";
         return cb(err);
@@ -71,3 +73,20 @@ export const uploadRulesPdf = makeUpload({ dir: RULES_DIR, types: { ".pdf": "app
 
 // F3.6 : photo d'un membre du jury
 export const uploadJuryPhoto = makeUpload({ dir: JURY_DIR, types: IMAGE_TYPES, maxMb: 2 });
+
+// F4.1 : documents du sujet (privés, jamais servis en statique)
+export const uploadSubjectFile = makeUpload({
+  dir: SUBJECT_DIR,
+  types: {
+    ".pdf": "application/pdf",
+    ".zip": ["application/zip", "application/x-zip-compressed"],
+    ".csv": ["text/csv", "application/vnd.ms-excel"],
+    ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ".txt": "text/plain",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+  },
+  maxMb: Number(process.env.MAX_SUBJECT_MB) || 50,
+});

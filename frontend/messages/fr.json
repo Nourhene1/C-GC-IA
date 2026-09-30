@@ -47,7 +47,8 @@
     "faq": "FAQ",
     "contact": "Contact",
     "content": "Contenu",
-    "messages": "Messages"
+    "messages": "Messages",
+    "subject": "Sujet"
   },
   "status": {
     "brouillon": "Brouillon",
@@ -109,7 +110,7 @@
     "submit": "Activer mon compte",
     "submitting": "Activation…",
     "errorTitle": "Invitation invalide ou expirée",
-        "subtitleJury": "Bonjour {name}, vous avez été invité(e) comme membre du jury. Choisissez votre mot de passe pour activer votre compte.",
+    "subtitleJury": "Bonjour {name}, vous avez été invité(e) comme membre du jury. Choisissez votre mot de passe pour activer votre compte.",
     "errorText": "Demandez à la personne qui vous a invité(e) de vous renvoyer l'invitation.",
     "toLogin": "Aller à la connexion"
   },
@@ -157,8 +158,8 @@
     "EDITION_EXISTS": "Une édition existe déjà pour cette année",
     "TRANSLATION_FAILED": "La traduction automatique a échoué",
     "TOO_MANY_REQUESTS": "Trop de messages envoyés. Réessayez dans une heure.",
-    "INVALID_EMAIL": "Adresse email invalide",   
-     "JURY_EMAIL_TAKEN": "Cet email appartient déjà à un compte équipe ou administrateur",
+    "INVALID_EMAIL": "Adresse email invalide",
+    "JURY_EMAIL_TAKEN": "Cet email appartient déjà à un compte équipe ou administrateur",
     "JURY_EMAIL_DUPLICATE": "Deux membres du jury ont le même email",
     "ACCOUNT_ALREADY_ACTIVE": "Ce compte est déjà activé"
   },
@@ -280,6 +281,7 @@
     "news": "Actualités",
     "sponsors": "Partenaires",
     "editions": "Éditions",
+    "subject": "Sujet",
     "currentEdition": "Édition en cours",
     "registrationOpen": "Inscriptions ouvertes",
     "registrationClosed": "Inscriptions fermées",
@@ -292,6 +294,7 @@
     "newsDrafts": "{count, plural, =0 {Aucun brouillon} one {# brouillon} other {# brouillons}}",
     "sponsorsCount": "{count, plural, =0 {Aucun partenaire pour cette édition} one {# partenaire pour cette édition} other {# partenaires pour cette édition}}",
     "editionsText": "Dates, thème, taille des équipes et historique des éditions passées.",
+    "subjectText": "Thème de l'édition et informations générales.",
     "newAnnouncement": "Nouvelle annonce",
     "manage": "Gérer",
     "unreadMessages": "{count, plural, one {# nouveau message de contact} other {# nouveaux messages de contact}}"
@@ -322,10 +325,15 @@
     "backToPending": "Remettre en attente",
     "notSubmitted": "Ce dossier est encore en brouillon : il ne peut pas être examiné.",
     "done": "Statut mis à jour. L'équipe a été prévenue par email.",
-    "confirmReject": "Rejeter définitivement ce dossier ?",
+    "confirm_reject": "Rejeter définitivement ce dossier ?",
     "chefEmail": "Email du chef",
     "filiere": "Filière",
-    "createdAt": "Créé le"
+    "createdAt": "Créé le",
+    "confirm_backToPending": "Confirmer le retour à l'état « En attente »",
+    "confirm_revision":" Demander des modifications pour ce dossier ?",
+    "close": "Fermer",
+    "successTitle":"Statut mis à jour !",
+    "confirm_validate":" Valider ce dossier ?"
   },
   "footer": {
     "navigation": "Navigation",
@@ -427,6 +435,8 @@
     "back": "Retour aux actualités",
     "all": "Toutes",
     "empty": "Aucune annonce.",
+    "confirmDeleteTitle": "Supprimer cette annonce ?",
+    "confirmDeleteButton": "Supprimer",
     "states": {
       "published": "Publiée",
       "scheduled": "Programmée",
@@ -469,7 +479,15 @@
     "orderHint": "Les plus petits nombres s'affichent en premier",
     "chooseLogo": "Choisir un logo",
     "logoHint": "PNG, JPG ou WEBP — {max} Mo maximum",
-    "confirmDelete": "Supprimer le partenaire {name} ?"
+    "confirmDelete": "Supprimer le partenaire {name} ?",
+    "confirmDeleteTitle": "Supprimer ce partenaire ?",
+    "tiers": {
+    "platine": "Platinum",
+    "or": "Gold",
+    "argent": "Silver",
+    "bronze": "Bronze",
+    "partenaire": "Partner"
+  }
   },
   "adminEditions": {
     "title": "Éditions",
@@ -562,6 +580,8 @@
     "noResult": "Aucune question ne correspond à votre recherche.",
     "notFound": "Vous ne trouvez pas votre réponse ?",
     "contactUs": "Contactez-nous",
+    "confirmDeleteTitle": "Supprimer cette question ?",
+    "confirmDeleteButton": "Supprimer",
     "categories": {
       "inscription": "Inscription",
       "equipe": "Équipe",
@@ -635,8 +655,8 @@
     "end": "Fin (facultatif)",
     "moveUp": "Monter",
     "moveDown": "Descendre",
-    "saving": "Enregistrement et traduction en cours…",   
-     "juryEmail": "Email (invitation au compte jury)",
+    "saving": "Enregistrement et traduction en cours…",
+    "juryEmail": "Email (invitation au compte jury)",
     "juryEmailHint": "Facultatif et non affiché sur le site. À l'enregistrement, un lien d'activation est envoyé à cette adresse.",
     "juryInvited": "Invitation envoyée",
     "juryActive": "Compte activé",
@@ -665,6 +685,193 @@
     "empty": "Aucun message.",
     "reply": "Répondre",
     "markUnread": "Marquer non lu",
-    "confirmDelete": "Supprimer ce message ?"
-  }
+    "confirmDelete": "Supprimer ce message ?",
+    "confirmDeleteTitle": "Supprimer ce message ?",
+    "confirmDeleteButton": "Supprimer"
+  },
+  "notifications": {
+    "open": "Ouvrir les notifications",
+    "close": "Fermer les notifications",
+    "title": "Notifications",
+    "unreadCount": "{count} notification(s) non lue(s)",
+    "markAllRead": "Tout marquer comme lu",
+    "markRead": "Marquer comme lu",
+    "delete": "Supprimer",
+    "loading": "Chargement des notifications...",
+    "error": "Impossible de charger les notifications.",
+    "defaultTitle": "Notification",
+    "empty": {
+      "title": "Aucune notification",
+      "description": "Vous n'avez aucune nouvelle notification."
+    }
+  },
+ "subject": {
+  "notOpen": {
+    "title": "Le sujet n'est pas encore disponible",
+    "description": "Il sera publié à l'ouverture de la session. Revenez à ce moment-là : la page se mettra à jour automatiquement.",
+    "opensAt": "Ouverture prévue le {date}"
+  },
+  "public": {
+    "breadcrumb": "Sujet",
+    "title": "Sujet de la compétition",
+    "description": "Consultez le sujet et les documents disponibles pour la compétition."
+  },
+
+  "team": {
+    "breadcrumb": "Sujet",
+    "title": "Sujet de la compétition",
+    "description": "Consultez le sujet, les documents et les addenda de la compétition."
+  },
+
+  "admin": {
+    "breadcrumb": "Sujet",
+    "pageTitle": "Sujet de la compétition",
+    "pageDescription": "Gérez le sujet de la compétition, les documents, les addenda et la date de la session.",
+
+    "title": "Gestion du sujet",
+    "description": "Gérez le sujet de la compétition et les documents associés.",
+
+    "documents": {
+      "title": "Documents",
+      "description": "Gérez les documents disponibles pour les participants.",
+      "add": "Ajouter un document"
+    },
+
+    "files": {
+      "empty": "Aucun document disponible.",
+      "downloading": "Téléchargement...",
+      "download": "Télécharger",
+      "upload":"Téléverser",
+      "select": "Sélectionner...",
+      "delete": "Supprimer",
+      "errors": {
+        "upload": "Impossible de téléverser le document.",
+        "delete": "Impossible de supprimer le document."
+      }
+    },
+
+    "uploader": {
+      "select": "Sélectionner un ou plusieurs fichiers",
+      "hint": "PDF, DOC, DOCX, ZIP ou autres formats autorisés",
+      "remove": "Supprimer",
+      "errors": {
+        "noFile": "Veuillez sélectionner au moins un fichier.",
+        "upload": "L'envoi du fichier a échoué."
+      },
+      "uploading": "Envoi...",
+      "upload": "Téléverser"
+    },
+
+    "addenda": {
+      "title": "Addenda",
+      "description": "Gérez les informations supplémentaires et les mises à jour liées au sujet de la compétition.",
+      "add": "Ajouter un addendum",
+      "empty": "Aucun addendum disponible.",
+
+      "fields": {
+        "title": "Titre",
+        "titlePlaceholder": "Entrez le titre de l'addendum",
+        "description": "Description",
+        "descriptionPlaceholder": "Entrez la description de l'addendum"
+      },
+
+      "errors": {
+        "titleRequired": "Le titre de l'addendum est obligatoire.",
+        "create": "Impossible de créer l'addendum."
+      },
+
+      "creating": "Création...",
+      "create": "Créer l'addendum"
+    },
+
+    "session": {
+      "title": "Date de la session",
+      "description": "Définissez la date d'ouverture de la session et de publication du sujet.",
+      "label": "Date de la session",
+
+      "fields": {
+        "date": "Date de la session"
+      },
+
+      "save": "Enregistrer la date",
+      "saving": "Enregistrement...",
+
+      "errors": {
+        "required": "Veuillez sélectionner une date.",
+        "update": "Impossible de mettre à jour la date de la session."
+      }
+    },
+    "audit": {
+      "title": "Journal d'audit",
+      "description": "Consultations, téléchargements et modifications liés au sujet.",
+      "empty": "Aucune activité enregistrée pour ces filtres.",
+      "total": "{count} entrées",
+      "filesCount": "{count} fichiers (ZIP)",
+      "prev": "Page précédente",
+      "next": "Page suivante",
+      "export": {
+        "csv": "Exporter en CSV",
+        "pdf": "Exporter en PDF",
+        "loading": "Export en cours..."
+      },
+      "filters": {
+        "action": "Action",
+        "allActions": "Toutes les actions",
+        "from": "Du",
+        "to": "Au",
+        "reset": "Réinitialiser"
+      },
+      "columns": {
+        "date": "Date",
+        "user": "Utilisateur",
+        "team": "Équipe",
+        "action": "Action",
+        "detail": "Détail",
+        "ip": "IP"
+      },
+      "actions": {
+        "SUBJECT_VIEW": "Consultation du sujet",
+        "SUBJECT_DOWNLOAD": "Téléchargement d'un document",
+        "SUBJECT_ZIP_DOWNLOAD": "Téléchargement du ZIP",
+        "SUBJECT_FILE_UPLOAD": "Ajout d'un document",
+        "SUBJECT_FILE_DELETE": "Suppression d'un document",
+        "SUBJECT_SESSION_OPEN_CHANGED": "Date d'ouverture modifiée",
+        "ADDENDUM_CREATE": "Addendum créé",
+        "ADDENDUM_UPDATE": "Addendum modifié",
+        "AUDIT_EXPORT": "Export du journal"
+      }
+    }
+  },
+
+  "documents": {
+    "title": "Documents",
+    "description": "Consultez les documents disponibles pour la compétition.",
+    "empty": "Aucun document disponible.",
+    "download": "Télécharger",
+    "downloading": "Téléchargement...",
+    "defaultFileName": "document"
+  },
+
+  "addenda": {
+    "title": "Addenda",
+    "description": "Consultez les informations supplémentaires et les mises à jour liées au sujet de la compétition.",
+    "empty": "Aucun addendum disponible."
+  },
+
+  "actions": {
+    "refresh": "Actualiser",
+    "retry": "Réessayer"
+  },
+
+  "errors": {
+    "load": "Impossible de charger le sujet."
+  },
+
+  "empty": {
+    "title": "Aucun sujet disponible",
+    "description": "Le sujet de la compétition n'est pas encore disponible."
+  },
+
+  "download": "Télécharger le sujet"
+}
 }

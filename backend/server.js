@@ -10,11 +10,19 @@ import teamRoutes from "./routes/teamRoutes.js";
 import newsRoutes from "./routes/newsRoutes.js";
 import sponsorRoutes from "./routes/sponsorRoutes.js";
 import contentRoutes from "./routes/contentRoutes.js";
+import subjectRoutes from "./routes/subjectRoutes.js";
+import subjectAdminRoutes from "./routes/subjectAdminRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 import { PUBLIC_DIR } from "./utils/files.js";
 import { startNewsScheduler } from "./utils/newsNotifier.js";
+import { startSubjectScheduler } from "./utils/subjectNotifier.js";
 import { translateProvider } from "./utils/translate.js";
 
 const app = express();
+
+// Derrière un proxy (nginx, Render…), décommenter pour journaliser la vraie IP (F4.4)
+// app.set("trust proxy", 1);
+
 app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:3000" }));
 app.use(express.json({ limit: "1mb" }));
 
@@ -26,11 +34,15 @@ app.use("/uploads", express.static(PUBLIC_DIR, { maxAge: "7d" }));
 // Routes
 app.get("/api/health", (req, res) => res.json({ ok: true }));
 app.use("/api/auth", authRoutes);
+// Module 4 : doit être AVANT adminRoutes pour ne pas être intercepté
+app.use("/api/admin/subject", subjectAdminRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/editions", editionRoutes);
 app.use("/api/teams", teamRoutes);
 app.use("/api/news", newsRoutes);
 app.use("/api/sponsors", sponsorRoutes);
+app.use("/api/subject", subjectRoutes);             // F4.2 / F4.3 / F4.5 / F4.7
+app.use("/api/notifications", notificationRoutes);  // F4.6 : notifications in-app
 app.use("/api", contentRoutes); // /api/content, /api/faq, /api/contact
 
 // Route inconnue
@@ -68,5 +80,6 @@ mongoose.connect(process.env.MONGO_URI)
       console.log(`Traduction automatique : ${translateProvider}`);
     });
     startNewsScheduler(); // F1.4 / F1.6 : envoi des annonces programmées
+    startSubjectScheduler(); // F4.6 : notification à l'ouverture du sujet
   })
   .catch((err) => console.error("Erreur MongoDB :", err.message));
