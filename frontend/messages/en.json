@@ -48,7 +48,8 @@
     "contact": "Contact",
     "content": "Content",
     "messages": "Messages",
-    "subject": "Subjects"
+    "subject": "Subjects",
+    "submission": "Submissions"
   },
   "status": {
     "brouillon": "Draft",
@@ -870,5 +871,116 @@
       "description": "The competition subject is not available yet."
     },
     "download": "Download Subject"
+  },
+  "submission": {
+  "team": {
+    "title": "Submit your work",
+    "description": "Upload your team's deliverables before the deadline. Each replacement creates a new version; previous ones are kept."
+  },
+  "window": {
+    "open": "Submissions open",
+    "grace": "Grace period in progress",
+    "closed": "Submissions closed",
+    "deadline": "Deadline: {date}",
+    "tolerance": "{minutes} min grace period",
+    "graceWarning": "Files submitted now are marked as late. Final closing: {date}."
+  },
+  "status": {
+    "submitted": "Submitted",
+    "late": "Late",
+    "not_submitted": "Not submitted"
+  },
+  "kinds": {
+    "report": "Report",
+    "code": "Source code",
+    "slides": "Slides",
+    "video": "Video"
+  },
+  "rules": {
+    "required": "Required",
+    "optional": "Optional",
+    "formats": "Formats: {formats}",
+    "maxSize": "max {maxMb} MB",
+    "orLink": "HTTPS link accepted"
+  },
+  "current": {
+    "none": "Nothing submitted",
+    "deposited": "Submitted",
+    "late": "Late"
+  },
+  "fields": {
+    "linkPlaceholder": "https://…"
+  },
+  "receipt": {
+    "title": "Submission received",
+    "receivedAt": "Received on {date} (server time)",
+    "late": "This file arrived after the deadline, during the grace period.",
+    "emailSent": "A receipt has been sent to you by email."
+  },
+  "actions": {
+    "send": "Submit",
+    "replace": "Replace",
+    "sending": "Uploading…",
+    "download": "Download",
+    "open": "Open link",
+    "mode_file": "File",
+    "mode_link": "Link",
+    "history": "Previous versions ({count})",
+    "hideHistory": "Hide previous versions",
+    "close": "Close",
+    "refresh": "Refresh",
+    "projection": "Projection mode",
+    "exit": "Exit",
+    "details": "Details",
+    "save": "Save",
+    "saving": "Saving…"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "SUBMISSIONS_CLOSED": "Submissions are closed: this file was not saved.",
+    "FILE_TOO_LARGE": "File too large: the limit is {maxMb} MB.",
+    "INVALID_FORMAT": "Format not accepted. Allowed formats: {allowed}.",
+    "INVALID_URL": "Invalid link: it must start with https://.",
+    "INVALID_KIND": "Unknown deliverable type.",
+    "FILE_REQUIRED": "Choose a file.",
+    "LINK_NOT_ALLOWED": "This deliverable does not accept a link.",
+    "TOO_MANY_VERSIONS": "Maximum number of versions reached ({max}).",
+    "INVALID_TOLERANCE": "Tolerance must be an integer between 0 and 240.",
+    "clientFormat": "Format not accepted. Allowed formats: {allowed}.",
+    "clientTooLarge": "File too large ({size}): the limit is {maxMb} MB."
+  },
+  "admin": {
+    "title": "Submission tracking",
+    "description": "Submission status of each validated team.",
+    "projectionTitle": "Team submissions, {year} edition",
+    "team": "Team",
+    "status": "Status",
+    "lastDeposit": "Last submission",
+    "never": "None",
+    "anonCode": "Anonymous code",
+    "saved": "Settings saved.",
+    "counts": {
+      "total": "Teams",
+      "submitted": "Submitted",
+      "late": "Late",
+      "not_submitted": "Not submitted"
+    },
+    "settings": {
+      "title": "Submission settings",
+      "tolerance": "Grace period after the deadline (minutes)",
+      "toleranceHint": "Files submitted during this period are accepted but marked as late. 0 = no grace period.",
+      "anonymize": "Anonymize deliverables for the jury",
+      "anonymizeHint": "The jury sees a code (E-XXXX) instead of the team name, and neutral file names."
+    }
+  },
+  "jury": {
+    "title": "Deliverables to evaluate",
+    "description": "Latest version submitted by each team.",
+    "anonymized": "Blind evaluation: teams are identified by a code.",
+    "empty": "No deliverables submitted.",
+    "notYetTitle": "Submissions are not closed yet",
+    "notYetDescription": "Deliverables will be available to the jury once submissions close.",
+    "closesAt": "Closing: {date}"
   }
+}
 }

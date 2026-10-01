@@ -9,7 +9,7 @@ const localized = {
 // Une pièce justificative demandée (F2.4)
 const requiredDocumentSchema = new mongoose.Schema(
   {
-    kind:      { type: String, required: true }, // "carte_etudiant", "attestation_scolarite"…
+    kind: { type: String, required: true }, // "carte_etudiant", "attestation_scolarite"…
     perMember: { type: Boolean, default: true }, // une par membre, ou une seule pour l'équipe
   },
   { _id: false }
@@ -18,8 +18,8 @@ const requiredDocumentSchema = new mongoose.Schema(
 // Une équipe primée (historique des éditions)
 const winnerSchema = new mongoose.Schema(
   {
-    rank:          { type: Number, required: true, min: 1 },
-    teamName:      { type: String, required: true, trim: true },
+    rank: { type: Number, required: true, min: 1 },
+    teamName: { type: String, required: true, trim: true },
     etablissement: { type: String, trim: true, default: "" },
   },
   { _id: false }
@@ -27,25 +27,31 @@ const winnerSchema = new mongoose.Schema(
 
 const editionSchema = new mongoose.Schema(
   {
-    year:      { type: Number, required: true, unique: true },
-    title:     localized,
-    theme:     localized,
+    year: { type: Number, required: true, unique: true },
+    title: localized,
+    theme: localized,
     isCurrent: { type: Boolean, default: false },
 
     dates: {
-      registrationOpen:   { type: Date, required: true },
-      registrationClose:  { type: Date, required: true },
-      sessionOpen:        { type: Date, required: true },
+      registrationOpen: { type: Date, required: true },
+      registrationClose: { type: Date, required: true },
+      sessionOpen: { type: Date, required: true },
       submissionDeadline: { type: Date, required: true },
-      evaluationStart:    { type: Date }, // F3.2 : phase d'évaluation par le jury
-      evaluationEnd:      { type: Date },
-      resultsDate:        { type: Date },
+      evaluationStart: { type: Date }, // F3.2 : phase d'évaluation par le jury
+      evaluationEnd: { type: Date },
+      resultsDate: { type: Date },
     },
 
     // Nombre de membres autorisé, chef compris (F2.3)
     teamSize: {
       min: { type: Number, default: 2, min: 1 },
       max: { type: Number, default: 5, min: 1 },
+    },
+
+    submission: {
+      toleranceMinutes: { type: Number, default: 0, min: 0, max: 240 }, // F5.2
+      anonymize: { type: Boolean, default: false },              // F5.8
+      
     },
 
     requiredDocuments: {
@@ -58,9 +64,9 @@ const editionSchema = new mongoose.Schema(
 
     // Chiffres de l'édition précédente, affichés sur l'accueil (F1.1)
     stats: {
-      teams:        { type: Number, default: 0 },
+      teams: { type: Number, default: 0 },
       participants: { type: Number, default: 0 },
-      schools:      { type: Number, default: 0 },
+      schools: { type: Number, default: 0 },
     },
 
     // --- Historique (F1.1) : rempli à la fin de l'édition ---

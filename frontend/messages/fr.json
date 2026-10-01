@@ -48,7 +48,8 @@
     "contact": "Contact",
     "content": "Contenu",
     "messages": "Messages",
-    "subject": "Sujet"
+    "subject": "Sujet",
+    "submission": "Dépôt des travaux"
   },
   "status": {
     "brouillon": "Brouillon",
@@ -869,5 +870,116 @@
       "description": "Le sujet de la compétition n'est pas encore disponible."
     },
     "download": "Télécharger le sujet"
+  },
+  "submission": {
+  "team": {
+    "title": "Dépôt des travaux",
+    "description": "Déposez les livrables de votre équipe avant la date limite. Chaque remplacement crée une nouvelle version, les précédentes sont conservées."
+  },
+  "window": {
+    "open": "Dépôt ouvert",
+    "grace": "Délai de tolérance en cours",
+    "closed": "Dépôt clos",
+    "deadline": "Date limite : {date}",
+    "tolerance": "tolérance de {minutes} min",
+    "graceWarning": "Les dépôts faits maintenant sont marqués en retard. Fermeture définitive : {date}."
+  },
+  "status": {
+    "submitted": "Déposé",
+    "late": "En retard",
+    "not_submitted": "Non déposé"
+  },
+  "kinds": {
+    "report": "Rapport",
+    "code": "Code source",
+    "slides": "Présentation",
+    "video": "Vidéo"
+  },
+  "rules": {
+    "required": "Obligatoire",
+    "optional": "Facultatif",
+    "formats": "Formats : {formats}",
+    "maxSize": "max {maxMb} Mo",
+    "orLink": "lien HTTPS accepté"
+  },
+  "current": {
+    "none": "Aucun dépôt",
+    "deposited": "Déposé",
+    "late": "En retard"
+  },
+  "fields": {
+    "linkPlaceholder": "https://…"
+  },
+  "receipt": {
+    "title": "Dépôt bien reçu",
+    "receivedAt": "Reçu le {date} (heure du serveur)",
+    "late": "Ce dépôt est arrivé après la date limite, pendant le délai de tolérance.",
+    "emailSent": "Un accusé de réception vous a été envoyé par e-mail."
+  },
+  "actions": {
+    "send": "Déposer",
+    "replace": "Remplacer",
+    "sending": "Envoi…",
+    "download": "Télécharger",
+    "open": "Ouvrir le lien",
+    "mode_file": "Fichier",
+    "mode_link": "Lien",
+    "history": "Versions précédentes ({count})",
+    "hideHistory": "Masquer les versions précédentes",
+    "close": "Fermer",
+    "refresh": "Actualiser",
+    "projection": "Mode projection",
+    "exit": "Quitter",
+    "details": "Détails",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…"
+  },
+  "errors": {
+    "generic": "Une erreur est survenue. Réessayez.",
+    "SUBMISSIONS_CLOSED": "Les dépôts sont clos : ce fichier n'a pas été enregistré.",
+    "FILE_TOO_LARGE": "Fichier trop volumineux : la limite est de {maxMb} Mo.",
+    "INVALID_FORMAT": "Format non accepté. Formats autorisés : {allowed}.",
+    "INVALID_URL": "Lien invalide : il doit commencer par https://.",
+    "INVALID_KIND": "Type de livrable inconnu.",
+    "FILE_REQUIRED": "Choisissez un fichier.",
+    "LINK_NOT_ALLOWED": "Ce livrable n'accepte pas de lien.",
+    "TOO_MANY_VERSIONS": "Nombre maximum de versions atteint ({max}).",
+    "INVALID_TOLERANCE": "La tolérance doit être un entier entre 0 et 240.",
+    "clientFormat": "Format non accepté. Formats autorisés : {allowed}.",
+    "clientTooLarge": "Fichier trop volumineux ({size}) : la limite est de {maxMb} Mo."
+  },
+  "admin": {
+    "title": "Suivi des dépôts",
+    "description": "Statut de dépôt de chaque équipe validée.",
+    "projectionTitle": "Dépôts des équipes, édition {year}",
+    "team": "Équipe",
+    "status": "Statut",
+    "lastDeposit": "Dernier dépôt",
+    "never": "Aucun",
+    "anonCode": "Code anonyme",
+    "saved": "Réglages enregistrés.",
+    "counts": {
+      "total": "Équipes",
+      "submitted": "Déposés",
+      "late": "En retard",
+      "not_submitted": "Non déposés"
+    },
+    "settings": {
+      "title": "Réglages du dépôt",
+      "tolerance": "Tolérance après la date limite (minutes)",
+      "toleranceHint": "Les dépôts faits pendant ce délai sont acceptés mais marqués en retard. 0 = aucune tolérance.",
+      "anonymize": "Anonymiser les livrables pour le jury",
+      "anonymizeHint": "Le jury voit un code (E-XXXX) à la place du nom de l'équipe, et des noms de fichiers neutres."
+    }
+  },
+  "jury": {
+    "title": "Livrables à évaluer",
+    "description": "Dernière version déposée par chaque équipe.",
+    "anonymized": "Évaluation à l'aveugle : les équipes sont identifiées par un code.",
+    "empty": "Aucun livrable déposé.",
+    "notYetTitle": "Les dépôts ne sont pas encore clos",
+    "notYetDescription": "Les livrables seront consultables par le jury dès la fermeture des dépôts.",
+    "closesAt": "Clôture : {date}"
   }
+}
 }
