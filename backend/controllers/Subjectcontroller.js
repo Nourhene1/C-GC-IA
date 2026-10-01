@@ -335,3 +335,19 @@ export const exportAudit = async (req, res) => {
   res.type("application/pdf");
   pipeAuditPdf(logs, res, { lang, filtersText, truncatedAt: truncated ? MAX_EXPORT : null });
 };
+// DELETE /api/admin/subject/addenda/:id
+export const deleteAddendum = async (req, res) => {
+  const subject = await Subject.findOne({ "addenda._id": req.params.id });
+  const addendum = subject?.addenda.id(req.params.id);
+  if (!addendum) return res.status(404).json({ code: "NOT_FOUND" });
+
+  const { _id, version } = addendum;
+  const title = addendum.title.fr;
+  subject.addenda.pull(_id);
+  await subject.save();
+
+  await audit(req, "ADDENDUM_DELETE", {
+    resource: "addendum", resourceId: _id, meta: { version, title },
+  });
+  res.json({ ok: true });
+};

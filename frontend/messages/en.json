@@ -331,10 +331,10 @@
     "filiere": "Field",
     "createdAt": "Created on",
     "confirm_backToPending": "Confirm get to pending",
-    "confirm_revision":" Request changes for this application?",
+    "confirm_revision": " Request changes for this application?",
     "close": "Close",
     "successTitle": "Status updated",
-    "confirm_validate":" Approve this application?"
+    "confirm_validate": " Approve this application?"
   },
   "footer": {
     "navigation": "Navigation",
@@ -468,29 +468,29 @@
     "saving": "Saving…"
   },
   "adminSponsors": {
-  "title": "Partners",
-  "subtitle": "Partners and sponsors of the current edition.",
-  "new": "Add a partner",
-  "edit": "Edit partner",
-  "empty": "No partners yet.",
-  "name": "Name",
-  "website": "Website",
-  "tier": "Level",
-  "order": "Display order",
-  "orderHint": "Lower numbers are shown first",
-  "chooseLogo": "Choose a logo",
-  "logoHint": "PNG, JPG or WEBP — {max} MB maximum",
-  "confirmDelete": "Delete partner {name}?",
-  "confirmDeleteTitle": "Delete this partner?",
-  "confirmDeleteButton": "Delete",
-  "tiers": {
-    "platine": "Platinum",
-    "or": "Gold",
-    "argent": "Silver",
-    "bronze": "Bronze",
-    "partenaire": "Partner"
-  }
-},
+    "title": "Partners",
+    "subtitle": "Partners and sponsors of the current edition.",
+    "new": "Add a partner",
+    "edit": "Edit partner",
+    "empty": "No partners yet.",
+    "name": "Name",
+    "website": "Website",
+    "tier": "Level",
+    "order": "Display order",
+    "orderHint": "Lower numbers are shown first",
+    "chooseLogo": "Choose a logo",
+    "logoHint": "PNG, JPG or WEBP — {max} MB maximum",
+    "confirmDelete": "Delete partner {name}?",
+    "confirmDeleteTitle": "Delete this partner?",
+    "confirmDeleteButton": "Delete",
+    "tiers": {
+      "platine": "Platinum",
+      "or": "Gold",
+      "argent": "Silver",
+      "bronze": "Bronze",
+      "partenaire": "Partner"
+    }
+  },
   "adminEditions": {
     "title": "Editions",
     "subtitle": "The current edition is shown on the home page. The others form the archives.",
@@ -763,11 +763,19 @@
         "description": "Manage additional information and updates related to the competition subject.",
         "add": "Add an Addendum",
         "empty": "No addenda available.",
+        "update": "Update Addendum",
+        "updating": "Updating...",
+        "confirmDelete": "Delete this addendum?",
+        "delete": "Delete",
+        "lockedTitle": "Addenda locked",
+        "lockedDescription": "Addenda can only be added or modified after the subject has been published. Set the session opening date above to unlock addenda management.",
+        "lockedNoDate": "Set the session opening date above to unlock addenda management.",
         "fields": {
           "title": "Title",
           "titlePlaceholder": "Enter the addendum title",
           "description": "Description",
-          "descriptionPlaceholder": "Enter the addendum description"
+          "descriptionPlaceholder": "Enter the addendum description",
+          "notify": "Notify teams by email"
         },
         "errors": {
           "titleRequired": "The addendum title is required.",
@@ -780,6 +788,8 @@
         "title": "Session Date",
         "description": "Set the session opening date and the date when the subject will be published.",
         "label": "Choose a session Date",
+        "statusOpen": "Subject open to teams",
+        "statusHidden": "Subject hidden",
         "fields": {
           "date": "Session Date"
         },
@@ -838,6 +848,10 @@
       "download": "Download",
       "downloading": "Downloading...",
       "defaultFileName": "document"
+    },
+    "card": {
+      "title": "Complete Competition Subject",
+      "description": "Download all subject documents in a single ZIP archive."
     },
     "addenda": {
       "title": "Addenda",

@@ -330,10 +330,10 @@
     "filiere": "Filière",
     "createdAt": "Créé le",
     "confirm_backToPending": "Confirmer le retour à l'état « En attente »",
-    "confirm_revision":" Demander des modifications pour ce dossier ?",
+    "confirm_revision": " Demander des modifications pour ce dossier ?",
     "close": "Fermer",
-    "successTitle":"Statut mis à jour !",
-    "confirm_validate":" Valider ce dossier ?"
+    "successTitle": "Statut mis à jour !",
+    "confirm_validate": " Valider ce dossier ?"
   },
   "footer": {
     "navigation": "Navigation",
@@ -482,12 +482,12 @@
     "confirmDelete": "Supprimer le partenaire {name} ?",
     "confirmDeleteTitle": "Supprimer ce partenaire ?",
     "tiers": {
-    "platine": "Platinum",
-    "or": "Gold",
-    "argent": "Silver",
-    "bronze": "Bronze",
-    "partenaire": "Partner"
-  }
+      "platine": "Platinum",
+      "or": "Gold",
+      "argent": "Silver",
+      "bronze": "Bronze",
+      "partenaire": "Partner"
+    }
   },
   "adminEditions": {
     "title": "Éditions",
@@ -705,173 +705,169 @@
       "description": "Vous n'avez aucune nouvelle notification."
     }
   },
- "subject": {
-  "notOpen": {
-    "title": "Le sujet n'est pas encore disponible",
-    "description": "Il sera publié à l'ouverture de la session. Revenez à ce moment-là : la page se mettra à jour automatiquement.",
-    "opensAt": "Ouverture prévue le {date}"
-  },
-  "public": {
-    "breadcrumb": "Sujet",
-    "title": "Sujet de la compétition",
-    "description": "Consultez le sujet et les documents disponibles pour la compétition."
-  },
-
-  "team": {
-    "breadcrumb": "Sujet",
-    "title": "Sujet de la compétition",
-    "description": "Consultez le sujet, les documents et les addenda de la compétition."
-  },
-
-  "admin": {
-    "breadcrumb": "Sujet",
-    "pageTitle": "Sujet de la compétition",
-    "pageDescription": "Gérez le sujet de la compétition, les documents, les addenda et la date de la session.",
-
-    "title": "Gestion du sujet",
-    "description": "Gérez le sujet de la compétition et les documents associés.",
-
+  "subject": {
+    "notOpen": {
+      "title": "Le sujet n'est pas encore disponible",
+      "description": "Il sera publié à l'ouverture de la session. Revenez à ce moment-là : la page se mettra à jour automatiquement.",
+      "opensAt": "Ouverture prévue le {date}"
+    },
+    "public": {
+      "breadcrumb": "Sujet",
+      "title": "Sujet de la compétition",
+      "description": "Consultez le sujet et les documents disponibles pour la compétition."
+    },
+    "team": {
+      "breadcrumb": "Sujet",
+      "title": "Sujet de la compétition",
+      "description": "Consultez le sujet, les documents et les addenda de la compétition."
+    },
+    "admin": {
+      "breadcrumb": "Sujet",
+      "pageTitle": "Sujet de la compétition",
+      "pageDescription": "Gérez le sujet de la compétition, les documents, les addenda et la date de la session.",
+      "title": "Gestion du sujet",
+      "description": "Gérez le sujet de la compétition et les documents associés.",
+      "documents": {
+        "title": "Documents",
+        "description": "Gérez les documents disponibles pour les participants.",
+        "add": "Ajouter un document"
+      },
+      "files": {
+        "empty": "Aucun document disponible.",
+        "downloading": "Téléchargement...",
+        "download": "Télécharger",
+        "upload": "Téléverser",
+        "select": "Sélectionner...",
+        "delete": "Supprimer",
+        "deleting": "Suppression...",
+        "errors": {
+          "upload": "Impossible de téléverser le document.",
+          "delete": "Impossible de supprimer le document."
+        }
+      },
+      "uploader": {
+        "select": "Sélectionner un ou plusieurs fichiers",
+        "hint": "PDF, DOC, DOCX, ZIP ou autres formats autorisés",
+        "remove": "Supprimer",
+        "errors": {
+          "noFile": "Veuillez sélectionner au moins un fichier.",
+          "upload": "L'envoi du fichier a échoué."
+        },
+        "uploading": "Envoi...",
+        "upload": "Téléverser"
+      },
+      "addenda": {
+        "title": "Addenda",
+        "description": "Gérez les informations supplémentaires et les mises à jour liées au sujet de la compétition.",
+        "add": "Ajouter un addendum",
+        "empty": "Aucun addendum disponible.",
+        "update": "Modifier l'addendum",
+        "updating": "Modification...",
+        "delete": "Supprimer l'addendum",
+        "deleting": "Suppression...",
+        "confirmDelete": "Supprimer cet addendum ?",
+        "lockedTitle": "Les addenda ne sont pas encore disponibles",
+        "lockedDescription": "Ils pourront être publiés à partir de l'ouverture du sujet, le {date}.",
+        "lockedNoDate": "Définissez d'abord la date d'ouverture du sujet ci-dessus.",
+        "fields": {
+          "title": "Titre",
+          "titlePlaceholder": "Entrez le titre de l'addendum",
+          "description": "Description",
+          "descriptionPlaceholder": "Entrez la description de l'addendum",
+          "notify": "Prévenir les équipes par email"
+        },
+        "errors": {
+          "titleRequired": "Le titre de l'addendum est obligatoire.",
+          "create": "Impossible de créer l'addendum."
+        },
+        "creating": "Création...",
+        "create": "Créer l'addendum"
+      },
+      "session": {
+        "title": "Date de la session",
+        "description": "Définissez la date d'ouverture de la session et de publication du sujet.",
+        "label": "Date de la session",
+        "statusOpen": "Sujet ouvert aux équipes",
+        "statusHidden": "Sujet masqué",
+        "fields": {
+          "date": "Date de la session"
+        },
+        "save": "Enregistrer la date",
+        "saving": "Enregistrement...",
+        "errors": {
+          "required": "Veuillez sélectionner une date.",
+          "update": "Impossible de mettre à jour la date de la session."
+        }
+      },
+      "audit": {
+        "title": "Journal d'audit",
+        "description": "Consultations, téléchargements et modifications liés au sujet.",
+        "empty": "Aucune activité enregistrée pour ces filtres.",
+        "total": "{count} entrées",
+        "filesCount": "{count} fichiers (ZIP)",
+        "prev": "Page précédente",
+        "next": "Page suivante",
+        "export": {
+          "csv": "Exporter en CSV",
+          "pdf": "Exporter en PDF",
+          "loading": "Export en cours..."
+        },
+        "filters": {
+          "action": "Action",
+          "allActions": "Toutes les actions",
+          "from": "Du",
+          "to": "Au",
+          "reset": "Réinitialiser"
+        },
+        "columns": {
+          "date": "Date",
+          "user": "Utilisateur",
+          "team": "Équipe",
+          "action": "Action",
+          "detail": "Détail",
+          "ip": "IP"
+        },
+        "actions": {
+          "SUBJECT_VIEW": "Consultation du sujet",
+          "SUBJECT_DOWNLOAD": "Téléchargement d'un document",
+          "SUBJECT_ZIP_DOWNLOAD": "Téléchargement du ZIP",
+          "SUBJECT_FILE_UPLOAD": "Ajout d'un document",
+          "SUBJECT_FILE_DELETE": "Suppression d'un document",
+          "SUBJECT_SESSION_OPEN_CHANGED": "Date d'ouverture modifiée",
+          "ADDENDUM_CREATE": "Addendum créé",
+          "ADDENDUM_UPDATE": "Addendum modifié",
+          "AUDIT_EXPORT": "Export du journal"
+        }
+      }
+    },
     "documents": {
       "title": "Documents",
-      "description": "Gérez les documents disponibles pour les participants.",
-      "add": "Ajouter un document"
-    },
-
-    "files": {
+      "description": "Consultez les documents disponibles pour la compétition.",
       "empty": "Aucun document disponible.",
-      "downloading": "Téléchargement...",
       "download": "Télécharger",
-      "upload":"Téléverser",
-      "select": "Sélectionner...",
-      "delete": "Supprimer",
-      "errors": {
-        "upload": "Impossible de téléverser le document.",
-        "delete": "Impossible de supprimer le document."
-      }
+      "downloading": "Téléchargement...",
+      "defaultFileName": "document"
     },
-
-    "uploader": {
-      "select": "Sélectionner un ou plusieurs fichiers",
-      "hint": "PDF, DOC, DOCX, ZIP ou autres formats autorisés",
-      "remove": "Supprimer",
-      "errors": {
-        "noFile": "Veuillez sélectionner au moins un fichier.",
-        "upload": "L'envoi du fichier a échoué."
-      },
-      "uploading": "Envoi...",
-      "upload": "Téléverser"
+    "card": {
+      "title": "Sujet complet de la compétition",
+      "description": "Téléchargez l'ensemble des documents du sujet dans une seule archive ZIP."
     },
-
     "addenda": {
       "title": "Addenda",
-      "description": "Gérez les informations supplémentaires et les mises à jour liées au sujet de la compétition.",
-      "add": "Ajouter un addendum",
-      "empty": "Aucun addendum disponible.",
-
-      "fields": {
-        "title": "Titre",
-        "titlePlaceholder": "Entrez le titre de l'addendum",
-        "description": "Description",
-        "descriptionPlaceholder": "Entrez la description de l'addendum"
-      },
-
-      "errors": {
-        "titleRequired": "Le titre de l'addendum est obligatoire.",
-        "create": "Impossible de créer l'addendum."
-      },
-
-      "creating": "Création...",
-      "create": "Créer l'addendum"
+      "description": "Consultez les informations supplémentaires et les mises à jour liées au sujet de la compétition.",
+      "empty": "Aucun addendum disponible."
     },
-
-    "session": {
-      "title": "Date de la session",
-      "description": "Définissez la date d'ouverture de la session et de publication du sujet.",
-      "label": "Date de la session",
-
-      "fields": {
-        "date": "Date de la session"
-      },
-
-      "save": "Enregistrer la date",
-      "saving": "Enregistrement...",
-
-      "errors": {
-        "required": "Veuillez sélectionner une date.",
-        "update": "Impossible de mettre à jour la date de la session."
-      }
+    "actions": {
+      "refresh": "Actualiser",
+      "retry": "Réessayer"
     },
-    "audit": {
-      "title": "Journal d'audit",
-      "description": "Consultations, téléchargements et modifications liés au sujet.",
-      "empty": "Aucune activité enregistrée pour ces filtres.",
-      "total": "{count} entrées",
-      "filesCount": "{count} fichiers (ZIP)",
-      "prev": "Page précédente",
-      "next": "Page suivante",
-      "export": {
-        "csv": "Exporter en CSV",
-        "pdf": "Exporter en PDF",
-        "loading": "Export en cours..."
-      },
-      "filters": {
-        "action": "Action",
-        "allActions": "Toutes les actions",
-        "from": "Du",
-        "to": "Au",
-        "reset": "Réinitialiser"
-      },
-      "columns": {
-        "date": "Date",
-        "user": "Utilisateur",
-        "team": "Équipe",
-        "action": "Action",
-        "detail": "Détail",
-        "ip": "IP"
-      },
-      "actions": {
-        "SUBJECT_VIEW": "Consultation du sujet",
-        "SUBJECT_DOWNLOAD": "Téléchargement d'un document",
-        "SUBJECT_ZIP_DOWNLOAD": "Téléchargement du ZIP",
-        "SUBJECT_FILE_UPLOAD": "Ajout d'un document",
-        "SUBJECT_FILE_DELETE": "Suppression d'un document",
-        "SUBJECT_SESSION_OPEN_CHANGED": "Date d'ouverture modifiée",
-        "ADDENDUM_CREATE": "Addendum créé",
-        "ADDENDUM_UPDATE": "Addendum modifié",
-        "AUDIT_EXPORT": "Export du journal"
-      }
-    }
-  },
-
-  "documents": {
-    "title": "Documents",
-    "description": "Consultez les documents disponibles pour la compétition.",
-    "empty": "Aucun document disponible.",
-    "download": "Télécharger",
-    "downloading": "Téléchargement...",
-    "defaultFileName": "document"
-  },
-
-  "addenda": {
-    "title": "Addenda",
-    "description": "Consultez les informations supplémentaires et les mises à jour liées au sujet de la compétition.",
-    "empty": "Aucun addendum disponible."
-  },
-
-  "actions": {
-    "refresh": "Actualiser",
-    "retry": "Réessayer"
-  },
-
-  "errors": {
-    "load": "Impossible de charger le sujet."
-  },
-
-  "empty": {
-    "title": "Aucun sujet disponible",
-    "description": "Le sujet de la compétition n'est pas encore disponible."
-  },
-
-  "download": "Télécharger le sujet"
-}
+    "errors": {
+      "load": "Impossible de charger le sujet."
+    },
+    "empty": {
+      "title": "Aucun sujet disponible",
+      "description": "Le sujet de la compétition n'est pas encore disponible."
+    },
+    "download": "Télécharger le sujet"
+  }
 }

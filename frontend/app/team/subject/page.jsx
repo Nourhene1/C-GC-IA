@@ -11,11 +11,7 @@ function TeamSubjectPageContent() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <p className="text-sm font-medium text-gray-500">
-          {t("team.breadcrumb")}
-        </p>
-
-        <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
           {t("team.title")}
         </h1>
 

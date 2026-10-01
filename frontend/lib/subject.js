@@ -37,4 +37,11 @@ export const exportSubjectAudit = async ({ format, lang, action, from, to } = {}
   const res = await api(`/api/admin/subject/audit/export?${params}`, { raw: true });
   return res.blob();
 };
- 
+ export const createAddendum = (data) =>
+  api("/api/admin/subject/addenda", { method: "POST", body: data });
+
+export const updateAddendum = (id, data) =>
+  api(`/api/admin/subject/addenda/${id}`, { method: "PUT", body: data });
+
+export const deleteAddendum = (id) =>
+  api(`/api/admin/subject/addenda/${id}`, { method: "DELETE" });

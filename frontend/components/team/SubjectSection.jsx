@@ -59,10 +59,7 @@ export default function SubjectSection() {
 
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      console.error(
-        "Erreur lors du téléchargement du sujet :",
-        err
-      );
+      console.error("Erreur lors du téléchargement du sujet :", err);
     } finally {
       setDownloading(false);
     }
@@ -101,11 +98,7 @@ export default function SubjectSection() {
   }
 
   if (error) {
-    return (
-      <Alert type="error">
-        {t("errors.load")}
-      </Alert>
-    );
+    return <Alert type="error">{t("errors.load")}</Alert>;
   }
 
   if (!subject) {
@@ -124,38 +117,23 @@ export default function SubjectSection() {
     );
   }
 
-  const getLocalizedValue = (value) => {
-    if (!value) return "";
-
-    if (typeof value === "string") {
-      return value;
-    }
-
-    return value[locale] || value.fr || value.en || "";
-  };
-
   const hasFiles = (subject.files?.length ?? 0) > 0;
 
   return (
     <section className="space-y-6">
-      {/* Sujet */}
+      {/* Sujet : icône + titre/description + bouton sur la même ligne */}
       <div className={card}>
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex min-w-0 items-start gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 items-center gap-4">
             <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-light">
               <FileText className="size-5 text-primary" />
             </div>
 
             <div className="min-w-0">
-              <h2 className={sectionTitle}>
-                {getLocalizedValue(subject.title)}
-              </h2>
-
-              {subject.description && (
-                <p className="mt-2 text-sm leading-6 text-slate-600">
-                  {getLocalizedValue(subject.description)}
-                </p>
-              )}
+              <h2 className={sectionTitle}>{t("card.title")}</h2>
+              <p className="mt-1 text-sm leading-6 text-slate-600">
+                {t("card.description")}
+              </p>
             </div>
           </div>
 
@@ -164,7 +142,7 @@ export default function SubjectSection() {
               type="button"
               onClick={handleDownload}
               disabled={downloading}
-              className={btn.primary}
+              className={`${btn.primary} shrink-0`}
             >
               {downloading ? (
                 <Loader2 className="size-4 animate-spin" />
@@ -172,19 +150,14 @@ export default function SubjectSection() {
                 <Download className="size-4" />
               )}
 
-              {downloading
-                ? t("documents.downloading")
-                : t("download")}
+              {downloading ? t("documents.downloading") : t("download")}
             </button>
           )}
         </div>
       </div>
 
       {/* Documents */}
-      <DocumentsList
-        files={subject.files || []}
-        onRefresh={refetch}
-      />
+      <DocumentsList files={subject.files || []} onRefresh={refetch} />
 
       {/* Addenda */}
       <AddendaList

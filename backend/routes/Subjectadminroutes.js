@@ -3,7 +3,7 @@ import { protect, authorize } from "../middleware/auth.js";
 import { uploadSubjectFile } from "../middleware/upload.js";
 import {
   adminGetSubject, addFile, removeSubjectFile, setSessionOpen,
-  createAddendum, updateAddendum, listAudit, exportAudit,
+  createAddendum, updateAddendum, listAudit, exportAudit,deleteAddendum
 } from "../controllers/Subjectcontroller.js";
 
 const router = Router();
@@ -16,6 +16,7 @@ router.delete("/files/:fileId", removeSubjectFile);
 router.patch("/session-open", setSessionOpen);              // F4.2
 router.post("/addenda", createAddendum);                    // F4.7
 router.put("/addenda/:id", updateAddendum);
+router.delete("/addenda/:id", deleteAddendum);
 router.get("/audit", listAudit);                            // F4.4
 router.get("/audit/export", exportAudit);                   // F4.4 : CSV / PDF
 
