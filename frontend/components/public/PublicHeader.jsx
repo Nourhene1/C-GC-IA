@@ -71,6 +71,7 @@ export default function PublicHeader() {
     { href: "/partenaires", label: t("partners"), icon: Handshake },
   ];
   const main = [
+    { href: "/resultats", label: t("results") }, // Module 7
     { href: "/news", label: t("news") },
     { href: "/archives", label: t("archives") },
     { href: "/faq", label: t("faq") },
@@ -82,7 +83,7 @@ export default function PublicHeader() {
 
   // Lien du menu desktop : texte + petit trait animé sous le lien actif
   const navLink = (active) =>
-    `group relative rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
+    `group relative whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
       active ? "text-accent" : "text-primary/80 hover:text-primary"
     }`;
   const Underline = ({ active }) => (

@@ -16,9 +16,14 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 import submissionRoutes from "./routes/submission.js";
 import adminSubmissionRoutes from "./routes/adminSubmission.js";
 import jurySubmissionRoutes from "./routes/jurySubmission.js";
+import evaluationAdminRoutes from "./routes/evaluationAdmin.js";
+import evaluationJuryRoutes from "./routes/evaluationJury.js";
+import resultsAdminRoutes from "./routes/resultsAdmin.js";
+import resultsRoutes from "./routes/results.js";
 import { PUBLIC_DIR } from "./utils/files.js";
 import { startNewsScheduler } from "./utils/newsNotifier.js";
 import { startSubjectScheduler } from "./utils/subjectNotifier.js";
+import { startResultsScheduler } from "./utils/results.js";
 import { translateProvider } from "./utils/translate.js";
 
 
@@ -42,6 +47,8 @@ app.use("/api/auth", authRoutes);
 // Routes admin spécifiques : doivent être AVANT adminRoutes pour ne pas être interceptées
 app.use("/api/admin/subject", subjectAdminRoutes);          // Module 4
 app.use("/api/admin/submissions", adminSubmissionRoutes);   // F5.7 / F5.2 / F5.8
+app.use("/api/admin/evaluations", evaluationAdminRoutes);   // Module 6
+app.use("/api/admin/results", resultsAdminRoutes);           // Module 7
 app.use("/api/admin", adminRoutes);
 
 app.use("/api/editions", editionRoutes);
@@ -52,6 +59,8 @@ app.use("/api/subject", subjectRoutes);             // F4.2 / F4.3 / F4.5 / F4.7
 app.use("/api/notifications", notificationRoutes);  // F4.6 : notifications in-app
 app.use("/api/submission", submissionRoutes);
 app.use("/api/jury/submissions", jurySubmissionRoutes);
+app.use("/api/jury/evaluations", evaluationJuryRoutes);     // Module 6
+app.use("/api/results", resultsRoutes);                     // Module 7 : classement public + attestation
 app.use("/api", contentRoutes); // /api/content, /api/faq, /api/contact
 
 // Route inconnue
@@ -90,5 +99,6 @@ mongoose.connect(process.env.MONGO_URI)
     });
     startNewsScheduler();    // F1.4 / F1.6 : envoi des annonces programmées
     startSubjectScheduler(); // F4.6 : notification à l'ouverture du sujet
+    startResultsScheduler(); // F7.4 : publication programmée des résultats
   })
   .catch((err) => console.error("Erreur MongoDB :", err.message));

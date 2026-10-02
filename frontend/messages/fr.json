@@ -49,7 +49,9 @@
     "content": "Contenu",
     "messages": "Messages",
     "subject": "Sujet",
-    "submission": "Dépôt des travaux"
+    "submission": "Dépôt des travaux",
+    "evaluations": "Évaluations",
+    "results": "Résultats"
   },
   "status": {
     "brouillon": "Brouillon",
@@ -162,7 +164,30 @@
     "INVALID_EMAIL": "Adresse email invalide",
     "JURY_EMAIL_TAKEN": "Cet email appartient déjà à un compte équipe ou administrateur",
     "JURY_EMAIL_DUPLICATE": "Deux membres du jury ont le même email",
-    "ACCOUNT_ALREADY_ACTIVE": "Ce compte est déjà activé"
+    "ACCOUNT_ALREADY_ACTIVE": "Ce compte est déjà activé",
+    "GRID_LOCKED": "La grille est verrouillée : des évaluations ont déjà été validées",
+    "GRID_INVALID_SCALE": "Le barème doit être compris entre 1 et 1000",
+    "GRID_EMPTY": "Ajoutez au moins un critère",
+    "GRID_LABEL_REQUIRED": "Chaque critère et sous-critère doit avoir un intitulé",
+    "GRID_INVALID_WEIGHT": "Chaque critère doit avoir une pondération supérieure à 0",
+    "GRID_INVALID_MAX": "Chaque élément noté doit avoir un maximum supérieur à 0",
+    "GRID_WEIGHTS_NOT_100": "La somme des pondérations doit être égale à 100 %",
+    "GRID_NOT_READY": "La grille d'évaluation n'est pas encore prête",
+    "INVALID_SCORE": "Une note est invalide (négative ou supérieure au maximum)",
+    "EVALUATION_INCOMPLETE": "Notez tous les critères avant de valider",
+    "EVALUATION_LOCKED": "Cette évaluation est validée : elle ne peut plus être modifiée",
+    "EVALUATION_CLOSED": "La période d'évaluation est terminée",
+    "EVALUATION_SUBMITTED": "Impossible de retirer une évaluation déjà validée",
+    "EVALUATION_NOT_SUBMITTED": "Seule une évaluation validée peut être rouverte",
+    "NO_JURY": "Aucun membre du jury : ajoutez des jurés avec un email dans Contenu → Jury",
+    "NO_SUBMISSIONS": "Aucune équipe n'a encore déposé de travail",
+    "NOT_ENOUGH_JURY": "Il n'y a pas assez de jurés pour atteindre le nombre d'évaluateurs demandé par équipe",
+    "ALREADY_ASSIGNED": "Cet évaluateur est déjà affecté à cette équipe",
+    "RESULTS_PUBLISHED": "Les résultats sont publiés : les notes et les règles sont verrouillées. Retirez d'abord la publication (avec un motif) pour corriger.",
+    "RESULTS_ALREADY_PUBLISHED": "Une publication est déjà en cours. Retirez-la avant d'en créer une nouvelle.",
+    "RESULTS_NOT_PUBLISHED": "Les résultats ne sont pas encore publiés",
+    "NO_RANKING": "Aucune équipe n'a de note validée : le classement est vide",
+    "NO_CERTIFICATE": "Aucune attestation n'est disponible pour votre compte"
   },
   "dashboard": {
     "noTeamTitle": "Vous n'avez pas encore d'équipe",
@@ -174,7 +199,8 @@
     "progress": "{done} étape(s) sur {total} complétée(s)",
     "members": "{count, plural, one {# membre} other {# membres}}",
     "juryTitle": "Espace jury",
-    "juryText": "Les travaux à évaluer apparaîtront ici après la date limite de dépôt."
+    "juryText": "Consultez les travaux qui vous sont attribués et saisissez vos notes à partir de la grille d'évaluation.",
+    "juryEvaluations": "Mes évaluations"
   },
   "team": {
     "title": "Créer mon équipe",
@@ -409,7 +435,8 @@
     "subject": "Le sujet",
     "winners": "Équipes gagnantes",
     "sponsors": "Partenaires de l'édition",
-    "rank": "{rank, selectordinal, one {#er} other {#e}} prix"
+    "rank": "{rank, selectordinal, one {#er} other {#e}} prix",
+    "fullRanking": "Classement complet"
   },
   "partners": {
     "title": "Partenaires",
@@ -872,114 +899,388 @@
     "download": "Télécharger le sujet"
   },
   "submission": {
-  "team": {
-    "title": "Dépôt des travaux",
-    "description": "Déposez les livrables de votre équipe avant la date limite. Chaque remplacement crée une nouvelle version, les précédentes sont conservées."
-  },
-  "window": {
-    "open": "Dépôt ouvert",
-    "grace": "Délai de tolérance en cours",
-    "closed": "Dépôt clos",
-    "deadline": "Date limite : {date}",
-    "tolerance": "tolérance de {minutes} min",
-    "graceWarning": "Les dépôts faits maintenant sont marqués en retard. Fermeture définitive : {date}."
-  },
-  "status": {
-    "submitted": "Déposé",
-    "late": "En retard",
-    "not_submitted": "Non déposé"
-  },
-  "kinds": {
-    "report": "Rapport",
-    "code": "Code source",
-    "slides": "Présentation",
-    "video": "Vidéo"
-  },
-  "rules": {
-    "required": "Obligatoire",
-    "optional": "Facultatif",
-    "formats": "Formats : {formats}",
-    "maxSize": "max {maxMb} Mo",
-    "orLink": "lien HTTPS accepté"
-  },
-  "current": {
-    "none": "Aucun dépôt",
-    "deposited": "Déposé",
-    "late": "En retard"
-  },
-  "fields": {
-    "linkPlaceholder": "https://…"
-  },
-  "receipt": {
-    "title": "Dépôt bien reçu",
-    "receivedAt": "Reçu le {date} (heure du serveur)",
-    "late": "Ce dépôt est arrivé après la date limite, pendant le délai de tolérance.",
-    "emailSent": "Un accusé de réception vous a été envoyé par e-mail."
-  },
-  "actions": {
-    "send": "Déposer",
-    "replace": "Remplacer",
-    "sending": "Envoi…",
-    "download": "Télécharger",
-    "open": "Ouvrir le lien",
-    "mode_file": "Fichier",
-    "mode_link": "Lien",
-    "history": "Versions précédentes ({count})",
-    "hideHistory": "Masquer les versions précédentes",
-    "close": "Fermer",
-    "refresh": "Actualiser",
-    "projection": "Mode projection",
-    "exit": "Quitter",
-    "details": "Détails",
-    "save": "Enregistrer",
-    "saving": "Enregistrement…"
-  },
-  "errors": {
-    "generic": "Une erreur est survenue. Réessayez.",
-    "SUBMISSIONS_CLOSED": "Les dépôts sont clos : ce fichier n'a pas été enregistré.",
-    "FILE_TOO_LARGE": "Fichier trop volumineux : la limite est de {maxMb} Mo.",
-    "INVALID_FORMAT": "Format non accepté. Formats autorisés : {allowed}.",
-    "INVALID_URL": "Lien invalide : il doit commencer par https://.",
-    "INVALID_KIND": "Type de livrable inconnu.",
-    "FILE_REQUIRED": "Choisissez un fichier.",
-    "LINK_NOT_ALLOWED": "Ce livrable n'accepte pas de lien.",
-    "TOO_MANY_VERSIONS": "Nombre maximum de versions atteint ({max}).",
-    "INVALID_TOLERANCE": "La tolérance doit être un entier entre 0 et 240.",
-    "clientFormat": "Format non accepté. Formats autorisés : {allowed}.",
-    "clientTooLarge": "Fichier trop volumineux ({size}) : la limite est de {maxMb} Mo."
-  },
-  "admin": {
-    "title": "Suivi des dépôts",
-    "description": "Statut de dépôt de chaque équipe validée.",
-    "projectionTitle": "Dépôts des équipes, édition {year}",
-    "team": "Équipe",
-    "status": "Statut",
-    "lastDeposit": "Dernier dépôt",
-    "never": "Aucun",
-    "anonCode": "Code anonyme",
-    "saved": "Réglages enregistrés.",
-    "counts": {
-      "total": "Équipes",
-      "submitted": "Déposés",
-      "late": "En retard",
-      "not_submitted": "Non déposés"
+    "team": {
+      "title": "Dépôt des travaux",
+      "description": "Déposez les livrables de votre équipe avant la date limite. Chaque remplacement crée une nouvelle version, les précédentes sont conservées."
     },
-    "settings": {
-      "title": "Réglages du dépôt",
-      "tolerance": "Tolérance après la date limite (minutes)",
-      "toleranceHint": "Les dépôts faits pendant ce délai sont acceptés mais marqués en retard. 0 = aucune tolérance.",
-      "anonymize": "Anonymiser les livrables pour le jury",
-      "anonymizeHint": "Le jury voit un code (E-XXXX) à la place du nom de l'équipe, et des noms de fichiers neutres."
+    "window": {
+      "open": "Dépôt ouvert",
+      "grace": "Délai de tolérance en cours",
+      "closed": "Dépôt clos",
+      "deadline": "Date limite : {date}",
+      "tolerance": "tolérance de {minutes} min",
+      "graceWarning": "Les dépôts faits maintenant sont marqués en retard. Fermeture définitive : {date}."
+    },
+    "status": {
+      "submitted": "Déposé",
+      "late": "En retard",
+      "not_submitted": "Non déposé"
+    },
+    "kinds": {
+      "report": "Rapport",
+      "code": "Code source",
+      "slides": "Présentation",
+      "video": "Vidéo"
+    },
+    "rules": {
+      "required": "Obligatoire",
+      "optional": "Facultatif",
+      "formats": "Formats : {formats}",
+      "maxSize": "max {maxMb} Mo",
+      "orLink": "lien HTTPS accepté"
+    },
+    "current": {
+      "none": "Aucun dépôt",
+      "deposited": "Déposé",
+      "late": "En retard"
+    },
+    "fields": {
+      "linkPlaceholder": "https://…"
+    },
+    "receipt": {
+      "title": "Dépôt bien reçu",
+      "receivedAt": "Reçu le {date} (heure du serveur)",
+      "late": "Ce dépôt est arrivé après la date limite, pendant le délai de tolérance.",
+      "emailSent": "Un accusé de réception vous a été envoyé par e-mail."
+    },
+    "actions": {
+      "send": "Déposer",
+      "replace": "Remplacer",
+      "sending": "Envoi…",
+      "download": "Télécharger",
+      "open": "Ouvrir le lien",
+      "mode_file": "Fichier",
+      "mode_link": "Lien",
+      "history": "Versions précédentes ({count})",
+      "hideHistory": "Masquer les versions précédentes",
+      "close": "Fermer",
+      "refresh": "Actualiser",
+      "projection": "Mode projection",
+      "exit": "Quitter",
+      "details": "Détails",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…"
+    },
+    "errors": {
+      "generic": "Une erreur est survenue. Réessayez.",
+      "SUBMISSIONS_CLOSED": "Les dépôts sont clos : ce fichier n'a pas été enregistré.",
+      "FILE_TOO_LARGE": "Fichier trop volumineux : la limite est de {maxMb} Mo.",
+      "INVALID_FORMAT": "Format non accepté. Formats autorisés : {allowed}.",
+      "INVALID_URL": "Lien invalide : il doit commencer par https://.",
+      "INVALID_KIND": "Type de livrable inconnu.",
+      "FILE_REQUIRED": "Choisissez un fichier.",
+      "LINK_NOT_ALLOWED": "Ce livrable n'accepte pas de lien.",
+      "TOO_MANY_VERSIONS": "Nombre maximum de versions atteint ({max}).",
+      "INVALID_TOLERANCE": "La tolérance doit être un entier entre 0 et 240.",
+      "clientFormat": "Format non accepté. Formats autorisés : {allowed}.",
+      "clientTooLarge": "Fichier trop volumineux ({size}) : la limite est de {maxMb} Mo."
+    },
+    "admin": {
+      "title": "Suivi des dépôts",
+      "description": "Statut de dépôt de chaque équipe validée.",
+      "projectionTitle": "Dépôts des équipes, édition {year}",
+      "team": "Équipe",
+      "status": "Statut",
+      "lastDeposit": "Dernier dépôt",
+      "never": "Aucun",
+      "anonCode": "Code anonyme",
+      "saved": "Réglages enregistrés.",
+      "counts": {
+        "total": "Équipes",
+        "submitted": "Déposés",
+        "late": "En retard",
+        "not_submitted": "Non déposés"
+      },
+      "settings": {
+        "title": "Réglages du dépôt",
+        "tolerance": "Tolérance après la date limite (minutes)",
+        "toleranceHint": "Les dépôts faits pendant ce délai sont acceptés mais marqués en retard. 0 = aucune tolérance.",
+        "anonymize": "Anonymiser les livrables pour le jury",
+        "anonymizeHint": "Le jury voit un code (E-XXXX) à la place du nom de l'équipe, et des noms de fichiers neutres."
+      }
+    },
+    "jury": {
+      "title": "Livrables à évaluer",
+      "description": "Dernière version déposée par chaque équipe.",
+      "anonymized": "Évaluation à l'aveugle : les équipes sont identifiées par un code.",
+      "empty": "Aucun livrable déposé.",
+      "notYetTitle": "Les dépôts ne sont pas encore clos",
+      "notYetDescription": "Les livrables seront consultables par le jury dès la fermeture des dépôts.",
+      "closesAt": "Clôture : {date}"
     }
   },
-  "jury": {
-    "title": "Livrables à évaluer",
-    "description": "Dernière version déposée par chaque équipe.",
-    "anonymized": "Évaluation à l'aveugle : les équipes sont identifiées par un code.",
-    "empty": "Aucun livrable déposé.",
-    "notYetTitle": "Les dépôts ne sont pas encore clos",
-    "notYetDescription": "Les livrables seront consultables par le jury dès la fermeture des dépôts.",
-    "closesAt": "Clôture : {date}"
+  "evaluation": {
+    "status": {
+      "pending": "À faire",
+      "draft": "En cours",
+      "submitted": "Terminée"
+    },
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saved": "Réglages enregistrés.",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "admin": {
+      "title": "Évaluations",
+      "subtitle": "Grille, affectation des évaluateurs et suivi des notes — édition {year}.",
+      "tabs": {
+        "tracking": "Affectations & suivi",
+        "grid": "Grille d'évaluation",
+        "results": "Résultats"
+      }
+    },
+    "grid": {
+      "title": "Grille d'évaluation",
+      "hint": "Définissez les critères, leurs sous-critères et leur pondération. La somme des pondérations doit faire 100 %. Chaque évaluateur note les sous-critères ; la note finale est ramenée au barème.",
+      "scale": "Barème",
+      "criterionN": "Critère {n}",
+      "weight": "Pondération",
+      "criterionLabel": "Intitulé du critère",
+      "description": "Description (facultative)",
+      "subCriteria": "Sous-critères",
+      "subTotal": "Total : {max} points",
+      "noSubHint": "Sans sous-critère, le critère est noté directement sur",
+      "points": "points",
+      "subLabel": "Sous-critère {n}",
+      "max": "Note maximale",
+      "addSub": "Ajouter un sous-critère",
+      "addCriterion": "Ajouter un critère",
+      "empty": "Aucun critère pour l'instant.",
+      "weightSum": "Somme des pondérations : {sum} %",
+      "save": "Enregistrer la grille",
+      "saved": "Grille enregistrée.",
+      "locked": "Grille verrouillée : des évaluations ont déjà été validées avec cette grille.",
+      "moveUp": "Monter",
+      "moveDown": "Descendre",
+      "remove": "Supprimer"
+    },
+    "settings": {
+      "title": "Réglages",
+      "evaluatorsPerTeam": "Évaluateurs par équipe",
+      "evaluatorsPerTeamHint": "Utilisé par l'affectation automatique.",
+      "gapThreshold": "Écart d'alerte (sur {scale})",
+      "gapThresholdHint": "Une alerte apparaît si l'écart entre deux évaluateurs d'une même équipe dépasse cette valeur."
+    },
+    "tracking": {
+      "teams": "Équipes à évaluer",
+      "alerts": "Alertes d'écart",
+      "gridNotReady": "La grille d'évaluation n'est pas encore définie : les évaluateurs ne pourront pas saisir de notes. Rendez-vous dans l'onglet « Grille d'évaluation ».",
+      "assignTitle": "Affectation des évaluateurs",
+      "assignHint": "L'affectation automatique complète chaque équipe jusqu'à {n} évaluateur(s), en répartissant la charge équitablement. Les affectations existantes sont conservées : vous pouvez ensuite ajouter ou retirer un évaluateur équipe par équipe.",
+      "autoAssign": "Affecter automatiquement",
+      "autoDone": "{count, plural, one {# affectation créée} other {# affectations créées}}. Les évaluateurs ont été prévenus.",
+      "autoNothing": "Toutes les équipes ont déjà leurs évaluateurs.",
+      "teamsWithout": "{count, plural, one {# équipe n'a} other {# équipes n'ont}} encore aucun évaluateur.",
+      "byEvaluator": "Avancement par évaluateur",
+      "evaluator": "Évaluateur",
+      "assigned": "Affectées",
+      "progress": "Terminées",
+      "notActivated": "compte non activé",
+      "noJury": "Aucun membre du jury. Ajoutez-les avec leur email dans Contenu → Jury.",
+      "byTeam": "Avancement par équipe",
+      "team": "Équipe",
+      "evaluators": "Évaluateurs",
+      "none": "Aucun évaluateur",
+      "addEvaluator": "+ évaluateur",
+      "add": "Ajouter",
+      "remove": "Retirer",
+      "confirmRemove": "Retirer {name} de cette équipe ? Ses notes en cours seront perdues.",
+      "filter": "Filtrer",
+      "filters": {
+        "all": "Toutes les équipes",
+        "unfinished": "Évaluations manquantes",
+        "finished": "Évaluations terminées",
+        "unassigned": "Sans évaluateur"
+      },
+      "noTeams": "Aucune équipe n'a encore déposé de travail.",
+      "noMatch": "Aucune équipe pour ce filtre.",
+      "chipHint": "Cliquez sur un évaluateur pour voir ses notes détaillées. Gris : à faire · orange : en cours · vert : terminée.",
+      "removeTitle": "Retirer cet évaluateur ?"
+    },
+    "detail": {
+      "title": "Évaluation",
+      "by": "Évaluée par {name}",
+      "provisional": "(note provisoire, non validée)",
+      "points": "Note",
+      "comment": "Commentaire de l'évaluateur",
+      "noComment": "Aucun commentaire.",
+      "history": "Historique",
+      "action": {
+        "submitted": "validée par {name} ({total})",
+        "reopened": "rouverte par {name} (note précédente : {total})"
+      },
+      "reopenTitle": "Rouvrir l'évaluation",
+      "reopenHint": "L'évaluateur pourra de nouveau modifier ses notes. Le motif est enregistré dans l'historique et l'évaluateur est prévenu.",
+      "reason": "Motif de la réouverture",
+      "reopen": "Rouvrir",
+      "reopenedOk": "Évaluation rouverte. L'évaluateur a été prévenu."
+    },
+    "results": {
+      "title": "Résultats par équipe",
+      "hint": "Moyenne des évaluations terminées. Une alerte est levée quand l'écart entre évaluateurs dépasse {gap} / {scale} : le jury de délibération peut alors fixer la note retenue.",
+      "done": "Terminées",
+      "average": "Moyenne",
+      "gap": "Écart",
+      "final": "Note retenue",
+      "moderated": "délibérée",
+      "gapAlert": "Écart important entre évaluateurs",
+      "alertsBanner": "{count, plural, one {# équipe présente} other {# équipes présentent}} un écart de notation important à examiner.",
+      "deliberate": "Délibérer",
+      "editDecision": "Modifier",
+      "clearDecision": "Annuler la décision",
+      "finalScore": "Note retenue",
+      "decisionNote": "Motif de la décision (obligatoire)",
+      "confidential": "Les notes individuelles sont confidentielles : elles ne sont visibles que par les administrateurs et par l'évaluateur concerné."
+    },
+    "jury": {
+      "title": "Mes évaluations",
+      "progress": "{done} sur {total} évaluation(s) terminée(s).",
+      "anonymized": "Évaluation à l'aveugle : les équipes sont identifiées par un code.",
+      "until": "Évaluations ouvertes jusqu'au {date}.",
+      "closedOn": "Période d'évaluation terminée le {date}.",
+      "gridNotReady": "La grille d'évaluation n'est pas encore publiée par le comité d'organisation.",
+      "empty": "Aucune équipe ne vous a encore été attribuée.",
+      "notYetTitle": "Les évaluations n'ont pas commencé",
+      "notYetText": "Vous pourrez évaluer les travaux après la clôture des dépôts.",
+      "confidential": "Vos notes sont confidentielles : seuls les administrateurs peuvent les consulter."
+    },
+    "form": {
+      "back": "Mes évaluations",
+      "total": "Note pondérée",
+      "deliverables": "Livrables de l'équipe",
+      "score": "Note",
+      "comment": "Commentaire (libre)",
+      "commentPlaceholder": "Points forts, points à améliorer, remarques…",
+      "saveDraft": "Enregistrer le brouillon",
+      "submit": "Valider l'évaluation",
+      "incompleteHint": "Notez tous les critères pour pouvoir valider.",
+      "draftSaved": "Brouillon enregistré.",
+      "submitted": "Évaluation validée. Merci !",
+      "lockedText": "Évaluation validée : la saisie est verrouillée. Contactez le comité d'organisation pour toute correction.",
+      "closedText": "La période d'évaluation est terminée : la saisie n'est plus possible.",
+      "confirmTitle": "Valider définitivement cette évaluation ?",
+      "confirmText": "Une fois validée, vos notes et votre commentaire seront verrouillés : vous ne pourrez plus les modifier. Seul le comité d'organisation pourra rouvrir l'évaluation.",
+      "confirmOk": "Oui, valider",
+      "confirmCancel": "Revenir à la saisie",
+      "submitting": "Validation…",
+      "table": {
+        "title": "Grille d'évaluation",
+        "team": "Équipe",
+        "criterion": "Critère",
+        "detail": "Détail",
+        "max": "Maximum",
+        "score": "Note attribuée",
+        "subtotal": "Total du critère",
+        "weight": "Pondération {weight} % · {points} points",
+        "direct": "Note globale du critère",
+        "points": "{n} pts",
+        "weighted": "soit {value} / {max} sur la note finale",
+        "total": "Total des points",
+        "final": "Note finale / {scale}"
+      }
+    },
+    "tiles": {
+      "pending": "À faire",
+      "draft": "En cours",
+      "submitted": "Terminées"
+    }
+  },
+  "results": {
+    "title": "Résultats",
+    "subtitle": "Classement officiel de la compétition.",
+    "officialSubtitle": "Classement officiel — {edition}. Publié le {date}.",
+    "podium": "Le podium",
+    "fullRanking": "Classement complet",
+    "rank": "Rang",
+    "team": "Équipe",
+    "school": "Établissement",
+    "score": "Note /{scale}",
+    "tied": "ex æquo",
+    "tiedHint": "Les équipes ex æquo partagent le même rang.",
+    "notYetTitle": "Les résultats ne sont pas encore publiés",
+    "notYetText": "Le classement officiel sera publié ici à la fin de la phase d'évaluation.",
+    "scheduledFor": "Le classement officiel sera publié le {date}.",
+    "tieBreakers": {
+      "lowestGap": "Écart le plus faible entre évaluateurs",
+      "earliestSubmission": "Dépôt le plus tôt",
+      "criterion": "Meilleure note au critère « {label} »"
+    },
+    "dashboard": {
+      "title": "Les résultats sont publiés !",
+      "text": "Consultez le classement officiel et téléchargez votre attestation.",
+      "view": "Voir le classement",
+      "certificate": "Mon attestation (PDF)"
+    },
+    "admin": {
+      "title": "Résultats",
+      "subtitle": "Classement, publication officielle et attestations — édition {year}.",
+      "notPublished": "Résultats non publiés",
+      "previewHint": "Prévisualisation visible uniquement par les administrateurs. Elle se met à jour avec les évaluations validées.",
+      "publishedOn": "Publiés le {date} (version {version})",
+      "scheduledFor": "Publication programmée le {date} (version {version})",
+      "lockedHint": "Notes, délibérations et règles verrouillées tant que cette publication est active.",
+      "notifiedOn": "Équipes prévenues et attestations envoyées le {date}",
+      "viewPublic": "Voir la page publique",
+      "resend": "Renvoyer les attestations",
+      "withdraw": "Retirer la publication",
+      "cancelSchedule": "Annuler la programmation",
+      "rules": "Règles du classement",
+      "rulesLocked": "Les règles sont verrouillées pendant la publication.",
+      "tieBreakTitle": "Départage des ex æquo",
+      "tieBreakHint": "Si deux équipes ont la même note, ces critères sont appliqués dans l'ordre. Si l'égalité persiste, elles sont classées ex æquo.",
+      "noTieBreak": "Aucun critère : les égalités restent ex æquo.",
+      "addTieBreak": "Ajouter un critère de départage",
+      "up": "Monter",
+      "down": "Descendre",
+      "remove": "Retirer",
+      "podiumSize": "Équipes sur le podium",
+      "showScores": "Afficher les notes sur la page publique",
+      "sendCertificates": "Envoyer les attestations par email à la publication",
+      "saveRules": "Enregistrer les règles",
+      "rulesSaved": "Règles enregistrées.",
+      "previewTitle": "Prévisualisation du classement",
+      "officialRanking": "Classement officiel (version {version})",
+      "frozenHint": "Version figée au moment de la publication.",
+      "empty": "Aucune équipe à classer pour l'instant.",
+      "evaluations": "Évaluations",
+      "notes": "Remarques",
+      "decidedBy": "départagée : {rule}",
+      "deliberated": "note délibérée",
+      "unranked": "non classée",
+      "certificates": "Attestations",
+      "certificatesHint": "Télécharger les attestations des membres de l'équipe (PDF)",
+      "checkTitle": "À vérifier avant de publier",
+      "warnings": {
+        "alerts": "Écart de notation non tranché : {teams}",
+        "incomplete": "Évaluations pas toutes validées : {teams}",
+        "unranked": "Sans note validée (non classées) : {teams}"
+      },
+      "publishTitle": "Publication officielle",
+      "publishHint": "Le classement est figé au moment de la publication. Ensuite, les notes ne peuvent plus être modifiées sans retirer la publication (motif obligatoire, tracé).",
+      "now": "Publier maintenant",
+      "later": "Programmer à une date",
+      "publishNow": "Publier maintenant",
+      "schedule": "Programmer la publication",
+      "confirmPublishTitle": "Publier le classement officiel ?",
+      "confirmScheduleTitle": "Programmer la publication ?",
+      "confirmPublishText": "{count, plural, one {# équipe classée} other {# équipes classées}}. Le classement sera figé et les notes verrouillées. Les équipes seront prévenues à l'heure de publication.",
+      "confirmWarnings": "Attention : certains points sont encore à vérifier (voir l'encadré).",
+      "confirmWithdrawTitle": "Retirer la publication ?",
+      "confirmWithdrawText": "Le classement ne sera plus visible et les notes seront de nouveau modifiables. Le retrait et son motif sont enregistrés dans l'historique.",
+      "reason": "Motif du retrait (obligatoire)",
+      "cancel": "Annuler",
+      "publishedOk": "Classement publié. Les équipes ont été prévenues.",
+      "scheduledOk": "Publication programmée.",
+      "withdrawnOk": "Publication retirée.",
+      "resentOk": "{count} email(s) envoyé(s) avec les attestations.",
+      "history": "Historique des publications",
+      "historyLine": "Publication du {date} par {name}",
+      "withdrawnLine": "Retirée le {date} par {name} — « {reason} »",
+      "status": {
+        "scheduled": "Programmée",
+        "published": "Publiée",
+        "withdrawn": "Retirée"
+      }
+    }
   }
-}
 }

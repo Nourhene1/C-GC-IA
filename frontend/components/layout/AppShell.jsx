@@ -16,6 +16,8 @@ import {
   CalendarRange,
   BookOpen,
   FileCheck,
+  ClipboardCheck,
+  Trophy,
 } from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import NotificationBell from "@/components/common/NotificationBell";
@@ -41,11 +43,14 @@ export default function AppShell({ user, children }) {
     { href: "/admin/editions", label: t("editions"), Icon: CalendarRange },
     { href: "/admin/subject", label: t("subject"), Icon: BookOpen },
     { href: "/admin/submissions", label: t("submission"), Icon: FileCheck },
+    { href: "/admin/evaluations", label: t("evaluations"), Icon: ClipboardCheck }, // Module 6
+    { href: "/admin/results", label: t("results"), Icon: Trophy },                  // Module 7
   ];
 
   const juryLinks = [
     { href: "/dashboard", label: t("dashboard"), Icon: LayoutDashboard },
     { href: "/jury/submissions", label: t("submission"), Icon: FileCheck },
+    { href: "/jury/evaluations", label: t("evaluations"), Icon: ClipboardCheck }, // Module 6
   ];
 
   const teamLinks = [
@@ -151,11 +156,11 @@ export default function AppShell({ user, children }) {
             </div>
           </div>
 
-          {/* Niveau 2 : navigation alignée sur le contenu, défilable sur mobile */}
+          {/* Niveau 2 : navigation alignée sur le contenu ; passe à la ligne s'il y a beaucoup de liens */}
           <div className="border-t border-slate-100">
             <nav
               aria-label={t("menu")}
-              className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              className="mx-auto flex max-w-6xl flex-wrap gap-1 px-4 py-2"
             >
               {links.map(({ href, label, Icon }) => {
                 const active = isActive(href);

@@ -49,7 +49,9 @@
     "content": "Content",
     "messages": "Messages",
     "subject": "Subjects",
-    "submission": "Submissions"
+    "submission": "Submissions",
+    "evaluations": "Evaluations",
+    "results": "Results"
   },
   "status": {
     "brouillon": "Draft",
@@ -91,9 +93,7 @@
     "sentText": "We sent a confirmation link to {email}. Click it to activate your account.",
     "sentHint": "Remember to check your spam folder.",
     "resend": "Resend email",
-    "resent": "Email sent again!",
-    "subtitleJury": "Hello {name}, you have been invited as a jury member. Choose your password to activate your account.",
-    "errorText": "Ask the person who invited you to send the invitation again."
+    "resent": "Email sent again!"
   },
   "verify": {
     "loading": "Confirming your email address…",
@@ -113,8 +113,9 @@
     "submit": "Activate my account",
     "submitting": "Activating…",
     "errorTitle": "Invalid or expired invitation",
-    "errorText": "Ask your team leader to send the invitation again.",
-    "toLogin": "Go to sign in"
+    "errorText": "Ask the person who invited you to send the invitation again.",
+    "toLogin": "Go to sign in",
+    "subtitleJury": "Hello {name}, you have been invited as a jury member. Choose your password to activate your account."
   },
   "errors": {
     "FIELDS_REQUIRED": "All required fields must be filled in",
@@ -152,18 +153,41 @@
     "ALREADY_SUBMITTED": "The application has already been submitted",
     "DOSSIER_INCOMPLETE": "The application is incomplete",
     "INVALID_STATUS": "Invalid status",
-    "REASON_REQUIRED": "A reason is required",
+    "REASON_REQUIRED": "Please give a reason",
     "TEAM_NOT_SUBMITTED": "This application has not been submitted yet",
     "SAME_STATUS": "The application already has this status",
-    "INVALID_PUBLISH_DATE": "The publication date must be in the future",
+    "INVALID_PUBLISH_DATE": "Invalid publication date",
     "INVALID_URL": "The website address must start with http:// or https://",
     "EDITION_EXISTS": "An edition already exists for this year",
     "TRANSLATION_FAILED": "Automatic translation failed",
     "TOO_MANY_REQUESTS": "Too many messages sent. Please try again in an hour.",
     "INVALID_EMAIL": "Invalid email address",
-    "JURY_EMAIL_TAKEN": "Cet email appartient déjà à un compte équipe ou administrateur",
-    "JURY_EMAIL_DUPLICATE": "Deux membres du jury ont le même email",
-    "ACCOUNT_ALREADY_ACTIVE": "Ce compte est déjà activé"
+    "JURY_EMAIL_TAKEN": "This email already belongs to a team or administrator account",
+    "JURY_EMAIL_DUPLICATE": "Two jury members have the same email",
+    "ACCOUNT_ALREADY_ACTIVE": "This account is already activated",
+    "GRID_LOCKED": "The grid is locked: some evaluations have already been submitted",
+    "GRID_INVALID_SCALE": "The scale must be between 1 and 1000",
+    "GRID_EMPTY": "Add at least one criterion",
+    "GRID_LABEL_REQUIRED": "Every criterion and sub-criterion needs a title",
+    "GRID_INVALID_WEIGHT": "Every criterion needs a weight greater than 0",
+    "GRID_INVALID_MAX": "Every scored item needs a maximum greater than 0",
+    "GRID_WEIGHTS_NOT_100": "The weights must add up to 100%",
+    "GRID_NOT_READY": "The evaluation grid is not ready yet",
+    "INVALID_SCORE": "A score is invalid (negative or above the maximum)",
+    "EVALUATION_INCOMPLETE": "Score every criterion before submitting",
+    "EVALUATION_LOCKED": "This evaluation has been submitted and can no longer be changed",
+    "EVALUATION_CLOSED": "The evaluation period is over",
+    "EVALUATION_SUBMITTED": "A submitted evaluation cannot be removed",
+    "EVALUATION_NOT_SUBMITTED": "Only a submitted evaluation can be reopened",
+    "NO_JURY": "No jury members: add jurors with an email in Content → Jury",
+    "NO_SUBMISSIONS": "No team has submitted any work yet",
+    "NOT_ENOUGH_JURY": "There are not enough jurors to reach the requested number of evaluators per team",
+    "ALREADY_ASSIGNED": "This evaluator is already assigned to this team",
+    "RESULTS_PUBLISHED": "Results are published: scores and rules are locked. Withdraw the publication first (with a reason) to make corrections.",
+    "RESULTS_ALREADY_PUBLISHED": "A publication is already active. Withdraw it before creating a new one.",
+    "RESULTS_NOT_PUBLISHED": "Results have not been published yet",
+    "NO_RANKING": "No team has a submitted score: the ranking is empty",
+    "NO_CERTIFICATE": "No certificate is available for your account"
   },
   "dashboard": {
     "noTeamTitle": "You don't have a team yet",
@@ -175,7 +199,8 @@
     "progress": "{done} of {total} steps completed",
     "members": "{count, plural, one {# member} other {# members}}",
     "juryTitle": "Jury area",
-    "juryText": "Submissions to evaluate will appear here after the submission deadline."
+    "juryText": "View the projects assigned to you and enter your scores using the evaluation grid.",
+    "juryEvaluations": "My evaluations"
   },
   "team": {
     "title": "Create my team",
@@ -410,7 +435,8 @@
     "subject": "The subject",
     "winners": "Winning teams",
     "sponsors": "Edition partners",
-    "rank": "{rank, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} prize"
+    "rank": "{rank, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} prize",
+    "fullRanking": "Full ranking"
   },
   "partners": {
     "title": "Partners",
@@ -873,114 +899,388 @@
     "download": "Download Subject"
   },
   "submission": {
-  "team": {
-    "title": "Submit your work",
-    "description": "Upload your team's deliverables before the deadline. Each replacement creates a new version; previous ones are kept."
-  },
-  "window": {
-    "open": "Submissions open",
-    "grace": "Grace period in progress",
-    "closed": "Submissions closed",
-    "deadline": "Deadline: {date}",
-    "tolerance": "{minutes} min grace period",
-    "graceWarning": "Files submitted now are marked as late. Final closing: {date}."
-  },
-  "status": {
-    "submitted": "Submitted",
-    "late": "Late",
-    "not_submitted": "Not submitted"
-  },
-  "kinds": {
-    "report": "Report",
-    "code": "Source code",
-    "slides": "Slides",
-    "video": "Video"
-  },
-  "rules": {
-    "required": "Required",
-    "optional": "Optional",
-    "formats": "Formats: {formats}",
-    "maxSize": "max {maxMb} MB",
-    "orLink": "HTTPS link accepted"
-  },
-  "current": {
-    "none": "Nothing submitted",
-    "deposited": "Submitted",
-    "late": "Late"
-  },
-  "fields": {
-    "linkPlaceholder": "https://…"
-  },
-  "receipt": {
-    "title": "Submission received",
-    "receivedAt": "Received on {date} (server time)",
-    "late": "This file arrived after the deadline, during the grace period.",
-    "emailSent": "A receipt has been sent to you by email."
-  },
-  "actions": {
-    "send": "Submit",
-    "replace": "Replace",
-    "sending": "Uploading…",
-    "download": "Download",
-    "open": "Open link",
-    "mode_file": "File",
-    "mode_link": "Link",
-    "history": "Previous versions ({count})",
-    "hideHistory": "Hide previous versions",
-    "close": "Close",
-    "refresh": "Refresh",
-    "projection": "Projection mode",
-    "exit": "Exit",
-    "details": "Details",
-    "save": "Save",
-    "saving": "Saving…"
-  },
-  "errors": {
-    "generic": "Something went wrong. Please try again.",
-    "SUBMISSIONS_CLOSED": "Submissions are closed: this file was not saved.",
-    "FILE_TOO_LARGE": "File too large: the limit is {maxMb} MB.",
-    "INVALID_FORMAT": "Format not accepted. Allowed formats: {allowed}.",
-    "INVALID_URL": "Invalid link: it must start with https://.",
-    "INVALID_KIND": "Unknown deliverable type.",
-    "FILE_REQUIRED": "Choose a file.",
-    "LINK_NOT_ALLOWED": "This deliverable does not accept a link.",
-    "TOO_MANY_VERSIONS": "Maximum number of versions reached ({max}).",
-    "INVALID_TOLERANCE": "Tolerance must be an integer between 0 and 240.",
-    "clientFormat": "Format not accepted. Allowed formats: {allowed}.",
-    "clientTooLarge": "File too large ({size}): the limit is {maxMb} MB."
-  },
-  "admin": {
-    "title": "Submission tracking",
-    "description": "Submission status of each validated team.",
-    "projectionTitle": "Team submissions, {year} edition",
-    "team": "Team",
-    "status": "Status",
-    "lastDeposit": "Last submission",
-    "never": "None",
-    "anonCode": "Anonymous code",
-    "saved": "Settings saved.",
-    "counts": {
-      "total": "Teams",
+    "team": {
+      "title": "Submit your work",
+      "description": "Upload your team's deliverables before the deadline. Each replacement creates a new version; previous ones are kept."
+    },
+    "window": {
+      "open": "Submissions open",
+      "grace": "Grace period in progress",
+      "closed": "Submissions closed",
+      "deadline": "Deadline: {date}",
+      "tolerance": "{minutes} min grace period",
+      "graceWarning": "Files submitted now are marked as late. Final closing: {date}."
+    },
+    "status": {
       "submitted": "Submitted",
       "late": "Late",
       "not_submitted": "Not submitted"
     },
-    "settings": {
-      "title": "Submission settings",
-      "tolerance": "Grace period after the deadline (minutes)",
-      "toleranceHint": "Files submitted during this period are accepted but marked as late. 0 = no grace period.",
-      "anonymize": "Anonymize deliverables for the jury",
-      "anonymizeHint": "The jury sees a code (E-XXXX) instead of the team name, and neutral file names."
+    "kinds": {
+      "report": "Report",
+      "code": "Source code",
+      "slides": "Slides",
+      "video": "Video"
+    },
+    "rules": {
+      "required": "Required",
+      "optional": "Optional",
+      "formats": "Formats: {formats}",
+      "maxSize": "max {maxMb} MB",
+      "orLink": "HTTPS link accepted"
+    },
+    "current": {
+      "none": "Nothing submitted",
+      "deposited": "Submitted",
+      "late": "Late"
+    },
+    "fields": {
+      "linkPlaceholder": "https://…"
+    },
+    "receipt": {
+      "title": "Submission received",
+      "receivedAt": "Received on {date} (server time)",
+      "late": "This file arrived after the deadline, during the grace period.",
+      "emailSent": "A receipt has been sent to you by email."
+    },
+    "actions": {
+      "send": "Submit",
+      "replace": "Replace",
+      "sending": "Uploading…",
+      "download": "Download",
+      "open": "Open link",
+      "mode_file": "File",
+      "mode_link": "Link",
+      "history": "Previous versions ({count})",
+      "hideHistory": "Hide previous versions",
+      "close": "Close",
+      "refresh": "Refresh",
+      "projection": "Projection mode",
+      "exit": "Exit",
+      "details": "Details",
+      "save": "Save",
+      "saving": "Saving…"
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "SUBMISSIONS_CLOSED": "Submissions are closed: this file was not saved.",
+      "FILE_TOO_LARGE": "File too large: the limit is {maxMb} MB.",
+      "INVALID_FORMAT": "Format not accepted. Allowed formats: {allowed}.",
+      "INVALID_URL": "Invalid link: it must start with https://.",
+      "INVALID_KIND": "Unknown deliverable type.",
+      "FILE_REQUIRED": "Choose a file.",
+      "LINK_NOT_ALLOWED": "This deliverable does not accept a link.",
+      "TOO_MANY_VERSIONS": "Maximum number of versions reached ({max}).",
+      "INVALID_TOLERANCE": "Tolerance must be an integer between 0 and 240.",
+      "clientFormat": "Format not accepted. Allowed formats: {allowed}.",
+      "clientTooLarge": "File too large ({size}): the limit is {maxMb} MB."
+    },
+    "admin": {
+      "title": "Submission tracking",
+      "description": "Submission status of each validated team.",
+      "projectionTitle": "Team submissions, {year} edition",
+      "team": "Team",
+      "status": "Status",
+      "lastDeposit": "Last submission",
+      "never": "None",
+      "anonCode": "Anonymous code",
+      "saved": "Settings saved.",
+      "counts": {
+        "total": "Teams",
+        "submitted": "Submitted",
+        "late": "Late",
+        "not_submitted": "Not submitted"
+      },
+      "settings": {
+        "title": "Submission settings",
+        "tolerance": "Grace period after the deadline (minutes)",
+        "toleranceHint": "Files submitted during this period are accepted but marked as late. 0 = no grace period.",
+        "anonymize": "Anonymize deliverables for the jury",
+        "anonymizeHint": "The jury sees a code (E-XXXX) instead of the team name, and neutral file names."
+      }
+    },
+    "jury": {
+      "title": "Deliverables to evaluate",
+      "description": "Latest version submitted by each team.",
+      "anonymized": "Blind evaluation: teams are identified by a code.",
+      "empty": "No deliverables submitted.",
+      "notYetTitle": "Submissions are not closed yet",
+      "notYetDescription": "Deliverables will be available to the jury once submissions close.",
+      "closesAt": "Closing: {date}"
     }
   },
-  "jury": {
-    "title": "Deliverables to evaluate",
-    "description": "Latest version submitted by each team.",
-    "anonymized": "Blind evaluation: teams are identified by a code.",
-    "empty": "No deliverables submitted.",
-    "notYetTitle": "Submissions are not closed yet",
-    "notYetDescription": "Deliverables will be available to the jury once submissions close.",
-    "closesAt": "Closing: {date}"
+  "evaluation": {
+    "status": {
+      "pending": "To do",
+      "draft": "In progress",
+      "submitted": "Completed"
+    },
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Settings saved.",
+    "cancel": "Cancel",
+    "close": "Close",
+    "admin": {
+      "title": "Evaluations",
+      "subtitle": "Grid, evaluator assignment and score tracking — {year} edition.",
+      "tabs": {
+        "tracking": "Assignment & tracking",
+        "grid": "Evaluation grid",
+        "results": "Results"
+      }
+    },
+    "grid": {
+      "title": "Evaluation grid",
+      "hint": "Define the criteria, their sub-criteria and their weights. Weights must add up to 100%. Each evaluator scores the sub-criteria; the final score is converted to the scale.",
+      "scale": "Scale",
+      "criterionN": "Criterion {n}",
+      "weight": "Weight",
+      "criterionLabel": "Criterion title",
+      "description": "Description (optional)",
+      "subCriteria": "Sub-criteria",
+      "subTotal": "Total: {max} points",
+      "noSubHint": "Without sub-criteria, the criterion is scored directly out of",
+      "points": "points",
+      "subLabel": "Sub-criterion {n}",
+      "max": "Maximum score",
+      "addSub": "Add a sub-criterion",
+      "addCriterion": "Add a criterion",
+      "empty": "No criteria yet.",
+      "weightSum": "Sum of weights: {sum}%",
+      "save": "Save the grid",
+      "saved": "Grid saved.",
+      "locked": "Grid locked: some evaluations have already been submitted with this grid.",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "remove": "Remove"
+    },
+    "settings": {
+      "title": "Settings",
+      "evaluatorsPerTeam": "Evaluators per team",
+      "evaluatorsPerTeamHint": "Used by automatic assignment.",
+      "gapThreshold": "Gap alert (out of {scale})",
+      "gapThresholdHint": "An alert is shown when the gap between two evaluators of the same team exceeds this value."
+    },
+    "tracking": {
+      "teams": "Teams to evaluate",
+      "alerts": "Gap alerts",
+      "gridNotReady": "The evaluation grid is not defined yet: evaluators will not be able to enter scores. Go to the \"Evaluation grid\" tab.",
+      "assignTitle": "Evaluator assignment",
+      "assignHint": "Automatic assignment fills each team up to {n} evaluator(s), spreading the workload evenly. Existing assignments are kept: you can then add or remove evaluators team by team.",
+      "autoAssign": "Assign automatically",
+      "autoDone": "{count, plural, one {# assignment created} other {# assignments created}}. The evaluators have been notified.",
+      "autoNothing": "Every team already has its evaluators.",
+      "teamsWithout": "{count, plural, one {# team has} other {# teams have}} no evaluator yet.",
+      "byEvaluator": "Progress by evaluator",
+      "evaluator": "Evaluator",
+      "assigned": "Assigned",
+      "progress": "Completed",
+      "notActivated": "account not activated",
+      "noJury": "No jury members. Add them with their email in Content → Jury.",
+      "byTeam": "Progress by team",
+      "team": "Team",
+      "evaluators": "Evaluators",
+      "none": "No evaluator",
+      "addEvaluator": "+ evaluator",
+      "add": "Add",
+      "remove": "Remove",
+      "confirmRemove": "Remove {name} from this team? Their scores in progress will be lost.",
+      "filter": "Filter",
+      "filters": {
+        "all": "All teams",
+        "unfinished": "Missing evaluations",
+        "finished": "Completed evaluations",
+        "unassigned": "No evaluator"
+      },
+      "noTeams": "No team has submitted any work yet.",
+      "noMatch": "No team for this filter.",
+      "chipHint": "Click an evaluator to see their detailed scores. Grey: to do · orange: in progress · green: completed.",
+      "removeTitle": "Remove this evaluator?"
+    },
+    "detail": {
+      "title": "Evaluation",
+      "by": "Evaluated by {name}",
+      "provisional": "(provisional score, not submitted)",
+      "points": "Score",
+      "comment": "Evaluator's comment",
+      "noComment": "No comment.",
+      "history": "History",
+      "action": {
+        "submitted": "submitted by {name} ({total})",
+        "reopened": "reopened by {name} (previous score: {total})"
+      },
+      "reopenTitle": "Reopen the evaluation",
+      "reopenHint": "The evaluator will be able to change their scores again. The reason is recorded in the history and the evaluator is notified.",
+      "reason": "Reason for reopening",
+      "reopen": "Reopen",
+      "reopenedOk": "Evaluation reopened. The evaluator has been notified."
+    },
+    "results": {
+      "title": "Results by team",
+      "hint": "Average of completed evaluations. An alert is raised when the gap between evaluators exceeds {gap} / {scale}: the deliberation jury can then set the final score.",
+      "done": "Completed",
+      "average": "Average",
+      "gap": "Gap",
+      "final": "Final score",
+      "moderated": "deliberated",
+      "gapAlert": "Large gap between evaluators",
+      "alertsBanner": "{count, plural, one {# team has} other {# teams have}} a large scoring gap to review.",
+      "deliberate": "Deliberate",
+      "editDecision": "Edit",
+      "clearDecision": "Cancel the decision",
+      "finalScore": "Final score",
+      "decisionNote": "Reason for the decision (required)",
+      "confidential": "Individual scores are confidential: only administrators and the evaluator concerned can see them."
+    },
+    "jury": {
+      "title": "My evaluations",
+      "progress": "{done} of {total} evaluation(s) completed.",
+      "anonymized": "Blind evaluation: teams are identified by a code.",
+      "until": "Evaluations open until {date}.",
+      "closedOn": "Evaluation period ended on {date}.",
+      "gridNotReady": "The evaluation grid has not been published by the organising committee yet.",
+      "empty": "No team has been assigned to you yet.",
+      "notYetTitle": "Evaluations have not started",
+      "notYetText": "You will be able to evaluate the projects once submissions are closed.",
+      "confidential": "Your scores are confidential: only administrators can see them."
+    },
+    "form": {
+      "back": "My evaluations",
+      "total": "Weighted score",
+      "deliverables": "Team deliverables",
+      "score": "Score",
+      "comment": "Comment (free text)",
+      "commentPlaceholder": "Strengths, areas for improvement, remarks…",
+      "saveDraft": "Save draft",
+      "submit": "Submit the evaluation",
+      "incompleteHint": "Score every criterion to be able to submit.",
+      "draftSaved": "Draft saved.",
+      "submitted": "Evaluation submitted. Thank you!",
+      "lockedText": "Evaluation submitted: entry is locked. Contact the organising committee for any correction.",
+      "closedText": "The evaluation period is over: scores can no longer be entered.",
+      "confirmTitle": "Submit this evaluation for good?",
+      "confirmText": "Once submitted, your scores and comment will be locked: you will no longer be able to change them. Only the organising committee can reopen the evaluation.",
+      "confirmOk": "Yes, submit",
+      "confirmCancel": "Back to scoring",
+      "submitting": "Submitting…",
+      "table": {
+        "title": "Evaluation grid",
+        "team": "Team",
+        "criterion": "Criterion",
+        "detail": "Detail",
+        "max": "Maximum",
+        "score": "Score given",
+        "subtotal": "Criterion total",
+        "weight": "Weight {weight}% · {points} points",
+        "direct": "Overall score for this criterion",
+        "points": "{n} pts",
+        "weighted": "i.e. {value} / {max} of the final score",
+        "total": "Total points",
+        "final": "Final score / {scale}"
+      }
+    },
+    "tiles": {
+      "pending": "To do",
+      "draft": "In progress",
+      "submitted": "Completed"
+    }
+  },
+  "results": {
+    "title": "Results",
+    "subtitle": "Official ranking of the competition.",
+    "officialSubtitle": "Official ranking — {edition}. Published on {date}.",
+    "podium": "The podium",
+    "fullRanking": "Full ranking",
+    "rank": "Rank",
+    "team": "Team",
+    "school": "Institution",
+    "score": "Score /{scale}",
+    "tied": "tied",
+    "tiedHint": "Tied teams share the same rank.",
+    "notYetTitle": "Results have not been published yet",
+    "notYetText": "The official ranking will be published here at the end of the evaluation phase.",
+    "scheduledFor": "The official ranking will be published on {date}.",
+    "tieBreakers": {
+      "lowestGap": "Smallest gap between evaluators",
+      "earliestSubmission": "Earliest submission",
+      "criterion": "Best score on \"{label}\""
+    },
+    "dashboard": {
+      "title": "Results are out!",
+      "text": "View the official ranking and download your certificate.",
+      "view": "View the ranking",
+      "certificate": "My certificate (PDF)"
+    },
+    "admin": {
+      "title": "Results",
+      "subtitle": "Ranking, official publication and certificates — {year} edition.",
+      "notPublished": "Results not published",
+      "previewHint": "Preview visible to administrators only. It updates as evaluations are submitted.",
+      "publishedOn": "Published on {date} (version {version})",
+      "scheduledFor": "Publication scheduled for {date} (version {version})",
+      "lockedHint": "Scores, deliberations and rules are locked while this publication is active.",
+      "notifiedOn": "Teams notified and certificates sent on {date}",
+      "viewPublic": "View public page",
+      "resend": "Resend certificates",
+      "withdraw": "Withdraw publication",
+      "cancelSchedule": "Cancel scheduling",
+      "rules": "Ranking rules",
+      "rulesLocked": "Rules are locked while the publication is active.",
+      "tieBreakTitle": "Tie-breaking",
+      "tieBreakHint": "When two teams have the same score, these rules are applied in order. If they are still tied, they share the rank.",
+      "noTieBreak": "No rule: ties remain tied.",
+      "addTieBreak": "Add a tie-break rule",
+      "up": "Move up",
+      "down": "Move down",
+      "remove": "Remove",
+      "podiumSize": "Teams on the podium",
+      "showScores": "Show scores on the public page",
+      "sendCertificates": "Email certificates on publication",
+      "saveRules": "Save rules",
+      "rulesSaved": "Rules saved.",
+      "previewTitle": "Ranking preview",
+      "officialRanking": "Official ranking (version {version})",
+      "frozenHint": "Version frozen at publication time.",
+      "empty": "No team to rank yet.",
+      "evaluations": "Evaluations",
+      "notes": "Notes",
+      "decidedBy": "decided by: {rule}",
+      "deliberated": "deliberated score",
+      "unranked": "unranked",
+      "certificates": "Certificates",
+      "certificatesHint": "Download the team members' certificates (PDF)",
+      "checkTitle": "Check before publishing",
+      "warnings": {
+        "alerts": "Unresolved scoring gap: {teams}",
+        "incomplete": "Evaluations not all submitted: {teams}",
+        "unranked": "No submitted score (unranked): {teams}"
+      },
+      "publishTitle": "Official publication",
+      "publishHint": "The ranking is frozen at publication time. Afterwards, scores cannot be changed without withdrawing the publication (reason required, recorded).",
+      "now": "Publish now",
+      "later": "Schedule for a date",
+      "publishNow": "Publish now",
+      "schedule": "Schedule publication",
+      "confirmPublishTitle": "Publish the official ranking?",
+      "confirmScheduleTitle": "Schedule the publication?",
+      "confirmPublishText": "{count, plural, one {# team ranked} other {# teams ranked}}. The ranking will be frozen and scores locked. Teams will be notified at publication time.",
+      "confirmWarnings": "Warning: some points still need checking (see the box).",
+      "confirmWithdrawTitle": "Withdraw the publication?",
+      "confirmWithdrawText": "The ranking will no longer be visible and scores can be edited again. The withdrawal and its reason are recorded in the history.",
+      "reason": "Reason for withdrawal (required)",
+      "cancel": "Cancel",
+      "publishedOk": "Ranking published. Teams have been notified.",
+      "scheduledOk": "Publication scheduled.",
+      "withdrawnOk": "Publication withdrawn.",
+      "resentOk": "{count} email(s) sent with certificates.",
+      "history": "Publication history",
+      "historyLine": "Publication of {date} by {name}",
+      "withdrawnLine": "Withdrawn on {date} by {name} — \"{reason}\"",
+      "status": {
+        "scheduled": "Scheduled",
+        "published": "Published",
+        "withdrawn": "Withdrawn"
+      }
+    }
   }
-}
 }

@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
-import { ArrowLeft, FileText, Trophy, Users, UserRound, School, Handshake } from "lucide-react";
+import { ArrowLeft, FileText, Trophy, Users, UserRound, School, Handshake, ListOrdered } from "lucide-react";
 import Podium from "@/components/public/Podium";
 import SponsorGrid from "@/components/public/SponsorGrid";
+import RankingTable from "@/components/results/RankingTable";
 import { serverApi, publicFileUrl } from "@/lib/server-api";
 import { pick } from "@/lib/content";
 
@@ -22,6 +23,7 @@ export default async function ArchiveDetailPage({ params }) {
 
   const data = await serverApi(`/api/editions/${year}`);
   if (!data) notFound();
+  const results = await serverApi(`/api/results?year=${year}`); // F7.8 : classement officiel archivé
   const { edition, sponsors } = data;
   const summary = pick(edition.subjectSummary, locale);
 
@@ -80,6 +82,15 @@ export default async function ArchiveDetailPage({ params }) {
           )}
         </div>
       </div>
+
+      {results?.rows?.length > 0 && (
+        <section className="mt-12">
+          <h2 className="mb-6 flex items-center gap-2 text-2xl font-extrabold text-primary">
+            <ListOrdered className="size-6 text-accent" /> {t("fullRanking")}
+          </h2>
+          <RankingTable rows={results.rows} scale={results.scale} showScores={results.showScores} />
+        </section>
+      )}
 
       {sponsors.length > 0 && (
         <section className="mt-12">
