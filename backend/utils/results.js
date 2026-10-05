@@ -11,6 +11,8 @@ import { certificatesBuffer, certificateRef } from "./certificates.js";
 
 export const ACTIVE = ["scheduled", "published"];
 
+const norm = (email) => String(email ?? "").trim().toLowerCase();
+
 // Publication en cours (programmée ou publiée, non retirée)
 export const activePublication = (editionId) =>
   Ranking.findOne({ edition: editionId, status: { $in: ACTIVE } }).sort({ version: -1 });
@@ -26,7 +28,11 @@ export const publicPublication = (editionId) =>
 export const editionTitle = (edition, lang) =>
   (lang === "en" && edition.title?.en) || edition.title?.fr || `Compétition IA & Génie Civil ${edition.year}`;
 
-// F7.6 : une entrée d'attestation par membre des équipes de la publication.
+// F7.6 : UNE attestation par personne et par publication.
+// - équipe dans le podium choisi par l'admin (rang <= podiumSize) -> RÉCOMPENSE, avec le rang
+// - toutes les autres (y compris non classées)                    -> PARTICIPATION, sans rang
+// Si une personne apparaît plusieurs fois (deux équipes, doublon, casse de l'email),
+// on garde la meilleure : récompense > participation, puis le meilleur rang.
 // filter : { teamId } (une équipe) ou { email } (une seule personne)
 export async function certificateEntries(pub, edition, filter = {}) {
   const rows = pub.rows.filter((r) => !filter.teamId || String(r.team) === String(filter.teamId));
@@ -35,29 +41,41 @@ export async function certificateEntries(pub, edition, filter = {}) {
     EditionContent.findOne({ edition: edition._id }).select("prizes").lean(),
   ]);
   const teamById = new Map(teams.map((t) => [String(t._id), t]));
-  const podium = pub.settings?.podiumSize ?? 3;
+  const podium = pub.settings?.podiumSize ?? 3; // valeur choisie par l'admin
+  const wanted = filter.email ? norm(filter.email) : null;
 
-  const entries = [];
+  const best = new Map(); // email normalisé -> entrée retenue
   for (const row of rows) {
     const team = teamById.get(String(row.team));
     if (!team) continue;
     const award = row.rank !== null && row.rank <= podium;
     const prize = award ? content?.prizes?.find((p) => p.rank === row.rank) : null;
-    for (const m of team.members) {
-      if (filter.email && m.email !== filter.email) continue;
-      entries.push({
+
+    for (const m of team.members ?? []) {
+      if (!m?.email) continue;
+      const key = norm(m.email);
+      if (wanted && key !== wanted) continue;
+
+      const entry = {
         email: m.email,
         fullName: `${m.prenom} ${m.nom}`,
         teamName: team.name,
         etablissement: team.etablissement,
         kind: award ? "award" : "participation",
-        rank: row.rank,
+        rank: award ? row.rank : null, // pas de rang pour les non-gagnants
         prizeTitle: prize?.title ?? null, // { fr, en } : choisi selon la langue
         ref: certificateRef(edition.year, pub._id, m.email, award ? row.rank : null),
-      });
+      };
+
+      const current = best.get(key);
+      const better =
+        !current ||
+        (entry.kind === "award" && current.kind !== "award") ||
+        (entry.kind === "award" && current.kind === "award" && entry.rank < current.rank);
+      if (better) best.set(key, entry);
     }
   }
-  return entries;
+  return [...best.values()];
 }
 
 // Le titre du prix dans la bonne langue
@@ -73,13 +91,13 @@ async function updateWinners(pub, edition) {
   await edition.save();
 }
 
-// Prévient les équipes (in-app + email) et envoie les attestations en pièce jointe
+// Prévient TOUS les participants (in-app + email) et envoie leur attestation en pièce jointe
 export async function notifyResults(pub, edition) {
   const entries = await certificateEntries(pub, edition);
   if (entries.length === 0) return 0;
 
   const users = await User.find({ email: { $in: entries.map((e) => e.email) } }).select("email locale").lean();
-  const userOf = new Map(users.map((u) => [u.email, u]));
+  const userOf = new Map(users.map((u) => [norm(u.email), u]));
   if (users.length) {
     await Notification.insertMany(users.map((u) => ({
       user: u._id, type: "results_published",
@@ -93,25 +111,32 @@ export async function notifyResults(pub, edition) {
   const withCertificate = pub.settings?.sendCertificates !== false;
   const title = { fr: editionTitle(edition, "fr"), en: editionTitle(edition, "en") };
 
+  let sent = 0;
   for (const entry of entries) {
-    const locale = userOf.get(entry.email)?.locale === "en" ? "en" : "fr";
-    const attachments = withCertificate
-      ? [{
-          filename: locale === "en" ? "certificate.pdf" : "attestation.pdf",
-          content: await certificatesBuffer(localizeEntries([entry], locale), { lang: locale, editionTitle: title[locale], date: pub.publishAt }),
-          contentType: "application/pdf",
-        }]
-      : undefined;
-    await sendMailSafe({
-      to: entry.email,
-      attachments,
-      ...resultsMail({
-        name: entry.fullName, teamName: entry.teamName, rank: entry.rank,
-        award: entry.kind === "award", withCertificate, locale, link,
-      }),
-    });
+    try {
+      const locale = userOf.get(norm(entry.email))?.locale === "en" ? "en" : "fr";
+      const attachments = withCertificate
+        ? [{
+            filename: locale === "en" ? "certificate.pdf" : "attestation.pdf",
+            content: await certificatesBuffer(localizeEntries([entry], locale), { lang: locale, editionTitle: title[locale], date: pub.publishAt }),
+            contentType: "application/pdf",
+          }]
+        : undefined;
+      await sendMailSafe({
+        to: entry.email,
+        attachments,
+        ...resultsMail({
+          name: entry.fullName, teamName: entry.teamName, rank: entry.rank,
+          award: entry.kind === "award", withCertificate, locale, link,
+        }),
+      });
+      sent++;
+    } catch (err) {
+      // une attestation en échec ne doit pas bloquer les autres participants
+      console.error(`Envoi des résultats à ${entry.email} :`, err.message);
+    }
   }
-  return entries.length;
+  return sent;
 }
 
 // À l'heure prévue : publication effective, archives, notifications (une seule fois)

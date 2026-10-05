@@ -272,9 +272,7 @@ export default function SubmissionSection() {
                     date: format.dateTime(new Date(receipt.receivedAt), { dateStyle: "full", timeStyle: "medium" }),
                   })}
                 </p>
-                {receipt.sha256 && (
-                  <p className="mt-1 break-all font-mono text-xs text-emerald-700">SHA-256 : {receipt.sha256}</p>
-                )}
+             
                 {receipt.late && <p className="mt-2 text-sm font-semibold text-amber-700">{t("receipt.late")}</p>}
                 <p className="mt-2 text-xs text-emerald-700">{t("receipt.emailSent")}</p>
               </div>

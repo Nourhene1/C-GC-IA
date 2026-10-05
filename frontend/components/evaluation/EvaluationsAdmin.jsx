@@ -39,22 +39,33 @@ export default function EvaluationsAdmin() {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* ---- En-tête avec pastille d'icône et petite barre orange ---- */}
       <div>
-        <h1 className="flex items-center gap-2 text-2xl font-bold text-primary">
-          <ClipboardCheck className="size-6 text-accent" /> {t("admin.title")}
+        <h1 className="flex items-center gap-3 text-2xl font-bold text-primary">
+          <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent/10 ring-1 ring-accent/20">
+            <ClipboardCheck className="size-6 text-accent" />
+          </span>
+          {t("admin.title")}
         </h1>
-        <p className="mt-1 text-sm text-slate-500">{t("admin.subtitle", { year: overview.edition.year })}</p>
+        <span className="mt-2 block h-1 w-14 rounded-full bg-accent" />
+        <p className="mt-2 text-sm text-slate-500">{t("admin.subtitle", { year: overview.edition.year })}</p>
       </div>
 
+      {/* ---- Onglets ---- */}
       <div className="flex gap-2 overflow-x-auto pb-1" role="tablist">
-        {TABS.map(({ key, Icon }) => (
-          <button key={key} role="tab" aria-selected={tab === key} onClick={() => setTab(key)}
-            className={`inline-flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition ${
-              tab === key ? "bg-primary text-white" : "bg-white text-primary hover:bg-accent-light"
-            }`}>
-            <Icon className="size-4" /> {t(`admin.tabs.${key}`)}
-          </button>
-        ))}
+        {TABS.map(({ key, Icon }) => {
+          const active = tab === key;
+          return (
+            <button key={key} role="tab" aria-selected={active} onClick={() => setTab(key)}
+              className={`inline-flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition ${
+                active
+                  ? "bg-primary text-white ring-2 ring-accent/60"
+                  : "bg-white text-primary hover:bg-accent-light hover:text-accent"
+              }`}>
+              <Icon className={`size-4 ${active ? "text-accent" : ""}`} /> {t(`admin.tabs.${key}`)}
+            </button>
+          );
+        })}
       </div>
 
       <ErrorAlert error={error} />

@@ -72,14 +72,19 @@ function TeamsList() {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* ---- En-tête avec petite barre orange ---- */}
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-primary">{t("title")}</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-primary">{t("title")}</h1>
+          <span className="mt-2 block h-1 w-14 rounded-full bg-accent" />
+        </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="flex items-center gap-1 text-sm font-semibold text-slate-500">
+          <span className="flex items-center gap-1 text-sm font-semibold text-accent">
             <Download className="size-4" /> {t("export")}
           </span>
           {EXPORTS.map(({ format: fmt, label, Icon }) => (
-            <button key={fmt} onClick={() => exportAs(fmt)} disabled={!!exporting} className={btn.outline}>
+            <button key={fmt} onClick={() => exportAs(fmt)} disabled={!!exporting}
+              className={`${btn.outline} hover:border-accent hover:text-accent`}>
               <Icon className="size-4" /> {exporting === fmt ? t("exporting") : label}
             </button>
           ))}
@@ -94,7 +99,9 @@ function TeamsList() {
           return (
             <button key={s || "all"} onClick={() => changeTab(s)}
               className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition ${
-                active ? "bg-primary text-white" : "bg-white text-primary hover:bg-accent-light"
+                active
+                  ? "bg-primary text-white ring-2 ring-accent/60"
+                  : "bg-white text-primary hover:bg-accent-light hover:text-accent"
               }`}>
               {s ? ts(s) : t("all")} <span className={active ? "text-accent" : "text-slate-400"}>({count})</span>
             </button>
@@ -103,7 +110,7 @@ function TeamsList() {
       </div>
 
       <div className="relative">
-        <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-slate-400" />
+        <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-accent" />
         <input type="search" value={search} onChange={(e) => setSearch(e.target.value)}
           placeholder={t("search")} aria-label={t("search")}
           className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-12 pr-4 text-sm outline-none focus:border-accent focus:ring-4 focus:ring-accent/15" />
@@ -118,7 +125,7 @@ function TeamsList() {
       ) : (
         <div className="overflow-x-auto rounded-2xl bg-white shadow-lg shadow-primary/5">
           <table className="w-full min-w-[720px] text-left text-sm">
-            <thead className="bg-primary text-xs uppercase tracking-wide text-white">
+            <thead className="border-b-4 border-accent bg-primary text-xs uppercase tracking-wide text-white">
               <tr>
                 <th className="px-4 py-3">{t("team")}</th>
                 <th className="px-4 py-3">{t("chef")}</th>
@@ -130,7 +137,7 @@ function TeamsList() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {data.teams.map((team) => (
-                <tr key={team._id} className="transition hover:bg-surface">
+                <tr key={team._id} className="group transition hover:bg-accent-light/50">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <TeamLogo logo={team.logo} name={team.name} size="size-10" />
@@ -148,14 +155,16 @@ function TeamsList() {
                       </>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-center font-semibold">{team.membersCount}</td>
+                  <td className="px-4 py-3 text-center font-semibold text-primary">{team.membersCount}</td>
                   <td className="px-4 py-3 text-slate-600">
                     {team.submittedAt ? format.dateTime(new Date(team.submittedAt), { dateStyle: "medium" }) : "—"}
                   </td>
                   <td className="px-4 py-3"><StatusBadge status={team.status} /></td>
                   <td className="px-4 py-3 text-right">
-                    <Link href={`/admin/teams/${team._id}`} className={btn.ghost}>
-                      {t("review")} <ArrowRight className="size-4" />
+                    <Link href={`/admin/teams/${team._id}`}
+                      className={`${btn.ghost} group-hover:text-accent`}>
+                      {t("review")}
+                      <ArrowRight className="size-4 transition group-hover:translate-x-1" />
                     </Link>
                   </td>
                 </tr>

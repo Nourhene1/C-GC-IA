@@ -26,7 +26,6 @@ export default function VersionLine({ version, fetcher }) {
         <p className="mt-0.5 text-xs text-slate-500">
           {format.dateTime(new Date(version.receivedAt), { dateStyle: "medium", timeStyle: "medium" })}
           {version.size != null && ` · ${formatSize(version.size)}`}
-          {version.sha256 && ` · SHA-256 ${version.sha256.slice(0, 12)}…`}
         </p>
       </div>
 

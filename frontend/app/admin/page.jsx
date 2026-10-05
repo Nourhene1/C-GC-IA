@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useLocale, useTranslations, useFormatter } from "next-intl";
 import {
   ArrowRight, Clock, UserCog, FolderKanban, Megaphone, Handshake, CalendarRange,
-  Plus, ExternalLink, CalendarCheck, CalendarX, Mail,BookOpen
+  Plus, ExternalLink, CalendarCheck, CalendarX, Mail, BookOpen
 } from "lucide-react";
 import RequireAuth from "@/components/auth/RequireAuth";
 import AppShell from "@/components/layout/AppShell";
@@ -18,6 +18,15 @@ import { DATE_LONG } from "@/lib/format";
 
 const STATUS_ORDER = ["en_attente", "en_revision", "valide", "rejete", "brouillon"];
 const ROLE_ORDER = ["chef", "membre", "jury", "admin"];
+
+// Pastille orange douce pour les icônes de section
+function IconBadge({ icon: Icon }) {
+  return (
+    <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-accent/10 ring-1 ring-accent/20">
+      <Icon className="size-5 text-accent" />
+    </span>
+  );
+}
 
 function AdminHome() {
   const t = useTranslations("admin");
@@ -56,11 +65,17 @@ function AdminHome() {
   const regOpen = edition && now >= new Date(edition.dates.registrationOpen) && now <= new Date(edition.dates.registrationClose);
   const regNotYet = edition && now < new Date(edition.dates.registrationOpen);
 
+  const outlineAccent = `${btn.outline} hover:border-accent hover:text-accent`;
+
   return (
     <div className="flex flex-col gap-6">
+      {/* ---- En-tête avec petite barre orange ---- */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold text-primary">{t("title")}</h1>
-        <a href="/" target="_blank" rel="noopener noreferrer" className={btn.outline}>
+        <div>
+          <h1 className="text-2xl font-bold text-primary">{t("title")}</h1>
+          <span className="mt-2 block h-1 w-14 rounded-full bg-accent" />
+        </div>
+        <a href="/" target="_blank" rel="noopener noreferrer" className={outlineAccent}>
           <ExternalLink className="size-4" /> {t("viewSite")}
         </a>
       </div>
@@ -68,9 +83,11 @@ function AdminHome() {
       {/* ---- Édition en cours ---- */}
       {edition && (
         <section className={`${card} flex flex-col gap-4 sm:flex-row sm:items-center`}>
-          <span className="w-fit rounded-xl bg-primary px-4 py-2 text-2xl font-extrabold text-white">{edition.year}</span>
+          <span className="w-fit rounded-xl bg-accent px-4 py-2 text-2xl font-extrabold text-white shadow-md shadow-accent/30">
+            {edition.year}
+          </span>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-bold uppercase tracking-wide text-slate-400">{t("currentEdition")}</p>
+            <p className="text-xs font-bold uppercase tracking-wide text-accent">{t("currentEdition")}</p>
             <p className="font-bold text-primary">{pick(edition.theme, locale)}</p>
             <p className={`mt-1 inline-flex items-center gap-1.5 text-sm font-semibold ${regOpen ? "text-green-700" : "text-slate-500"}`}>
               {regOpen ? <CalendarCheck className="size-4" /> : <CalendarX className="size-4" />}
@@ -81,16 +98,22 @@ function AdminHome() {
                   : t("registrationClosed")}
             </p>
           </div>
-          <Link href={`/admin/editions/${edition._id}`} className={btn.outline}>{t("editEdition")}</Link>
+          <Link href={`/admin/editions/${edition._id}`} className={outlineAccent}>
+            {t("editEdition")}
+          </Link>
         </section>
       )}
 
       {/* ---- Dossiers à examiner (F2.6) ---- */}
       <Link href="/admin/teams?status=en_attente"
-        className="flex items-center gap-4 rounded-2xl bg-primary p-6 text-white shadow-lg transition hover:bg-primary-dark">
-        <Clock className="size-8 text-accent" />
+        className="group flex items-center gap-4 rounded-2xl bg-primary p-6 text-white shadow-lg transition hover:bg-primary-dark">
+        <span className="grid size-12 shrink-0 place-items-center rounded-full bg-accent/20 ring-1 ring-accent/40">
+          <Clock className="size-6 text-accent" />
+        </span>
         <span className="flex-1 text-lg font-bold">{t("pendingCta", { count: pending })}</span>
-        <ArrowRight className="size-5" />
+        <span className="grid size-10 place-items-center rounded-full bg-accent shadow-md shadow-accent/40 transition group-hover:translate-x-1">
+          <ArrowRight className="size-5" />
+        </span>
       </Link>
 
       {/* ---- Messages de contact non lus (F3.4) ---- */}
@@ -106,8 +129,10 @@ function AdminHome() {
       {/* ---- Dossiers par statut ---- */}
       <section className={card}>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className={sectionTitle}><FolderKanban className="size-5 text-accent" /> {t("teams")}</h2>
-          <Link href="/admin/teams" className={btn.outline}>{t("manageTeams")} <ArrowRight className="size-4" /></Link>
+          <h2 className={`${sectionTitle} gap-3`}><IconBadge icon={FolderKanban} /> {t("teams")}</h2>
+          <Link href="/admin/teams" className={outlineAccent}>
+            {t("manageTeams")} <ArrowRight className="size-4" />
+          </Link>
         </div>
         <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {STATUS_ORDER.map((s) => (
@@ -120,10 +145,10 @@ function AdminHome() {
         </div>
       </section>
 
-      {/* ---- Contenu du site (Module 1) ---- */}
-      <div className="grid gap-6 lg:grid-cols-3">
+      {/* ---- Contenu du site (grille 2×2) ---- */}
+      <div className="grid gap-6 sm:grid-cols-2">
         <section className={`${card} flex flex-col`}>
-          <h2 className={sectionTitle}><Megaphone className="size-5 text-accent" /> {t("news")}</h2>
+          <h2 className={`${sectionTitle} gap-3`}><IconBadge icon={Megaphone} /> {t("news")}</h2>
           <ul className="mt-4 flex flex-1 flex-col gap-1.5 text-sm text-slate-600">
             <li>{t("newsPublished", { count: newsCounts.published || 0 })}</li>
             <li>{t("newsScheduled", { count: newsCounts.scheduled || 0 })}</li>
@@ -131,41 +156,36 @@ function AdminHome() {
           </ul>
           <div className="mt-5 flex flex-wrap gap-2">
             <Link href="/admin/news/new" className={btn.primary}><Plus className="size-4" /> {t("newAnnouncement")}</Link>
-            <Link href="/admin/news" className={btn.outline}>{t("manage")}</Link>
+            <Link href="/admin/news" className={outlineAccent}>{t("manage")}</Link>
           </div>
         </section>
 
         <section className={`${card} flex flex-col`}>
-          <h2 className={sectionTitle}><Handshake className="size-5 text-accent" /> {t("sponsors")}</h2>
+          <h2 className={`${sectionTitle} gap-3`}><IconBadge icon={Handshake} /> {t("sponsors")}</h2>
           <p className="mt-4 flex-1 text-sm text-slate-600">{t("sponsorsCount", { count: data.sponsors.sponsors.length })}</p>
-          <Link href="/admin/sponsors" className={`${btn.outline} mt-5 w-fit`}>{t("manage")}</Link>
+          <Link href="/admin/sponsors" className={`${outlineAccent} mt-5 w-fit`}>{t("manage")}</Link>
         </section>
 
         <section className={`${card} flex flex-col`}>
-          <h2 className={sectionTitle}><CalendarRange className="size-5 text-accent" /> {t("editions")}</h2>
+          <h2 className={`${sectionTitle} gap-3`}><IconBadge icon={CalendarRange} /> {t("editions")}</h2>
           <p className="mt-4 flex-1 text-sm text-slate-600">{t("editionsText")}</p>
-          <Link href="/admin/editions" className={`${btn.outline} mt-5 w-fit`}>{t("manage")}</Link>
+          <Link href="/admin/editions" className={`${outlineAccent} mt-5 w-fit`}>{t("manage")}</Link>
         </section>
 
-
-         <section className={`${card} flex flex-col`}>
-          <h2 className={sectionTitle}><BookOpen className="size-5 text-accent" /> {t("subject")}</h2>
+        <section className={`${card} flex flex-col`}>
+          <h2 className={`${sectionTitle} gap-3`}><IconBadge icon={BookOpen} /> {t("subject")}</h2>
           <p className="mt-4 flex-1 text-sm text-slate-600">{t("subjectText")}</p>
-          <Link href="/admin/subject" className={`${btn.outline} mt-5 w-fit`}>{t("manage")}</Link>
+          <Link href="/admin/subject" className={`${outlineAccent} mt-5 w-fit`}>{t("manage")}</Link>
         </section>
       </div>
 
-
-
-      
-
       {/* ---- Comptes par rôle ---- */}
       <section className={card}>
-        <h2 className={sectionTitle}><UserCog className="size-5 text-accent" /> {t("users")}</h2>
+        <h2 className={`${sectionTitle} gap-3`}><IconBadge icon={UserCog} /> {t("users")}</h2>
         <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {ROLE_ORDER.map((r) => (
             <div key={r} className="rounded-xl bg-surface p-4">
-              <p className="text-xs font-bold uppercase text-slate-500">{tc(`roles.${r}`)}</p>
+              <p className="text-xs font-bold uppercase text-accent">{tc(`roles.${r}`)}</p>
               <p className="text-3xl font-extrabold text-primary">{users[r] || 0}</p>
             </div>
           ))}

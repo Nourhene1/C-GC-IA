@@ -24,7 +24,6 @@ export function receiptMail({ receipt, locale = "fr", link }) {
     [t.item, `${kind} (v${receipt.version})`],
     [t.file, receipt.name],
     [t.at, when],
-    receipt.sha256 && ["SHA-256", receipt.sha256],
   ].filter(Boolean);
 
   const text = [
