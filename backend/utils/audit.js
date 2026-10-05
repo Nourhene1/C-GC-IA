@@ -1,4 +1,4 @@
-import AuditLog from "../models/AuditLog.js";
+import AuditLog from "../models/Auditlog.js";
 
 // F4.4 : enregistre une action. Ne fait jamais échouer la requête.
 // Utilisable partout : await audit(req, "LOGIN"), audit(req, "SOLUTION_UPLOAD", {...})

@@ -13,17 +13,20 @@ const transporter = useSmtp
     })
   : nodemailer.createTransport({ jsonTransport: true });
 
-export async function sendMail({ to, subject, html, text }) {
+// attachments (facultatif) : [{ filename, content (Buffer), contentType }] — ex. attestation PDF (F7.6)
+export async function sendMail({ to, subject, html, text, attachments }) {
   await transporter.sendMail({
     from: process.env.MAIL_FROM || "Compétition IA-GC <no-reply@iagc.tn>",
     to,
     subject,
     html,
     text,
+    attachments,
   });
 
   if (!useSmtp) {
-    console.log(`\n📧 [EMAIL DE DEV] À : ${to}\n   Sujet : ${subject}\n${text}\n`);
+    const files = attachments?.length ? `\n   Pièces jointes : ${attachments.map((a) => a.filename).join(", ")}` : "";
+    console.log(`\n📧 [EMAIL DE DEV] À : ${to}\n   Sujet : ${subject}${files}\n${text}\n`);
   }
 }
 

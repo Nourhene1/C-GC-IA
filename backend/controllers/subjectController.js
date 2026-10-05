@@ -2,7 +2,7 @@ import archiver from "archiver";
 import mongoose from "mongoose";
 import Subject, { SUBJECT_KINDS } from "../models/Subject.js";
 import Edition from "../models/Edition.js";
-import AuditLog from "../models/AuditLog.js";
+import AuditLog from "../models/Auditlog.js";
 import { getCurrentEdition } from "../utils/edition.js";
 import { removeFile, subjectFilePath } from "../utils/files.js";
 import { withEnglish } from "../utils/autoTranslate.js";

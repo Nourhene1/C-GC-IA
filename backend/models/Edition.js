@@ -51,7 +51,14 @@ const editionSchema = new mongoose.Schema(
     submission: {
       toleranceMinutes: { type: Number, default: 0, min: 0, max: 240 }, // F5.2
       anonymize: { type: Boolean, default: false },              // F5.8
-      
+    },
+
+    // Module 7 : règles du classement et de la publication des résultats
+    results: {
+      tieBreakers: { type: [String], default: ["lowestGap", "earliestSubmission"] }, // F7.2 : départage, dans l'ordre
+      podiumSize:  { type: Number, default: 3, min: 1, max: 10 },  // F7.5 : nombre d'équipes sur le podium
+      showScores:  { type: Boolean, default: true },               // notes visibles sur la page publique
+      sendCertificates: { type: Boolean, default: true },          // F7.6 : attestations envoyées par email à la publication
     },
 
     requiredDocuments: {

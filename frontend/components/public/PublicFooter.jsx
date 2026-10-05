@@ -14,6 +14,7 @@ export default function PublicFooter() {
     { href: "/calendrier", label: tn("calendar") },
     { href: "/jury", label: tn("jury") },
     { href: "/partenaires", label: tn("partners") },
+    { href: "/resultats", label: tn("results") },
     { href: "/news", label: tn("news") },
     { href: "/archives", label: tn("archives") },
     { href: "/faq", label: tn("faq") },

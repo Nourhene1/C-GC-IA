@@ -4,7 +4,7 @@ import { uploadSubjectFile } from "../middleware/upload.js";
 import {
   adminGetSubject, addFile, removeSubjectFile, setSessionOpen,
   createAddendum, updateAddendum, listAudit, exportAudit,deleteAddendum
-} from "../controllers/Subjectcontroller.js";
+} from "../controllers/subjectController.js";
 
 const router = Router();
 

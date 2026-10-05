@@ -10,6 +10,7 @@ import TeamLogo from "@/components/team/TeamLogo";
 import StatusBanner from "@/components/team/StatusBanner";
 import Spinner from "@/components/ui/Spinner";
 import LatestNewsWidget from "@/components/public/LatestNewsWidget";
+import MyResultsCard from "@/components/results/MyResultsCard";
 import { btn, card } from "@/components/ui/styles";
 import { api } from "@/lib/api";
 
@@ -100,10 +101,16 @@ export default function DashboardPage() {
                 <div>
                   <h2 className="text-xl font-bold text-primary">{t("juryTitle")}</h2>
                   <p className="mt-1 text-slate-600">{t("juryText")}</p>
+                  <Link href="/jury/evaluations" className={`${btn.primary} mt-4`}>
+                    {t("juryEvaluations")} <ArrowRight className="size-4" />
+                  </Link>
                 </div>
               </div>
             ) : (
-              <TeamCard user={user} />
+              <div className="flex flex-col gap-6">
+                <MyResultsCard />
+                <TeamCard user={user} />
+              </div>
             )}
 
             <div className="mt-6">
