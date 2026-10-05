@@ -95,6 +95,33 @@
     "subtitleJury": "Hello {name}, you have been invited as a jury member. Choose your password to activate your account.",
     "errorText": "Ask the person who invited you to send the invitation again."
   },
+    "forgotPassword": {
+    "title": "Forgot password",
+    "subtitle": "Enter the email address of your account. We will send you a code to reset your password.",
+    "email": "Email",
+    "submit": "Send code",
+    "submitting": "Sending…",
+    "success": "If an account exists with this email, a reset code has just been sent.",
+    "backToLogin": "Back to sign in"
+  },
+    "resetCode": {
+    "title": "Code verification",
+    "subtitle": "Enter the 6-digit code we just sent to your email address.",
+    "code": "6-digit code",
+    "submit": "Verify code",
+    "submitting": "Verifying…",
+    "backToLogin": "Back to sign in"
+  },
+    "newPassword": {
+    "title": "New password",
+    "subtitle": "Choose a new password for your account.",
+    "password": "New password (8 characters min.)",
+    "confirmPassword": "Confirm password",
+    "submit": "Reset password",
+    "submitting": "Saving…",
+    "success": "Your password has been changed. Redirecting to sign in…",
+    "backToLogin": "Back to sign in"
+  },
   "verify": {
     "loading": "Confirming your email address…",
     "successTitle": "Email confirmed!",

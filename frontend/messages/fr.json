@@ -93,6 +93,32 @@
     "resend": "Renvoyer l'email",
     "resent": "Email renvoyé !"
   },
+    "forgotPassword": {
+    "title": "Mot de passe oublié",
+    "subtitle": "Saisissez l'adresse email de votre compte. Nous vous enverrons un code pour réinitialiser votre mot de passe.",
+    "email": "Email",
+    "submit": "Envoyer le code",
+    "submitting": "Envoi…",
+    "success": "Si un compte existe avec cet email, un code de réinitialisation vient d'être envoyé.",
+    "backToLogin": "Retour à la connexion"
+  },
+    "resetCode": {
+    "title": "Vérification du code",
+    "subtitle": "Saisissez le code à 6 chiffres que nous venons d'envoyer à votre adresse email.",
+    "code": "Code à 6 chiffres",
+    "submit": "Vérifier le code",
+    "submitting": "Vérification…",
+    "backToLogin": "Retour à la connexion"
+  },  "newPassword": {
+    "title": "Nouveau mot de passe",
+    "subtitle": "Choisissez un nouveau mot de passe pour votre compte.",
+    "password": "Nouveau mot de passe (8 caractères min.)",
+    "confirmPassword": "Confirmer le mot de passe",
+    "submit": "Réinitialiser le mot de passe",
+    "submitting": "Enregistrement…",
+    "success": "Votre mot de passe a été modifié. Redirection vers la connexion…",
+    "backToLogin": "Retour à la connexion"
+  },
   "verify": {
     "loading": "Confirmation de votre adresse email…",
     "successTitle": "Email confirmé !",
