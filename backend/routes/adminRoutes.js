@@ -4,6 +4,7 @@ import {
   uploadSponsorLogo, uploadPoster as uploadPosterFile,
   uploadRulesPdf as uploadRulesPdfFile, uploadJuryPhoto as uploadJuryPhotoFile,
 } from "../middleware/upload.js";
+import { newsVideoUpload } from "../middleware/newsVideoUpload.js";
 import {
   getStats, listTeams, getTeam, updateStatus, exportTeams,
 } from "../controllers/adminTeamController.js";
@@ -21,6 +22,7 @@ import { listAdminFaq, createFaq, updateFaq, deleteFaq } from "../controllers/fa
 import { listMessages, markMessage, deleteMessage } from "../controllers/contactController.js";
 import { translate } from "../utils/translate.js";
 
+import { editionVideoUpload } from "../middleware/editionVideoUpload.js";
 const router = Router();
 
 // Toutes les routes de ce fichier : connecté ET admin
@@ -34,11 +36,11 @@ router.get("/teams/export", exportTeams); // avant "/teams/:id" !
 router.get("/teams/:id", getTeam);
 router.patch("/teams/:id/status", updateStatus);
 
-// Module 1 — actualités (F1.2, F1.4, F1.6)
+// Module 1 — actualités (F1.2, F1.4, F1.6) + vidéo importée
 router.get("/news", listAdminNews);
-router.post("/news", createNews);
+router.post("/news", newsVideoUpload, createNews);
 router.get("/news/:id", getAdminNews);
-router.put("/news/:id", updateNews);
+router.put("/news/:id", newsVideoUpload, updateNews);
 router.patch("/news/:id/publish", publishNews);
 router.patch("/news/:id/unpublish", unpublishNews);
 router.delete("/news/:id", deleteNews);
@@ -50,10 +52,9 @@ router.delete("/sponsors/:id", deleteSponsor);
 
 // Module 1 — éditions et historique (F1.1)
 router.get("/editions", listEditions);
-router.post("/editions", createEdition);
+router.post("/editions", editionVideoUpload, createEdition);
 router.get("/editions/:id", getEdition);
-router.put("/editions/:id", updateEdition);
-router.patch("/editions/:id/current", setCurrent);
+router.put("/editions/:id", editionVideoUpload, updateEdition);router.patch("/editions/:id/current", setCurrent);
 router.post("/editions/:id/poster", uploadPosterFile, uploadPoster);
 router.delete("/editions/:id/poster", deletePoster);
 

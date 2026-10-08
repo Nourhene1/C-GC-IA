@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getLocale, getTranslations, getFormatter } from "next-intl/server";
 import { ArrowLeft, CalendarDays } from "lucide-react";
 import { CATEGORY_STYLES } from "@/components/public/NewsCard";
+import NewsVideo from "@/components/public/NewsVideo";
 import { serverApi } from "@/lib/server-api";
 import { pick } from "@/lib/content";
 
@@ -43,6 +44,8 @@ export default async function NewsDetailPage({ params }) {
         <h1 className="mt-4 text-3xl font-extrabold leading-tight text-primary">{pick(news.title, locale)}</h1>
         {/* whitespace-pre-line : garde les retours à la ligne saisis par l'admin */}
         <div className="mt-6 whitespace-pre-line leading-relaxed text-ink">{pick(news.content, locale)}</div>
+
+        <NewsVideo video={news.video} />
       </div>
     </article>
   );

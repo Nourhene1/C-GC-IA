@@ -1,6 +1,6 @@
 {
   "common": {
-    "metaTitle": "AI & Civil Engineering Competition — ISET Sfax 2026",
+    "metaTitle": "AI & Civil Engineering Competition — ISET Sfax 2027",
     "competition": "Competition",
     "tagline": "AI serving Civil Engineering",
     "logoAlt": "AI-CE Competition logo",
@@ -51,7 +51,8 @@
     "subject": "Subjects",
     "submission": "Submissions",
     "evaluations": "Evaluations",
-    "results": "Results"
+    "results": "Results",
+    "sponsors": "Sponsors"
   },
   "status": {
     "brouillon": "Draft",
@@ -95,7 +96,7 @@
     "resend": "Resend email",
     "resent": "Email sent again!"
   },
-    "forgotPassword": {
+  "forgotPassword": {
     "title": "Forgot password",
     "subtitle": "Enter the email address of your account. We will send you a code to reset your password.",
     "email": "Email",
@@ -104,7 +105,7 @@
     "success": "If an account exists with this email, a reset code has just been sent.",
     "backToLogin": "Back to sign in"
   },
-    "resetCode": {
+  "resetCode": {
     "title": "Code verification",
     "subtitle": "Enter the 6-digit code we just sent to your email address.",
     "code": "6-digit code",
@@ -112,7 +113,7 @@
     "submitting": "Verifying…",
     "backToLogin": "Back to sign in"
   },
-    "newPassword": {
+  "newPassword": {
     "title": "New password",
     "subtitle": "Choose a new password for your account.",
     "password": "New password (8 characters min.)",
@@ -147,6 +148,7 @@
   "errors": {
     "FIELDS_REQUIRED": "All required fields must be filled in",
     "CREDENTIALS_REQUIRED": "Email and password are required",
+    "INVALID_VIDEO_URL": "Unrecognized video link: use a YouTube or Vimeo link (https)",
     "PASSWORD_TOO_SHORT": "The password must be at least 8 characters long",
     "PASSWORDS_MISMATCH": "The two passwords do not match",
     "EMAIL_TAKEN": "This email is already in use",
@@ -396,6 +398,8 @@
   },
   "home": {
     "edition": "{year} edition",
+    "eventSponsors": "Our sponsors",
+    "allEventSponsors": "See all sponsors",
     "civilEngineering": "Civil Engineering",
     "cta": "Register my team",
     "keyDates": "Key dates",
@@ -434,6 +438,7 @@
   "news": {
     "title": "News",
     "subtitle": "Announcements, deadline reminders and competition results.",
+    "video": "Announcement video",
     "all": "All",
     "empty": "No news yet.",
     "readMore": "Read more",
@@ -453,6 +458,9 @@
   },
   "archives": {
     "title": "Archives",
+    "podium": "The podium",
+    "testimonials": "What participants say",
+    "winnerVideos": "Winning teams' videos",
     "subtitle": "Browse previous editions: subjects, winning teams and partners.",
     "empty": "No archived edition yet.",
     "see": "View edition",
@@ -486,6 +494,14 @@
   "adminNews": {
     "title": "News",
     "new": "New announcement",
+    "video": "Video (optional)",
+    "videoUpload": "Import a video from my computer",
+    "videoFileHint": "MP4, WebM or MOV — 200 MB maximum",
+    "videoOr": "or paste a YouTube / Vimeo link",
+    "videoLink": "Video link",
+    "videoHint": "Ignored if a video is imported.",
+    "videoCurrent": "Current video",
+    "videoRemove": "Remove",
     "edit": "Edit announcement",
     "back": "Back to news",
     "all": "All",
@@ -546,6 +562,18 @@
     }
   },
   "adminEditions": {
+    "winnerVideo": "Team presentation video",
+    "winnerVideoPick": "Import a video",
+    "winnerVideoLink": "Or YouTube / Vimeo link",
+    "winnerVideoHint": "Optional. Shown in the archives, below the podium.",
+    "winnerVideoRemoved": "The video will be removed on save.",
+    "winnersHint": "Enter the top three teams to display the podium.",
+    "testimonials": "Testimonials",
+    "testimonialsHint": "Feedback from former participants, shown in the archives.",
+    "addTestimonial": "Add a testimonial",
+    "testimonialName": "Name",
+    "testimonialRole": "Role (e.g. former team leader, 2025 class)",
+    "testimonialQuote": "Testimonial",
     "title": "Editions",
     "subtitle": "The current edition is shown on the home page. The others form the archives.",
     "new": "New edition",
@@ -1308,6 +1336,57 @@
         "published": "Published",
         "withdrawn": "Withdrawn"
       }
+    }
+  },
+  "adminEventSponsors": {
+    "title": "Event sponsors",
+    "subtitle": "Logos shown on the public « Our sponsors » page, grouped by tier.",
+    "new": "Add a sponsor",
+    "edit": "Edit sponsor",
+    "empty": "No sponsors for these filters.",
+    "name": "Name",
+    "website": "Website",
+    "tier": "Tier",
+    "tiers": {
+      "titre": "Title",
+      "or": "Gold",
+      "argent": "Silver",
+      "bronze": "Bronze"
+    },
+    "edition": "Edition",
+    "noEdition": "None",
+    "order": "Order",
+    "orderHint": "Lower = displayed first.",
+    "visible": "Visible on site",
+    "hidden": "Hidden",
+    "chooseLogo": "Choose a logo",
+    "logoKeep": "Leave empty to keep the current logo.",
+    "logoHint": "PNG, JPG or WebP, {max} MB max.",
+    "filterEdition": "Edition",
+    "filterTier": "Tier",
+    "filterStatus": "Status",
+    "allEditions": "All editions",
+    "allTiers": "All tiers",
+    "allStatus": "All",
+    "visibleOnly": "Visible",
+    "hiddenOnly": "Hidden",
+    "reorderDisabled": "Reordering is disabled while filtering",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "toggleVisibility": "Show / hide",
+    "confirmDeleteTitle": "Delete this sponsor?",
+    "confirmDelete": "« {name} » and its logo will be permanently deleted.",
+    "confirmDeleteButton": "Delete"
+  },
+  "eventSponsorsPage": {
+    "title": "Our sponsors",
+    "subtitle": "Thank you to our partners who make this event possible.",
+    "empty": "Sponsors will be announced soon.",
+    "tiers": {
+      "titre": "Title sponsors",
+      "or": "Gold sponsors",
+      "argent": "Silver sponsors",
+      "bronze": "Bronze sponsors"
     }
   }
 }

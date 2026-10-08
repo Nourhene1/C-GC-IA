@@ -25,7 +25,7 @@ export default function AuthBrandPanel() {
       <h2 className="mt-2 font-extrabold uppercase leading-tight tracking-wide">
         <span className="block text-3xl">{t("competition")}</span>
         <span className="block text-2xl">
-          ISET Sfax <span className="text-accent">2026</span>
+          ISET Sfax <span className="text-accent">2027</span>
         </span>
       </h2>
       <span className="h-1 w-12 rounded-full bg-accent" />

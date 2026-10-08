@@ -44,7 +44,7 @@ export default function AppShell({ user, children }) {
           <Link href="/" className="flex items-center gap-2" title={t("home")}>
             <Image src="/logo.png" alt={tc("logoAlt")} width={40} height={40} className="rounded-full" />
             <span className="font-extrabold uppercase leading-none text-primary">
-              IA-GC <span className="text-accent">2026</span>
+              IA-GC <span className="text-accent">2027</span>
             </span>
           </Link>
 

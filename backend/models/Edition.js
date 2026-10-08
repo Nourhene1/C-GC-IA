@@ -1,26 +1,53 @@
 import mongoose from "mongoose";
 
-// Un texte dans les deux langues
+// Un texte dans les deux langues (obligatoire en français)
 const localized = {
   fr: { type: String, required: true, trim: true },
   en: { type: String, default: "", trim: true },
 };
 
-// Une pièce justificative demandée (F2.4)
-const requiredDocumentSchema = new mongoose.Schema(
+// Un texte bilingue facultatif
+const optionalText = {
+  fr: { type: String, trim: true, default: "" },
+  en: { type: String, trim: true, default: "" },
+};
+
+// Vidéo : fichier importé, lien YouTube ou lien Vimeo
+const videoSchema = new mongoose.Schema(
   {
-    kind: { type: String, required: true }, // "carte_etudiant", "attestation_scolarite"…
-    perMember: { type: Boolean, default: true }, // une par membre, ou une seule pour l'équipe
+    url: { type: String, default: "" },
+    provider: { type: String, enum: ["", "youtube", "vimeo", "file"], default: "" },
+    videoId: { type: String, default: "" }, // nom du fichier si provider = "file"
   },
   { _id: false }
 );
 
-// Une équipe primée (historique des éditions)
+// Une pièce justificative demandée (F2.4)
+const requiredDocumentSchema = new mongoose.Schema(
+  {
+    kind: { type: String, required: true },
+    perMember: { type: Boolean, default: true },
+  },
+  { _id: false }
+);
+
+// Une équipe primée, avec sa vidéo facultative
 const winnerSchema = new mongoose.Schema(
   {
     rank: { type: Number, required: true, min: 1 },
     teamName: { type: String, required: true, trim: true },
     etablissement: { type: String, trim: true, default: "" },
+    video: { type: videoSchema, default: () => ({}) },
+  },
+  { _id: false }
+);
+
+// Témoignage d'un ancien participant
+const testimonialSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, trim: true, maxlength: 100 },
+    role: optionalText,
+    quote: optionalText,
   },
   { _id: false }
 );
@@ -37,52 +64,48 @@ const editionSchema = new mongoose.Schema(
       registrationClose: { type: Date, required: true },
       sessionOpen: { type: Date, required: true },
       submissionDeadline: { type: Date, required: true },
-      evaluationStart: { type: Date }, // F3.2 : phase d'évaluation par le jury
+      evaluationStart: { type: Date },
       evaluationEnd: { type: Date },
       resultsDate: { type: Date },
     },
 
-    // Nombre de membres autorisé, chef compris (F2.3)
     teamSize: {
       min: { type: Number, default: 2, min: 1 },
       max: { type: Number, default: 5, min: 1 },
     },
 
     submission: {
-      toleranceMinutes: { type: Number, default: 0, min: 0, max: 240 }, // F5.2
-      anonymize: { type: Boolean, default: false },              // F5.8
+      toleranceMinutes: { type: Number, default: 0, min: 0, max: 240 },
+      anonymize: { type: Boolean, default: false },
     },
 
-    // Module 7 : règles du classement et de la publication des résultats
     results: {
-      tieBreakers: { type: [String], default: ["lowestGap", "earliestSubmission"] }, // F7.2 : départage, dans l'ordre
-      podiumSize:  { type: Number, default: 3, min: 1, max: 10 },  // F7.5 : nombre d'équipes sur le podium
-      showScores:  { type: Boolean, default: true },               // notes visibles sur la page publique
-      sendCertificates: { type: Boolean, default: true },          // F7.6 : attestations envoyées par email à la publication
+      tieBreakers: { type: [String], default: ["lowestGap", "earliestSubmission"] },
+      podiumSize: { type: Number, default: 3, min: 1, max: 10 },
+      showScores: { type: Boolean, default: true },
+      sendCertificates: { type: Boolean, default: true },
     },
 
     requiredDocuments: {
       type: [requiredDocumentSchema],
       default: [
         { kind: "carte_etudiant", perMember: true },
-        { kind: "attestation_scolarite", perMember: true }
+        { kind: "attestation_scolarite", perMember: true },
       ],
     },
 
-    // Chiffres de l'édition précédente, affichés sur l'accueil (F1.1)
     stats: {
       teams: { type: Number, default: 0 },
       participants: { type: Number, default: 0 },
       schools: { type: Number, default: 0 },
     },
 
-    // --- Historique (F1.1) : rempli à la fin de l'édition ---
-    poster: { type: String, default: null }, // affiche : /uploads/posters/xxx.jpg
-    subjectSummary: {
-      fr: { type: String, trim: true, default: "" },
-      en: { type: String, trim: true, default: "" },
-    },
+    // Historique (F1.1)
+    poster: { type: String, default: null },
+    subjectSummary: optionalText,
     winners: [winnerSchema],
+    video: { type: videoSchema, default: () => ({}) },
+    testimonials: [testimonialSchema],
   },
   { timestamps: true }
 );

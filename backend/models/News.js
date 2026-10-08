@@ -5,7 +5,7 @@ export const NEWS_CATEGORIES = ["lancement", "rappel", "resultats", "general"];
 // F1.2 : actualité / annonce bilingue et horodatée
 const newsSchema = new mongoose.Schema(
   {
-    edition:  { type: mongoose.Schema.Types.ObjectId, ref: "Edition" },
+    edition: { type: mongoose.Schema.Types.ObjectId, ref: "Edition" },
     category: { type: String, enum: NEWS_CATEGORIES, default: "general" },
     title: {
       fr: { type: String, required: true, trim: true, maxlength: 150 },
@@ -22,7 +22,13 @@ const newsSchema = new mongoose.Schema(
 
     // F1.4 : prévenir les équipes par email au moment de la publication
     notifyTeams: { type: Boolean, default: false },
-    notifiedAt:  { type: Date, default: null },
+    notifiedAt: { type: Date, default: null },
+    // Vidéo facultative (YouTube ou Vimeo)
+    video: {
+      url: { type: String, default: "" },
+      provider: { type: String, enum: ["", "youtube", "vimeo", "file"], default: "" },
+      videoId: { type: String, default: "" }, // nom du fichier si provider = "file"
+    },
 
     author: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   },

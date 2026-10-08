@@ -31,7 +31,7 @@ function layout({ title, paragraphs, button }) {
   <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px">
     <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff;border-radius:16px;overflow:hidden">
       <tr><td style="background:#173A63;color:#fff;padding:20px 28px;font-weight:800;font-size:18px">
-        COMPÉTITION IA &amp; GC <span style="color:#E87722">2026</span>
+        COMPÉTITION IA &amp; GC <span style="color:#E87722">2027</span>
       </td></tr>
       <tr><td style="padding:28px">
         <h1 style="margin:0 0 18px;font-size:20px;color:#173A63">${escapeHtml(title)}</h1>
@@ -203,7 +203,7 @@ export function juryInvitationMail({ name, link, locale }) {
     subject: "Invitation : membre du jury — Compétition IA & Génie Civil",
     title: `Bonjour ${name},`,
     lines: [
-      "Vous avez été ajouté(e) au jury de la Compétition IA & Génie Civil — ISET Sfax 2026.",
+      "Vous avez été ajouté(e) au jury de la Compétition IA & Génie Civil — ISET Sfax 2027.",
       "Choisissez votre mot de passe pour activer votre compte jury. Ce lien est valable 7 jours.",
     ],
     button: { label: "Activer mon compte", url: link },
@@ -212,7 +212,7 @@ export function juryInvitationMail({ name, link, locale }) {
     subject: "Invitation: jury member — AI & Civil Engineering Competition",
     title: `Hello ${name},`,
     lines: [
-      "You have been added to the jury of the AI & Civil Engineering Competition — ISET Sfax 2026.",
+      "You have been added to the jury of the AI & Civil Engineering Competition — ISET Sfax 2027.",
       "Choose your password to activate your jury account. This link is valid for 7 days.",
     ],
     button: { label: "Activate my account", url: link },

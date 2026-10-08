@@ -1,6 +1,6 @@
 {
   "common": {
-    "metaTitle": "Compétition IA & Génie Civil — ISET Sfax 2026",
+    "metaTitle": "Compétition IA & Génie Civil — ISET Sfax 2027",
     "competition": "Compétition",
     "tagline": "L'IA au service du Génie Civil",
     "logoAlt": "Logo Compétition IA-GC",
@@ -51,7 +51,8 @@
     "subject": "Sujet",
     "submission": "Dépôt des travaux",
     "evaluations": "Évaluations",
-    "results": "Résultats"
+    "results": "Résultats",
+    "sponsors": "Sponsors"
   },
   "status": {
     "brouillon": "Brouillon",
@@ -95,7 +96,7 @@
     "resend": "Renvoyer l'email",
     "resent": "Email renvoyé !"
   },
-    "forgotPassword": {
+  "forgotPassword": {
     "title": "Mot de passe oublié",
     "subtitle": "Saisissez l'adresse email de votre compte. Nous vous enverrons un code pour réinitialiser votre mot de passe.",
     "email": "Email",
@@ -104,14 +105,15 @@
     "success": "Si un compte existe avec cet email, un code de réinitialisation vient d'être envoyé.",
     "backToLogin": "Retour à la connexion"
   },
-    "resetCode": {
+  "resetCode": {
     "title": "Vérification du code",
     "subtitle": "Saisissez le code à 6 chiffres que nous venons d'envoyer à votre adresse email.",
     "code": "Code à 6 chiffres",
     "submit": "Vérifier le code",
     "submitting": "Vérification…",
     "backToLogin": "Retour à la connexion"
-  },  "newPassword": {
+  },
+  "newPassword": {
     "title": "Nouveau mot de passe",
     "subtitle": "Choisissez un nouveau mot de passe pour votre compte.",
     "password": "Nouveau mot de passe (8 caractères min.)",
@@ -149,6 +151,7 @@
     "PASSWORD_TOO_SHORT": "Le mot de passe doit contenir au moins 8 caractères",
     "PASSWORDS_MISMATCH": "Les deux mots de passe ne correspondent pas",
     "EMAIL_TAKEN": "Cet email est déjà utilisé",
+    "INVALID_VIDEO_URL": "Lien vidéo non reconnu : utilisez un lien YouTube ou Vimeo (https)",
     "INVALID_CREDENTIALS": "Email ou mot de passe incorrect",
     "EMAIL_NOT_VERIFIED": "Votre adresse email n'est pas encore confirmée",
     "INVALID_TOKEN": "Ce lien est invalide ou a expiré",
@@ -395,6 +398,8 @@
   },
   "home": {
     "edition": "Édition {year}",
+    "eventSponsors": "Nos sponsors",
+    "allEventSponsors": "Voir tous les sponsors",
     "civilEngineering": "Génie Civil",
     "cta": "Inscrire mon équipe",
     "keyDates": "Dates clés",
@@ -434,6 +439,7 @@
     "title": "Actualités",
     "subtitle": "Annonces, rappels d'échéances et résultats de la compétition.",
     "all": "Toutes",
+    "video": "Vidéo de l'annonce",
     "empty": "Aucune actualité pour le moment.",
     "readMore": "Lire la suite",
     "back": "Toutes les actualités",
@@ -452,6 +458,9 @@
   },
   "archives": {
     "title": "Archives",
+    "podium": "Le podium",
+    "testimonials": "Ce qu'en disent les participants",
+    "winnerVideos": "Vidéos des équipes gagnantes",
     "subtitle": "Retrouvez les éditions précédentes : sujets, équipes gagnantes et partenaires.",
     "empty": "Aucune édition archivée pour le moment.",
     "see": "Voir l'édition",
@@ -485,6 +494,14 @@
   "adminNews": {
     "title": "Actualités",
     "new": "Nouvelle annonce",
+    "video": "Vidéo (facultative)",
+    "videoUpload": "Importer une vidéo depuis mon ordinateur",
+    "videoFileHint": "MP4, WebM ou MOV — 200 Mo maximum",
+    "videoOr": "ou coller un lien YouTube / Vimeo",
+    "videoLink": "Lien vidéo",
+    "videoHint": "Ignoré si une vidéo est importée.",
+    "videoCurrent": "Vidéo actuelle",
+    "videoRemove": "Retirer",
     "edit": "Modifier l'annonce",
     "back": "Retour aux actualités",
     "all": "Toutes",
@@ -544,6 +561,18 @@
     }
   },
   "adminEditions": {
+    "winnerVideo": "Vidéo de présentation de l'équipe",
+    "winnerVideoPick": "Importer une vidéo",
+    "winnerVideoLink": "Ou lien YouTube / Vimeo",
+    "winnerVideoHint": "Facultative. Affichée dans les archives, sous le podium.",
+    "winnerVideoRemoved": "La vidéo sera retirée à l'enregistrement.",
+    "winnersHint": "Renseignez les trois premières équipes pour afficher le podium.",
+    "testimonials": "Témoignages",
+    "testimonialsHint": "Retours des anciens participants, affichés dans les archives.",
+    "addTestimonial": "Ajouter un témoignage",
+    "testimonialName": "Nom",
+    "testimonialRole": "Rôle (ex. ancien chef d'équipe, promotion 2025)",
+    "testimonialQuote": "Témoignage",
     "title": "Éditions",
     "subtitle": "L'édition en cours s'affiche sur l'accueil. Les autres forment les archives.",
     "new": "Nouvelle édition",
@@ -1307,6 +1336,57 @@
         "published": "Publiée",
         "withdrawn": "Retirée"
       }
+    }
+  },
+  "adminEventSponsors": {
+    "title": "Sponsors de l'événement",
+    "subtitle": "Logos affichés sur la page publique « Nos sponsors », regroupés par niveau.",
+    "new": "Ajouter un sponsor",
+    "edit": "Modifier le sponsor",
+    "empty": "Aucun sponsor pour ces filtres.",
+    "name": "Nom",
+    "website": "Site web",
+    "tier": "Niveau",
+    "tiers": {
+      "titre": "Titre",
+      "or": "Or",
+      "argent": "Argent",
+      "bronze": "Bronze"
+    },
+    "edition": "Édition",
+    "noEdition": "Aucune",
+    "order": "Ordre",
+    "orderHint": "Plus petit = affiché en premier.",
+    "visible": "Visible sur le site",
+    "hidden": "Masqué",
+    "chooseLogo": "Choisir un logo",
+    "logoKeep": "Laisser vide pour conserver le logo actuel.",
+    "logoHint": "PNG, JPG ou WebP, {max} Mo maximum.",
+    "filterEdition": "Édition",
+    "filterTier": "Niveau",
+    "filterStatus": "Statut",
+    "allEditions": "Toutes les éditions",
+    "allTiers": "Tous les niveaux",
+    "allStatus": "Tous",
+    "visibleOnly": "Visibles",
+    "hiddenOnly": "Masqués",
+    "reorderDisabled": "Réorganisation désactivée pendant le filtrage",
+    "moveUp": "Monter",
+    "moveDown": "Descendre",
+    "toggleVisibility": "Afficher / masquer",
+    "confirmDeleteTitle": "Supprimer ce sponsor ?",
+    "confirmDelete": "« {name} » et son logo seront supprimés définitivement.",
+    "confirmDeleteButton": "Supprimer"
+  },
+  "eventSponsorsPage": {
+    "title": "Nos sponsors",
+    "subtitle": "Merci à nos partenaires qui rendent cet événement possible.",
+    "empty": "Les sponsors seront annoncés prochainement.",
+    "tiers": {
+      "titre": "Sponsors titre",
+      "or": "Sponsors or",
+      "argent": "Sponsors argent",
+      "bronze": "Sponsors bronze"
     }
   }
 }

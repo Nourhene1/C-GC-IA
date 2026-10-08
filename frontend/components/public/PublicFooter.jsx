@@ -14,6 +14,7 @@ export default function PublicFooter() {
     { href: "/calendrier", label: tn("calendar") },
     { href: "/jury", label: tn("jury") },
     { href: "/partenaires", label: tn("partners") },
+    { href: "/sponsors", label: tn("sponsors") },
     { href: "/resultats", label: tn("results") },
     { href: "/news", label: tn("news") },
     { href: "/archives", label: tn("archives") },
@@ -41,7 +42,7 @@ export default function PublicFooter() {
         <div className="-mt-0 flex flex-col items-start justify-between gap-5 border-b border-white/10 py-10 sm:flex-row sm:items-center">
           <div>
             <p className="text-2xl font-extrabold uppercase text-white sm:text-3xl">
-              {tc("competition")} IA-GC <span className="text-accent">2026</span>
+              {tc("competition")} IA-GC <span className="text-accent">2027</span>
             </p>
             <p className="mt-1 text-white/70">{tc("tagline")}</p>
           </div>
@@ -103,7 +104,7 @@ export default function PublicFooter() {
         </div>
 
         <div className="border-t border-white/10 py-5 text-center text-xs text-white/50">
-          © 2026 {tc("competition")} IA-GC — ISET Sfax
+          © 2027 {tc("competition")} IA-GC — ISET Sfax
         </div>
       </div>
     </footer>

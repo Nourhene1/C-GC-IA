@@ -25,6 +25,9 @@ import { startNewsScheduler } from "./utils/newsNotifier.js";
 import { startSubjectScheduler } from "./utils/subjectNotifier.js";
 import { startResultsScheduler } from "./utils/results.js";
 import { translateProvider } from "./utils/translate.js";
+import adminEventSponsorRoutes from "./routes/adminEventSponsorRoutes.js";
+import eventSponsorRoutes from "./routes/eventSponsorRoutes.js";
+
 
 
 const app = express();
@@ -62,7 +65,8 @@ app.use("/api/jury/submissions", jurySubmissionRoutes);
 app.use("/api/jury/evaluations", evaluationJuryRoutes);     // Module 6
 app.use("/api/results", resultsRoutes);                     // Module 7 : classement public + attestation
 app.use("/api", contentRoutes); // /api/content, /api/faq, /api/contact
-
+app.use("/api/admin/event-sponsors", adminEventSponsorRoutes); // Sponsors (distincts des partenaires)
+app.use("/api/event-sponsors", eventSponsorRoutes);
 // Route inconnue
 app.use("/api", (req, res) => res.status(404).json({ code: "NOT_FOUND" }));
 

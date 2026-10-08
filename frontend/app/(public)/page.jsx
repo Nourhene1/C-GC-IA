@@ -6,6 +6,7 @@ import Countdown from "@/components/public/Countdown";
 import NewsCard from "@/components/public/NewsCard";
 import SponsorGrid from "@/components/public/SponsorGrid";
 import { serverApi } from "@/lib/server-api";
+import { assetUrl } from "@/lib/eventSponsorsApi";
 import { pick, MILESTONES } from "@/lib/content";
 
 // F1.1 : page d'accueil de l'édition en cours
@@ -16,11 +17,12 @@ export default async function HomePage() {
   const locale = await getLocale();
   const format = await getFormatter();
 
-  // Les trois appels partent en même temps
-  const [current, newsData, sponsorsData] = await Promise.all([
+  // Les appels partent en même temps
+  const [current, newsData, sponsorsData, eventSponsorsData] = await Promise.all([
     serverApi("/api/editions/current"),
     serverApi("/api/news?limit=3"),
     serverApi("/api/sponsors"),
+    serverApi("/api/event-sponsors"),
   ]);
 
   const edition = current?.edition;
@@ -29,6 +31,8 @@ export default async function HomePage() {
     edition && now >= new Date(edition.dates.registrationOpen) && now <= new Date(edition.dates.registrationClose);
   const news = newsData?.news || [];
   const sponsors = sponsorsData?.sponsors || [];
+  // /api/event-sponsors renvoie directement un tableau
+  const eventSponsors = Array.isArray(eventSponsorsData) ? eventSponsorsData : [];
 
   return (
     <>
@@ -229,6 +233,34 @@ export default async function HomePage() {
           <div className="mt-6 grid gap-5 md:grid-cols-3">
             {news.map((n) => <NewsCard key={n._id} news={n} />)}
           </div>
+        </section>
+      )}
+
+      {/* ---------- Sponsors de l'événement (aperçu) ---------- */}
+      {eventSponsors.length > 0 && (
+        <section className="mx-auto mt-16 max-w-6xl px-4">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h2 className="text-2xl font-extrabold text-primary sm:text-3xl">{t("eventSponsors")}</h2>
+            <Link href="/sponsors" className="inline-flex items-center gap-1 font-semibold text-accent hover:underline">
+              {t("allEventSponsors")} <ArrowRight className="size-4" />
+            </Link>
+          </div>
+          <ul className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {eventSponsors.slice(0, 6).map((s) => (
+              <li
+                key={s._id}
+                className="flex h-24 items-center justify-center rounded-2xl bg-white p-4 shadow-md shadow-primary/5 transition hover:-translate-y-1 hover:shadow-lg"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={assetUrl(s.logo)}
+                  alt={s.name}
+                  title={s.name}
+                  className="max-h-full max-w-full object-contain"
+                />
+              </li>
+            ))}
+          </ul>
         </section>
       )}
 

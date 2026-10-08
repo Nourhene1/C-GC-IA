@@ -15,6 +15,7 @@ import {
   CalendarDays,
   Gavel,
   Handshake,
+  Award,
 } from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { getToken, homeFor } from "@/lib/auth";
@@ -62,16 +63,17 @@ export default function PublicHeader() {
     };
   }, [dropdown]);
 
-  // Pages du sous-menu "La compétition" (Module 3 + partenaires)
+  // Pages du sous-menu "La compétition"
   const competition = [
     { href: "/reglement", label: t("rules"), icon: BookOpen },
     { href: "/eligibilite", label: t("eligibility"), icon: ShieldCheck },
     { href: "/calendrier", label: t("calendar"), icon: CalendarDays },
     { href: "/jury", label: t("jury"), icon: Gavel },
     { href: "/partenaires", label: t("partners"), icon: Handshake },
+    { href: "/sponsors", label: t("sponsors"), icon: Award },
   ];
   const main = [
-    { href: "/resultats", label: t("results") }, // Module 7
+    { href: "/resultats", label: t("results") },
     { href: "/news", label: t("news") },
     { href: "/archives", label: t("archives") },
     { href: "/faq", label: t("faq") },
@@ -117,7 +119,7 @@ export default function PublicHeader() {
             className="rounded-full ring-2 ring-accent/20"
           />
           <span className="text-lg font-extrabold uppercase leading-none tracking-tight text-primary">
-            IA-GC <span className="text-accent">2026</span>
+            IA-GC <span className="text-accent">2027</span>
           </span>
         </Link>
 

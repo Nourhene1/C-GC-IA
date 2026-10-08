@@ -18,6 +18,7 @@ import {
   FileCheck,
   ClipboardCheck,
   Trophy,
+  Medal
 } from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import NotificationBell from "@/components/common/NotificationBell";
@@ -40,6 +41,7 @@ export default function AppShell({ user, children }) {
     { href: "/admin/faq", label: t("faq"), Icon: CircleHelp },
     { href: "/admin/messages", label: t("messages"), Icon: Mail },
     { href: "/admin/sponsors", label: t("partners"), Icon: Handshake },
+     { href: "/admin/event-sponsors", label: t("sponsors"), Icon: Medal },
     { href: "/admin/editions", label: t("editions"), Icon: CalendarRange },
     { href: "/admin/subject", label: t("subject"), Icon: BookOpen },
     { href: "/admin/submissions", label: t("submission"), Icon: FileCheck },
@@ -114,7 +116,7 @@ export default function AppShell({ user, children }) {
               />
 
               <span className="text-lg font-extrabold uppercase leading-none text-primary">
-                IA-GC <span className="text-accent">2026</span>
+                IA-GC <span className="text-accent">2027</span>
               </span>
             </Link>
 

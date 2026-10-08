@@ -116,53 +116,7 @@ function CriterionCard({ criterion, index, length, onChange, onMove, onRemove })
   );
 }
 
-// Réglages modifiables à tout moment : évaluateurs par équipe (F6.2) et seuil d'écart (F6.7)
-function SettingsForm({ grid, onSaved }) {
-  const t = useTranslations("evaluation");
-  const [form, setForm] = useState({ evaluatorsPerTeam: grid.evaluatorsPerTeam, gapThreshold: grid.gapThreshold });
-  const [state, setState] = useState({ busy: false, error: null, saved: false });
 
-  const submit = async (e) => {
-    e.preventDefault();
-    setState({ busy: true, error: null, saved: false });
-    try {
-      const res = await saveEvaluationSettings({
-        evaluatorsPerTeam: Number(form.evaluatorsPerTeam), gapThreshold: Number(form.gapThreshold),
-      });
-      onSaved(res.grid);
-      setState({ busy: false, error: null, saved: true });
-    } catch (error) {
-      setState({ busy: false, error, saved: false });
-    }
-  };
-
-  return (
-    <form onSubmit={submit} className={card}>
-      <h2 className={sectionTitle}><Settings2 className="size-5 text-accent" /> {t("settings.title")}</h2>
-      <div className="mt-4 grid gap-4 sm:grid-cols-2">
-        <label className="block text-sm">
-          <span className="mb-1.5 block font-semibold text-primary">{t("settings.evaluatorsPerTeam")}</span>
-          <input type="number" min="1" max="10" required className={smallInput}
-            value={form.evaluatorsPerTeam} onChange={(e) => setForm({ ...form, evaluatorsPerTeam: e.target.value })} />
-          <span className="mt-1 block text-xs text-slate-500">{t("settings.evaluatorsPerTeamHint")}</span>
-        </label>
-        <label className="block text-sm">
-          <span className="mb-1.5 block font-semibold text-primary">{t("settings.gapThreshold", { scale: grid.scale })}</span>
-          <input type="number" min="0" max={grid.scale} step="any" required className={smallInput}
-            value={form.gapThreshold} onChange={(e) => setForm({ ...form, gapThreshold: e.target.value })} />
-          <span className="mt-1 block text-xs text-slate-500">{t("settings.gapThresholdHint")}</span>
-        </label>
-      </div>
-      <div className="mt-4 flex flex-col gap-3">
-        <ErrorAlert error={state.error} />
-        {state.saved && <Alert type="success">{t("saved")}</Alert>}
-      </div>
-      <button type="submit" disabled={state.busy} className={`${btn.secondary} mt-4`}>
-        <Save className="size-4" /> {t("save")}
-      </button>
-    </form>
-  );
-}
 
 // F6.1 : paramétrage de la grille (critères, sous-critères, pondérations, barème)
 export default function GridEditor({ grid: initial, locked, onSaved }) {
@@ -249,7 +203,6 @@ export default function GridEditor({ grid: initial, locked, onSaved }) {
         </div>
       </form>
 
-      <SettingsForm grid={grid} onSaved={(g) => { setGrid(g); onSaved?.(g); }} />
     </div>
   );
 }

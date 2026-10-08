@@ -2,6 +2,7 @@ import News, { NEWS_CATEGORIES } from "../models/News.js";
 import { getCurrentEdition } from "../utils/edition.js";
 import { runNewsNotifications } from "../utils/newsNotifier.js";
 import { withEnglish } from "../utils/autoTranslate.js";
+import { parseVideoUrl, removeStoredVideo, discardUpload } from "../utils/video.js";
 
 // ---------------------------------------------------------------------------
 // Public — F1.2
@@ -30,7 +31,7 @@ export const listPublicNews = async (req, res) => {
 // GET /api/news/:id — une annonce programmée reste invisible avant sa date
 export const getPublicNews = async (req, res) => {
   const news = await News.findOne({ _id: req.params.id, ...News.visibleFilter() })
-    .select("category title content publishAt")
+    .select("category title content publishAt video")
     .lean();
   if (!news) return res.status(404).json({ code: "NOT_FOUND" });
   res.json({ news });
@@ -67,13 +68,26 @@ export const getAdminNews = async (req, res) => {
 
 // Applique le formulaire à l'annonce.
 // mode : "draft" (brouillon), "now" (publier maintenant), "schedule" (programmer)
-async function applyBody(news, body) {
-  const { category, title = {}, content = {}, notifyTeams, mode, publishAt } = body;
+// file : vidéo importée (multer), facultative
+async function applyBody(news, body, file) {
+  const { category, title = {}, content = {}, notifyTeams, mode, publishAt, video, removeVideo } = body;
 
   if (!title.fr?.trim() || !content.fr?.trim()) return "FIELDS_REQUIRED";
   if (category && !NEWS_CATEGORIES.includes(category)) return "VALIDATION_ERROR";
 
+  // Vidéo, par ordre de priorité : fichier importé > suppression > lien > vidéo existante conservée
+  if (file) {
+    news.video = { url: `/uploads/news-videos/${file.filename}`, provider: "file", videoId: file.filename };
+  } else if (removeVideo === true || removeVideo === "true") {
+    news.video = { url: "", provider: "", videoId: "" };
+  } else if (String(video || "").trim()) {
+    const parsed = parseVideoUrl(video);
+    if (parsed === null) return "INVALID_VIDEO_URL";
+    news.video = parsed;
+  }
+
   news.category = category || "general";
+
   // L'admin écrit en français : l'anglais est traduit automatiquement
   const [en1, en2] = await Promise.all([withEnglish(title, news.title), withEnglish(content, news.content)]);
   news.title = en1;
@@ -101,8 +115,11 @@ export const createNews = async (req, res) => {
   const edition = await getCurrentEdition();
   const news = new News({ edition: edition?._id, author: req.user._id });
 
-  const error = await applyBody(news, req.body);
-  if (error) return res.status(400).json({ code: error });
+  const error = await applyBody(news, req.body, req.file);
+  if (error) {
+    await discardUpload(req.file);
+    return res.status(400).json({ code: error });
+  }
 
   await news.save();
   await runNewsNotifications(); // envoi immédiat si publiée maintenant
@@ -112,12 +129,26 @@ export const createNews = async (req, res) => {
 // PUT /api/admin/news/:id
 export const updateNews = async (req, res) => {
   const news = await News.findById(req.params.id);
-  if (!news) return res.status(404).json({ code: "NOT_FOUND" });
+  if (!news) {
+    await discardUpload(req.file);
+    return res.status(404).json({ code: "NOT_FOUND" });
+  }
 
-  const error = await applyBody(news, req.body);
-  if (error) return res.status(400).json({ code: error });
+  // Mémorise l'ancien fichier pour le supprimer s'il est remplacé ou retiré
+  const previousFile = news.video?.provider === "file" ? news.video.videoId : null;
+
+  const error = await applyBody(news, req.body, req.file);
+  if (error) {
+    await discardUpload(req.file);
+    return res.status(400).json({ code: error });
+  }
 
   await news.save();
+
+  if (previousFile && previousFile !== news.video?.videoId) {
+    await removeStoredVideo(previousFile);
+  }
+
   await runNewsNotifications();
   res.json({ news });
 };
@@ -144,5 +175,9 @@ export const publishNews = async (req, res) => {
 export const deleteNews = async (req, res) => {
   const news = await News.findByIdAndDelete(req.params.id);
   if (!news) return res.status(404).json({ code: "NOT_FOUND" });
+
+  // Supprime aussi le fichier vidéo stocké sur le serveur
+  if (news.video?.provider === "file") await removeStoredVideo(news.video.videoId);
+
   res.json({ ok: true });
 };
