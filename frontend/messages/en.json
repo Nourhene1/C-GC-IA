@@ -77,6 +77,7 @@
   },
   "register": {
     "title": "Register my team",
+    "etablissementPlaceholder": "Choose your institution",
     "subtitle": "Create your team's account. You will be the team leader and can add your teammates.",
     "lastName": "Last name",
     "firstName": "First name",

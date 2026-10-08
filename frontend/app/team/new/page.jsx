@@ -15,6 +15,27 @@ import { api } from "@/lib/api";
 import { useEdition } from "@/lib/useEdition";
 import { DATE_LONG } from "@/lib/format";
 
+const ETABLISSEMENTS = [
+  "ISET Siliana",
+  "ISET Gafsa",
+  "ISET Nabeul",
+  "ISET Radès",
+  "ISET Médenine",
+  "ISET Tozeur",
+  "ISET Sfax",
+  "ISSAT Sousse",
+  "ISSAT Gabès",
+  "IIT",
+  "IPSAS",
+];
+
+const FILIERES = ["IT", "GC"];
+
+const NIVEAUX = ["L1", "L2", "L3", "M1", "M2", "ING 1", "ING 2", "ING3"];
+
+const selectClass =
+  "rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20";
+
 // F2.2 : formulaire d'inscription de l'équipe
 function CreateTeamForm({ user }) {
   const t = useTranslations("team");
@@ -96,15 +117,62 @@ function CreateTeamForm({ user }) {
               value={form.name} onChange={handleChange} required maxLength={60} />
 
             <div className="grid gap-6 sm:grid-cols-2">
-              <Field label={t("etablissement")} icon={Building2} name="etablissement"
-                placeholder={t("etablissementPlaceholder")}
-                value={form.etablissement} onChange={handleChange} required />
-              <Field label={t("filiere")} icon={GraduationCap} name="filiere"
-                placeholder={t("filierePlaceholder")}
-                value={form.filiere} onChange={handleChange} required />
-              <Field label={t("niveau")} icon={BookOpen} name="niveau"
-                placeholder={t("niveauPlaceholder")}
-                value={form.niveau} onChange={handleChange} required />
+              <div className="flex flex-col gap-2">
+                <label htmlFor="etablissement" className="flex items-center gap-2 text-sm font-semibold text-primary">
+                  <Building2 className="size-4" /> {t("etablissement")}
+                </label>
+                <select
+                  id="etablissement"
+                  name="etablissement"
+                  value={form.etablissement}
+                  onChange={handleChange}
+                  required
+                  className={selectClass}
+                >
+                  <option value="" disabled>{t("etablissementPlaceholder")}</option>
+                  {ETABLISSEMENTS.map((nom) => (
+                    <option key={nom} value={nom}>{nom}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label htmlFor="filiere" className="flex items-center gap-2 text-sm font-semibold text-primary">
+                  <GraduationCap className="size-4" /> {t("filiere")}
+                </label>
+                <select
+                  id="filiere"
+                  name="filiere"
+                  value={form.filiere}
+                  onChange={handleChange}
+                  required
+                  className={selectClass}
+                >
+                  <option value="" disabled>{t("filierePlaceholder")}</option>
+                  {FILIERES.map((f) => (
+                    <option key={f} value={f}>{f}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label htmlFor="niveau" className="flex items-center gap-2 text-sm font-semibold text-primary">
+                  <BookOpen className="size-4" /> {t("niveau")}
+                </label>
+                <select
+                  id="niveau"
+                  name="niveau"
+                  value={form.niveau}
+                  onChange={handleChange}
+                  required
+                  className={selectClass}
+                >
+                  <option value="" disabled>{t("niveauPlaceholder")}</option>
+                  {NIVEAUX.map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div className="rounded-2xl border border-slate-200 p-5">

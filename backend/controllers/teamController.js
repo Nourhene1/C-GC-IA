@@ -55,11 +55,12 @@ export const createTeam = async (req, res) => {
     coach: { nom: coach.nom || "", email: coach.email || "" },
     chef: user._id,
     // Le chef est le premier membre de l'équipe
-    members: [{
+  members: [{
       user: user._id,
       nom: user.nom,
       prenom: user.prenom,
       email: user.email,
+      etablissement,
       niveau,
       filiere,
       isChef: true,
@@ -161,10 +162,17 @@ async function sendInvitation(user, team, chef) {
 // POST /api/teams/me/members
 export const addMember = async (req, res) => {
   const team = req.team;
-  const { nom, prenom, niveau, filiere } = req.body;
+  const { nom, prenom, etablissement, niveau, filiere } = req.body;
   const email = String(req.body.email || "").toLowerCase().trim();
 
-  if (!nom?.trim() || !prenom?.trim() || !email || !niveau?.trim() || !filiere?.trim()) {
+  if (
+    !nom?.trim() ||
+    !prenom?.trim() ||
+    !email ||
+    !etablissement?.trim() ||
+    !niveau?.trim() ||
+    !filiere?.trim()
+  ) {
     return res.status(400).json({ code: "FIELDS_REQUIRED" });
   }
   if (team.members.length >= team.edition.teamSize.max) {
@@ -189,7 +197,7 @@ export const addMember = async (req, res) => {
   }
   await user.save();
 
-  team.members.push({ user: user._id, nom, prenom, email, niveau, filiere });
+  team.members.push({ user: user._id, nom, prenom, email, etablissement, niveau, filiere });
   await team.save();
 
   await sendInvitation(user, team, req.user);

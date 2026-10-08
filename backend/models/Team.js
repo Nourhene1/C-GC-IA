@@ -8,13 +8,14 @@ export const STATUSES = ["brouillon", "en_attente", "valide", "rejete", "en_revi
 export const EDITABLE_STATUSES = ["brouillon", "en_attente", "en_revision"];
 
 const memberSchema = new mongoose.Schema({
-  user:    { type: ObjectId, ref: "User" },
-  nom:     { type: String, required: true, trim: true },
-  prenom:  { type: String, required: true, trim: true },
-  email:   { type: String, required: true, lowercase: true, trim: true },
-  niveau:  { type: String, trim: true, default: "" },  // obligatoire à la soumission
-  filiere: { type: String, trim: true, default: "" },  // obligatoire à la soumission
-  isChef:  { type: Boolean, default: false },
+  user:          { type: ObjectId, ref: "User" },
+  nom:           { type: String, required: true, trim: true },
+  prenom:        { type: String, required: true, trim: true },
+  email:         { type: String, required: true, lowercase: true, trim: true },
+  etablissement: { type: String, trim: true, default: "" },  // choisi dans la liste côté frontend
+  niveau:        { type: String, trim: true, default: "" },  // obligatoire à la soumission
+  filiere:       { type: String, trim: true, default: "" },  // obligatoire à la soumission
+  isChef:        { type: Boolean, default: false },
 });
 
 const documentSchema = new mongoose.Schema({
