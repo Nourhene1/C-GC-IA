@@ -1,11 +1,11 @@
 "use client";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, Trash2, ArrowUp, ArrowDown, Lock, Save, Settings2 } from "lucide-react";
+import { Plus, Trash2, ArrowUp, ArrowDown, Lock, Save } from "lucide-react";
 import { Alert, ErrorAlert } from "@/components/ui/Alert";
 import { btn, card, sectionTitle } from "@/components/ui/styles";
-import TextPair, { smallInput } from "@/components/admin/content/TextPair";
-import { saveGrid, saveEvaluationSettings } from "@/lib/evaluation";
+import TextPair from "@/components/admin/content/TextPair";
+import { saveGrid } from "@/lib/evaluation";
 
 // Clé locale pour les éléments pas encore enregistrés (React a besoin d'une clé stable)
 let counter = 0;
@@ -116,12 +116,10 @@ function CriterionCard({ criterion, index, length, onChange, onMove, onRemove })
   );
 }
 
-
-
-// F6.1 : paramétrage de la grille (critères, sous-critères, pondérations, barème)
-export default function GridEditor({ grid: initial, locked, onSaved }) {
+// F6.1 : paramétrage de la grille (critères, sous-critères, pondérations, barème).
+// stage : "final" (jury) ou "pre" (pré-évaluation). Obligatoire : c'est lui qui choisit la grille enregistrée.
+export default function GridEditor({ grid: initial, locked, stage, onSaved }) {
   const t = useTranslations("evaluation");
-  const [grid, setGrid] = useState(initial);
   const [scale, setScale] = useState(initial.scale);
   const [criteria, setCriteria] = useState(() =>
     initial.criteria.map((c) => withKey({ ...c, subCriteria: c.subCriteria.map(withKey) }))
@@ -135,9 +133,10 @@ export default function GridEditor({ grid: initial, locked, onSaved }) {
     e.preventDefault();
     setState({ busy: true, error: null, saved: false });
     try {
-      const res = await saveGrid({ scale: Number(scale), criteria });
-      setGrid(res.grid);
+      // L'étape est transmise explicitement : la grille jury et la grille pré-évaluation restent séparées
+      const res = await saveGrid({ scale: Number(scale), criteria }, stage);
       setCriteria(res.grid.criteria.map((c) => withKey({ ...c, subCriteria: c.subCriteria.map(withKey) })));
+      setScale(res.grid.scale);
       onSaved?.(res.grid);
       setState({ busy: false, error: null, saved: true });
     } catch (error) {
@@ -202,7 +201,6 @@ export default function GridEditor({ grid: initial, locked, onSaved }) {
           )}
         </div>
       </form>
-
     </div>
   );
 }

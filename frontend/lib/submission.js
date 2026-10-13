@@ -47,4 +47,11 @@ export function saveBlob(blob, filename) {
   window.URL.revokeObjectURL(url);
 }
 
+// Pilotage : lecture des dépôts (même logique que le jury)
+export const getPilotageSubmissions = () => api("/api/pilotage/submissions");
+
+// Pilotage : téléchargement d'une version (reprendre le corps de downloadJuryVersion)
+export const downloadPilotageVersion = (submissionId, versionId) =>
+  api(`/api/pilotage/submissions/${submissionId}/versions/${versionId}/download`, { raw: true });
+
 export const DELIVERABLE_KINDS = ["report", "code", "slides", "video"];

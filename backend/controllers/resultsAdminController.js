@@ -5,6 +5,7 @@ import Ranking from "../models/Ranking.js";
 import { getCurrentEdition } from "../utils/edition.js";
 import { audit } from "../utils/audit.js";
 import { buildRanking, snapshotRow, validTieBreakers, BASE_TIE_BREAKERS } from "../utils/ranking.js";
+import { stageScores, attachStageScores } from "../utils/stageScores.js";
 import {
   activePublication, runResultsPublication, notifyResults, certificateEntries,
   localizeEntries, editionTitle,
@@ -32,27 +33,35 @@ const publicationSummary = (p) => p && ({
   settings: p.settings,
 });
 
+// Retire les champs internes d'une ligne de prévisualisation
+const clean = ({ criteria, lastDepositAt, ...r }) => r;
+
 // GET /api/admin/results — F7.3 : prévisualisation réservée à l'admin + état de la publication
 export const getResultsAdmin = async (req, res) => {
   const edition = await currentEdition(res);
   if (!edition) return;
 
-  const [{ grid, ranked, unranked, warnings }, history] = await Promise.all([
+  const [{ grid, ranked, unranked, warnings }, history, scores] = await Promise.all([
     buildRanking(edition),
     Ranking.find({ edition: edition._id }).sort({ version: -1 })
       .select("-rows").populate("publishedBy withdrawnBy", "prenom nom").lean(),
+    stageScores(edition),
   ]);
   const active = history.find((p) => ["scheduled", "published"].includes(p.status));
   const activeRows = active ? (await Ranking.findById(active._id).select("rows").lean()).rows : null;
-  const clean = ({ criteria, lastDepositAt, ...r }) => r;
+
+  // Notes pré-évaluation, finale et totale pour chaque équipe
+  const withScores = (rows) => attachStageScores(rows.map(clean), scores.byTeam);
 
   res.json({
     edition: { id: edition._id, year: edition.year },
     now: new Date(),
     scale: grid.scale,
+    preScale: scores.scales.pre,
+    weights: scores.weights,
     criteria: grid.criteria.map((c) => ({ id: c._id, label: c.label })),
     settings: settingsOf(edition),
-    preview: { ranked: ranked.map(clean), unranked: unranked.map(clean), warnings },
+    preview: { ranked: withScores(ranked), unranked: withScores(unranked), warnings },
     publication: active ? { ...publicationSummary(active), rows: activeRows } : null,
     history: history.map(publicationSummary),
   });
@@ -93,18 +102,25 @@ export const publishResults = async (req, res) => {
   const publishAt = req.body.publishAt ? new Date(req.body.publishAt) : new Date();
   if (Number.isNaN(publishAt.getTime())) return res.status(400).json({ code: "INVALID_PUBLISH_DATE" });
 
-  const { grid, ranked, unranked } = await buildRanking(edition);
+  const [{ grid, ranked, unranked }, scores] = await Promise.all([
+    buildRanking(edition),
+    stageScores(edition),
+  ]);
   if (ranked.length === 0) return res.status(400).json({ code: "NO_RANKING" });
 
   const last = await Ranking.findOne({ edition: edition._id }).sort({ version: -1 }).select("version").lean();
   const settings = settingsOf(edition);
+
+  // Classement FIGÉ, avec les notes pré-évaluation, finale et totale : il ne bougera plus
+  const frozenRows = attachStageScores([...ranked, ...unranked].map(snapshotRow), scores.byTeam);
+
   const pub = await Ranking.create({
     edition: edition._id,
     version: (last?.version ?? 0) + 1,
     status: "scheduled",
     publishAt,
-    rows: [...ranked, ...unranked].map(snapshotRow), // classement FIGÉ : il ne bougera plus
-    settings: { scale: grid.scale, ...settings },
+    rows: frozenRows,
+    settings: { scale: grid.scale, preScale: scores.scales.pre, weights: scores.weights, ...settings },
     publishedBy: req.user._id,
   });
 

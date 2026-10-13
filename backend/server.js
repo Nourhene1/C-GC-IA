@@ -27,6 +27,8 @@ import { startResultsScheduler } from "./utils/results.js";
 import { translateProvider } from "./utils/translate.js";
 import adminEventSponsorRoutes from "./routes/adminEventSponsorRoutes.js";
 import eventSponsorRoutes from "./routes/eventSponsorRoutes.js";
+import pilotageSubmissionRoutes from "./routes/pilotageSubmission.js";
+import evaluationPilotageRoutes from "./routes/evaluationPilotage.js";
 
 
 
@@ -62,7 +64,9 @@ app.use("/api/subject", subjectRoutes);             // F4.2 / F4.3 / F4.5 / F4.7
 app.use("/api/notifications", notificationRoutes);  // F4.6 : notifications in-app
 app.use("/api/submission", submissionRoutes);
 app.use("/api/jury/submissions", jurySubmissionRoutes);
+app.use("/api/pilotage/submissions", pilotageSubmissionRoutes); // pré-évaluation : lecture des livrables
 app.use("/api/jury/evaluations", evaluationJuryRoutes);     // Module 6
+app.use("/api/pilotage/evaluations", evaluationPilotageRoutes); // pré-évaluation
 app.use("/api/results", resultsRoutes);                     // Module 7 : classement public + attestation
 app.use("/api", contentRoutes); // /api/content, /api/faq, /api/contact
 app.use("/api/admin/event-sponsors", adminEventSponsorRoutes); // Sponsors (distincts des partenaires)

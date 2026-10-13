@@ -11,6 +11,8 @@ import { audit } from "../utils/audit.js";
 import { sendMailSafe } from "../utils/mailer.js";
 import { resultsLocked } from "../utils/results.js";
 import { reopenedMail } from "../utils/evaluationEmails.js";
+import { STAGES, stageOf } from "../utils/stages.js";
+import { DEFAULT_STAGE_WEIGHTS } from "../utils/stageScores.js";
 import {
   validateGrid, computeTotal, teamSummary, balancedAssignment, gridItems,
 } from "../utils/grading.js";
@@ -20,14 +22,16 @@ import {
 
 const fullName = (u) => (u ? `${u.prenom} ${u.nom}` : "");
 
+// Étape demandée (?stage=pre ou ?stage=final). Par défaut : finale.
+const stageFrom = (req) => stageOf(req.query.stage);
+
 async function currentEdition(res) {
   const edition = await getCurrentEdition();
   if (!edition) res.status(404).json({ code: "NO_EDITION" });
   return edition;
 }
 
-// F7.4 : une fois les résultats publiés (ou programmés), plus aucune note ne peut changer.
-// Pour corriger, l'admin doit d'abord retirer la publication (avec un motif, tracé).
+// F7.4 : une fois les résultats publiés, plus aucune note ne peut changer (toutes étapes confondues)
 async function editableEdition(res) {
   const edition = await currentEdition(res);
   if (!edition) return null;
@@ -39,15 +43,16 @@ async function editableEdition(res) {
 }
 
 // ---------------------------------------------------------------------------
-// F6.1 — Grille d'évaluation
+// F6.1 — Grille d'évaluation (une par étape)
 // ---------------------------------------------------------------------------
 
-// GET /api/admin/evaluations/grid
+// GET /api/admin/evaluations/grid?stage=
 export const getAdminGrid = async (req, res) => {
   const edition = await currentEdition(res);
   if (!edition) return;
-  const grid = await getGrid(edition);
-  res.json({ grid, locked: await isGridLocked(edition) });
+  const stage = stageFrom(req);
+  const grid = await getGrid(edition, stage);
+  res.json({ stage, grid, locked: await isGridLocked(edition, stage) });
 };
 
 // Traduit les libellés en anglais en gardant les traductions déjà faites (comparaison par _id)
@@ -79,16 +84,17 @@ async function translateCriteria(criteria, previous = []) {
   return result;
 }
 
-// PUT /api/admin/evaluations/grid — { scale, criteria: [{ label, description, weight, max, subCriteria }] }
+// PUT /api/admin/evaluations/grid?stage= — { scale, criteria: [...] }
 export const updateGrid = async (req, res) => {
   const edition = await editableEdition(res);
   if (!edition) return;
-  if (await isGridLocked(edition)) return res.status(409).json({ code: "GRID_LOCKED" });
+  const stage = stageFrom(req);
+  if (await isGridLocked(edition, stage)) return res.status(409).json({ code: "GRID_LOCKED" });
 
   const code = validateGrid(req.body);
   if (code) return res.status(400).json({ code });
 
-  const grid = await getGrid(edition);
+  const grid = await getGrid(edition, stage);
   const previous = grid.toObject().criteria;
   grid.scale = Number(req.body.scale);
   grid.criteria = await translateCriteria(req.body.criteria, previous);
@@ -97,17 +103,18 @@ export const updateGrid = async (req, res) => {
 
   await audit(req, "EVALUATION_GRID_UPDATED", {
     resource: "evaluationGrid", resourceId: grid._id,
-    meta: { scale: grid.scale, criteria: grid.criteria.length, items: gridItems(grid).length },
+    meta: { stage, scale: grid.scale, criteria: grid.criteria.length, items: gridItems(grid).length },
   });
-  res.json({ grid, locked: false });
+  res.json({ stage, grid, locked: false });
 };
 
-// PATCH /api/admin/evaluations/settings — { evaluatorsPerTeam?, gapThreshold? }
+// PATCH /api/admin/evaluations/settings?stage= — { evaluatorsPerTeam?, gapThreshold? }
 // Toujours modifiable, même quand la grille est verrouillée
 export const updateSettings = async (req, res) => {
   const edition = await currentEdition(res);
   if (!edition) return;
-  const grid = await getGrid(edition);
+  const stage = stageFrom(req);
+  const grid = await getGrid(edition, stage);
   const { evaluatorsPerTeam, gapThreshold } = req.body;
 
   if (evaluatorsPerTeam !== undefined) {
@@ -122,30 +129,71 @@ export const updateSettings = async (req, res) => {
   }
   await grid.save();
   await audit(req, "EVALUATION_SETTINGS_CHANGED", {
-    meta: { evaluatorsPerTeam: grid.evaluatorsPerTeam, gapThreshold: grid.gapThreshold },
+    meta: { stage, evaluatorsPerTeam: grid.evaluatorsPerTeam, gapThreshold: grid.gapThreshold },
   });
-  res.json({ grid });
+  res.json({ stage, grid });
 };
 
 // ---------------------------------------------------------------------------
-// F6.6 / F6.7 — Tableau de suivi
+// Pondération des étapes dans la note totale (stockée sur la grille finale)
 // ---------------------------------------------------------------------------
 
-// GET /api/admin/evaluations
+// GET /api/admin/evaluations/stage-weights
+export const getStageWeights = async (req, res) => {
+  const edition = await currentEdition(res);
+  if (!edition) return;
+  const grid = await getGrid(edition, "final");
+  res.json({
+    weights: {
+      pre: grid.stageWeights?.pre ?? DEFAULT_STAGE_WEIGHTS.pre,
+      final: grid.stageWeights?.final ?? DEFAULT_STAGE_WEIGHTS.final,
+    },
+  });
+};
+
+// PATCH /api/admin/evaluations/stage-weights — { pre, final } en % (somme = 100)
+export const setStageWeights = async (req, res) => {
+  const edition = await editableEdition(res);
+  if (!edition) return;
+
+  const pre = Number(req.body.pre);
+  const final = Number(req.body.final);
+  const valid = [pre, final].every((n) => Number.isFinite(n) && n >= 0 && n <= 100);
+  if (!valid || Math.abs(pre + final - 100) > 0.01) {
+    return res.status(400).json({ code: "STAGE_WEIGHTS_INVALID" });
+  }
+
+  const grid = await getGrid(edition, "final");
+  const before = { pre: grid.stageWeights?.pre, final: grid.stageWeights?.final };
+  grid.stageWeights = { pre, final };
+  await grid.save();
+
+  await audit(req, "RESULTS_STAGE_WEIGHTS_CHANGED", { meta: { from: before, to: { pre, final } } });
+  res.json({ weights: { pre, final } });
+};
+
+// ---------------------------------------------------------------------------
+// F6.6 / F6.7 — Tableau de suivi (une étape à la fois)
+// ---------------------------------------------------------------------------
+
+// GET /api/admin/evaluations?stage=
 export const getOverview = async (req, res) => {
   const edition = await currentEdition(res);
   if (!edition) return;
+  const stage = stageFrom(req);
+  const role = STAGES[stage].role;
 
-  const [grid, locked, submissions, evaluations, deliberations, jurors] = await Promise.all([
-    getGrid(edition),
-    isGridLocked(edition),
+  const [grid, locked, submissions, evaluations, deliberations, evaluators] = await Promise.all([
+    getGrid(edition, stage),
+    isGridLocked(edition, stage),
     evaluableSubmissions(edition),
-    Evaluation.find({ edition: edition._id }).populate("evaluator", "prenom nom email").lean(),
-    Deliberation.find({ edition: edition._id }).lean(),
-    User.find({ role: "jury" }).select("prenom nom email isVerified").sort({ nom: 1 }).lean(),
+    Evaluation.find({ edition: edition._id, stage }).populate("evaluator", "prenom nom email").lean(),
+    // Délibération : réservée à l'étape finale
+    stage === "final" ? Deliberation.find({ edition: edition._id }).lean() : Promise.resolve([]),
+    User.find({ role }).select("prenom nom email isVerified").sort({ nom: 1 }).lean(),
   ]);
 
-  // Équipes : celles qui ont déposé + celles qui ont déjà des affectations
+  // Équipes : celles qui ont déposé + celles qui ont déjà une affectation dans cette étape
   const teams = new Map(
     submissions.map((s) => [String(s.team._id), { id: s.team._id, name: s.team.name, anonCode: s.anonCode, hasSubmission: true }])
   );
@@ -171,7 +219,7 @@ export const getOverview = async (req, res) => {
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
 
-  const evaluatorRows = jurors.map((j) => {
+  const evaluatorRows = evaluators.map((j) => {
     const mine = evaluations.filter((e) => String(e.evaluator?._id) === String(j._id));
     const count = (s) => mine.filter((e) => e.status === s).length;
     return {
@@ -182,6 +230,7 @@ export const getOverview = async (req, res) => {
 
   const count = (s) => evaluations.filter((e) => e.status === s).length;
   res.json({
+    stage,
     edition: { id: edition._id, year: edition.year },
     grid: {
       scale: grid.scale, evaluatorsPerTeam: grid.evaluatorsPerTeam, gapThreshold: grid.gapThreshold,
@@ -198,7 +247,7 @@ export const getOverview = async (req, res) => {
   });
 };
 
-// GET /api/admin/evaluations/:id — détail complet d'une évaluation (admin uniquement)
+// GET /api/admin/evaluations/:id — détail complet (admin uniquement) ; l'étape vient de l'évaluation
 export const getEvaluationDetail = async (req, res) => {
   const edition = await currentEdition(res);
   if (!edition) return;
@@ -209,10 +258,11 @@ export const getEvaluationDetail = async (req, res) => {
     .lean();
   if (!evaluation) return res.status(404).json({ code: "NOT_FOUND" });
 
-  const grid = await getGrid(edition);
+  const grid = await getGrid(edition, evaluation.stage);
   res.json({
     evaluation: {
       id: evaluation._id,
+      stage: evaluation.stage,
       team: { id: evaluation.team._id, name: evaluation.team.name },
       evaluator: { id: evaluation.evaluator._id, name: fullName(evaluation.evaluator), email: evaluation.evaluator.email },
       status: evaluation.status, scores: evaluation.scores, comment: evaluation.comment,
@@ -225,26 +275,29 @@ export const getEvaluationDetail = async (req, res) => {
 };
 
 // ---------------------------------------------------------------------------
-// F6.2 — Affectations
+// F6.2 — Affectations (par étape)
 // ---------------------------------------------------------------------------
 
-// POST /api/admin/evaluations/auto-assign — complète les affectations manquantes
+// POST /api/admin/evaluations/auto-assign?stage= — complète les affectations manquantes
 export const autoAssign = async (req, res) => {
   const edition = await editableEdition(res);
   if (!edition) return;
+  const stage = stageFrom(req);
 
-  const grid = await getGrid(edition);
-  const [submissions, jurors, existing] = await Promise.all([
+  const grid = await getGrid(edition, stage);
+  const [submissions, evaluators, existing] = await Promise.all([
     evaluableSubmissions(edition),
-    User.find({ role: "jury" }).select("_id").lean(),
-    Evaluation.find({ edition: edition._id }).select("team evaluator").lean(),
+    User.find({ role: STAGES[stage].role }).select("_id").lean(),
+    Evaluation.find({ edition: edition._id, stage }).select("team evaluator").lean(),
   ]);
-  if (jurors.length === 0) return res.status(400).json({ code: "NO_JURY" });
+  if (evaluators.length === 0) {
+    return res.status(400).json({ code: stage === "pre" ? "NO_PILOTAGE" : "NO_JURY" });
+  }
   if (submissions.length === 0) return res.status(400).json({ code: "NO_SUBMISSIONS" });
 
   const plan = balancedAssignment({
     teamIds: submissions.map((s) => s.team._id),
-    evaluatorIds: jurors.map((j) => j._id),
+    evaluatorIds: evaluators.map((j) => j._id),
     existing,
     perTeam: grid.evaluatorsPerTeam,
   });
@@ -252,25 +305,28 @@ export const autoAssign = async (req, res) => {
   if (plan.length) {
     await Evaluation.insertMany(
       plan.map((p) => ({
-        edition: edition._id, team: p.team, evaluator: p.evaluator,
+        edition: edition._id, stage, team: p.team, evaluator: p.evaluator,
         assignedBy: req.user._id, autoAssigned: true,
       }))
     );
-    await notifyAssignments(plan);
+    await notifyAssignments(plan, stage);
   }
 
-  await audit(req, "EVALUATION_AUTO_ASSIGN", { meta: { created: plan.length, perTeam: grid.evaluatorsPerTeam } });
+  await audit(req, "EVALUATION_AUTO_ASSIGN", {
+    meta: { stage, created: plan.length, perTeam: grid.evaluatorsPerTeam },
+  });
   res.json({
+    stage,
     created: plan.length,
-    // Pas assez d'évaluateurs pour atteindre le nombre demandé par équipe
-    notEnoughJury: jurors.length < grid.evaluatorsPerTeam,
+    notEnoughEvaluators: evaluators.length < grid.evaluatorsPerTeam,
   });
 };
 
-// POST /api/admin/evaluations/assign — { teamId, evaluatorId } : affectation manuelle
+// POST /api/admin/evaluations/assign?stage= — { teamId, evaluatorId } : affectation manuelle
 export const assign = async (req, res) => {
   const edition = await editableEdition(res);
   if (!edition) return;
+  const stage = stageFrom(req);
   const { teamId, evaluatorId } = req.body;
   if (!mongoose.isValidObjectId(teamId) || !mongoose.isValidObjectId(evaluatorId)) {
     return res.status(400).json({ code: "FIELDS_REQUIRED" });
@@ -278,19 +334,21 @@ export const assign = async (req, res) => {
 
   const [team, evaluator] = await Promise.all([
     Team.findOne({ _id: teamId, edition: edition._id }).select("_id").lean(),
-    User.findOne({ _id: evaluatorId, role: "jury" }).select("_id").lean(),
+    User.findOne({ _id: evaluatorId, role: STAGES[stage].role }).select("_id").lean(),
   ]);
   if (!team || !evaluator) return res.status(404).json({ code: "NOT_FOUND" });
-  if (await Evaluation.exists({ edition: edition._id, team: teamId, evaluator: evaluatorId })) {
+  if (await Evaluation.exists({ edition: edition._id, stage, team: teamId, evaluator: evaluatorId })) {
     return res.status(409).json({ code: "ALREADY_ASSIGNED" });
   }
 
   const evaluation = await Evaluation.create({
-    edition: edition._id, team: teamId, evaluator: evaluatorId, assignedBy: req.user._id,
+    edition: edition._id, stage, team: teamId, evaluator: evaluatorId, assignedBy: req.user._id,
   });
-  await notifyAssignments([{ team: teamId, evaluator: evaluatorId }]);
-  await audit(req, "EVALUATION_ASSIGNED", { resource: "evaluation", resourceId: evaluation._id, meta: { teamId, evaluatorId } });
-  res.status(201).json({ id: evaluation._id });
+  await notifyAssignments([{ team: teamId, evaluator: evaluatorId }], stage);
+  await audit(req, "EVALUATION_ASSIGNED", {
+    resource: "evaluation", resourceId: evaluation._id, meta: { stage, teamId, evaluatorId },
+  });
+  res.status(201).json({ id: evaluation._id, stage });
 };
 
 // DELETE /api/admin/evaluations/:id — retirer une affectation (impossible une fois validée)
@@ -304,7 +362,7 @@ export const unassign = async (req, res) => {
   await evaluation.deleteOne();
   await audit(req, "EVALUATION_UNASSIGNED", {
     resource: "evaluation", resourceId: evaluation._id,
-    meta: { teamId: evaluation.team, evaluatorId: evaluation.evaluator, status: evaluation.status },
+    meta: { stage: evaluation.stage, teamId: evaluation.team, evaluatorId: evaluation.evaluator, status: evaluation.status },
   });
   res.json({ ok: true });
 };
@@ -330,32 +388,37 @@ export const reopen = async (req, res) => {
   evaluation.total = null;
   await evaluation.save();
 
+  // Le lien pointe vers l'espace de l'étape (jury ou pilotage)
+  const path = `${STAGES[evaluation.stage].base}/${evaluation._id}`;
   const ev = evaluation.evaluator;
   await Notification.create({
     user: ev._id, type: "evaluation_reopened",
     title: { fr: "Évaluation rouverte", en: "Evaluation reopened" },
     body: { fr: `Motif : ${reason}`, en: `Reason: ${reason}` },
-    link: `/jury/evaluations/${evaluation._id}`,
+    link: path,
   });
   await sendMailSafe({
     to: ev.email,
     ...reopenedMail({
       name: fullName(ev), reason, locale: ev.locale,
-      link: `${process.env.FRONTEND_URL}/jury/evaluations/${evaluation._id}`,
+      link: `${process.env.FRONTEND_URL}${path}`,
     }),
   });
-  await audit(req, "EVALUATION_REOPENED", { resource: "evaluation", resourceId: evaluation._id, meta: { reason } });
+  await audit(req, "EVALUATION_REOPENED", {
+    resource: "evaluation", resourceId: evaluation._id, meta: { stage: evaluation.stage, reason },
+  });
   res.json({ ok: true });
 };
 
 // ---------------------------------------------------------------------------
-// F6.7 — Délibération (note retenue quand les évaluateurs sont trop éloignés)
+// F6.7 — Délibération (étape finale uniquement)
 // ---------------------------------------------------------------------------
 
 // PUT /api/admin/evaluations/teams/:teamId/deliberation — { finalScore, note } ; finalScore null = annuler
 export const setDeliberation = async (req, res) => {
   const edition = await editableEdition(res);
   if (!edition) return;
+  if (stageFrom(req) !== "final") return res.status(400).json({ code: "DELIBERATION_FINAL_ONLY" });
   if (!mongoose.isValidObjectId(req.params.teamId)) return res.status(404).json({ code: "NOT_FOUND" });
   const team = await Team.findOne({ _id: req.params.teamId, edition: edition._id }).select("_id").lean();
   if (!team) return res.status(404).json({ code: "NOT_FOUND" });
@@ -369,7 +432,7 @@ export const setDeliberation = async (req, res) => {
     return res.json({ deliberation: null });
   }
 
-  const grid = await getGrid(edition);
+  const grid = await getGrid(edition, "final");
   const score = Number(finalScore);
   if (!Number.isFinite(score) || score < 0 || score > grid.scale) return res.status(400).json({ code: "INVALID_SCORE" });
   if (!String(note).trim()) return res.status(400).json({ code: "REASON_REQUIRED" });
@@ -384,7 +447,7 @@ export const setDeliberation = async (req, res) => {
 };
 
 // ---------------------------------------------------------------------------
-// F6.8 — Export des notes détaillées
+// F6.8 — Export des notes détaillées (par étape)
 // ---------------------------------------------------------------------------
 
 const EXPORT_LABELS = {
@@ -406,19 +469,20 @@ const EXPORT_LABELS = {
   },
 };
 
-// GET /api/admin/evaluations/export?format=xlsx|csv&lang=fr|en
+// GET /api/admin/evaluations/export?stage=&format=xlsx|csv&lang=fr|en
 export const exportEvaluations = async (req, res) => {
   const edition = await currentEdition(res);
   if (!edition) return;
+  const stage = stageFrom(req);
   const lang = req.query.lang === "en" ? "en" : "fr";
   const L = EXPORT_LABELS[lang];
   const format = req.query.format === "csv" ? "csv" : "xlsx";
 
   const [grid, submissions, evaluations, deliberations] = await Promise.all([
-    getGrid(edition),
+    getGrid(edition, stage),
     evaluableSubmissions(edition),
-    Evaluation.find({ edition: edition._id }).populate("evaluator", "prenom nom").populate("team", "name").lean(),
-    Deliberation.find({ edition: edition._id }).lean(),
+    Evaluation.find({ edition: edition._id, stage }).populate("evaluator", "prenom nom").populate("team", "name").lean(),
+    stage === "final" ? Deliberation.find({ edition: edition._id }).lean() : Promise.resolve([]),
   ]);
   const anonOf = new Map(submissions.map((s) => [String(s.team._id), s.anonCode]));
   const delibOf = new Map(deliberations.map((d) => [String(d.team), d]));
@@ -448,7 +512,7 @@ export const exportEvaluations = async (req, res) => {
       ];
     });
 
-  await audit(req, "EVALUATION_EXPORT", { meta: { format, rows: detailRows.length } });
+  await audit(req, "EVALUATION_EXPORT", { meta: { stage, format, rows: detailRows.length } });
 
   if (format === "csv") {
     // Excel en français attend la virgule décimale (15,6 et non 15.6)
@@ -456,7 +520,7 @@ export const exportEvaluations = async (req, res) => {
     const cell = (v) => `"${String(num(v) ?? "").replace(/"/g, '""')}"`;
     const csv = "﻿" + [detailHeaders, ...detailRows].map((r) => r.map(cell).join(";")).join("\r\n");
     res.setHeader("Content-Type", "text/csv; charset=utf-8");
-    res.setHeader("Content-Disposition", 'attachment; filename="notes-detaillees.csv"');
+    res.setHeader("Content-Disposition", `attachment; filename="notes-${stage}.csv"`);
     return res.send(csv);
   }
 
@@ -502,7 +566,7 @@ export const exportEvaluations = async (req, res) => {
   addSheet(L.detail, detailHeaders, detailRows);
 
   res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-  res.setHeader("Content-Disposition", 'attachment; filename="notes-detaillees.xlsx"');
+  res.setHeader("Content-Disposition", `attachment; filename="notes-${stage}.xlsx"`);
   await wb.xlsx.write(res);
   res.end();
 };

@@ -1,20 +1,25 @@
 "use client";
-
-import { useParams } from "next/navigation";
+import { use } from "react";
 import RequireAuth from "@/components/auth/RequireAuth";
 import AppShell from "@/components/layout/AppShell";
-import JuryEvaluationForm from "@/components/evaluation/JuryEvaluationForm";
+import StageEvaluationForm from "@/components/evaluation/StageEvaluationForm";
+import { getMyEvaluation, saveMyEvaluation, submitMyEvaluation } from "@/lib/evaluation";
+import { downloadJuryVersion } from "@/lib/submission";
 
-// Module 6 : saisie des notes d'une équipe (F6.3)
-export default function JuryEvaluationPage() {
-  const { id } = useParams();
+const juryFns = {
+  get: getMyEvaluation,
+  save: saveMyEvaluation,
+  submit: submitMyEvaluation,
+  download: downloadJuryVersion,
+};
+
+export default function JuryEvaluationPage({ params }) {
+  const { id } = use(params);
   return (
     <RequireAuth roles={["jury"]}>
       {(user) => (
         <AppShell user={user}>
-          <div className="mx-auto max-w-5xl">
-            <JuryEvaluationForm id={id} />
-          </div>
+          <StageEvaluationForm id={id} ns="jury" backHref="/jury/evaluations" fns={juryFns} />
         </AppShell>
       )}
     </RequireAuth>

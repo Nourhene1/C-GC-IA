@@ -15,10 +15,14 @@ import Countdown from "@/components/submission/Countdown";
 import StatusBadge from "@/components/submission/StatusBadge";
 import VersionLine from "@/components/submission/VersionLine";
 
-function DeliverableCard({ item, rule, canDeposit, onDeposited }) {
+// Une carte par livrable. La fenêtre de dépôt vient de rule.window (propre à chaque livrable).
+function DeliverableCard({ item, rule, onDeposited }) {
   const t = useTranslations("submission");
+  const format = useFormatter();
   const errorMessage = useSubmissionError();
   const { kind, current, history } = item;
+  const canDeposit = rule.window.canDeposit;
+  const deadlineText = format.dateTime(new Date(rule.window.deadline), { dateStyle: "long", timeStyle: "short" });
 
   const [mode, setMode] = useState("file"); // file | link
   const [file, setFile] = useState(null);
@@ -82,6 +86,9 @@ function DeliverableCard({ item, rule, canDeposit, onDeposited }) {
           <p className="mt-1 text-xs text-slate-500">
             {t("rules.formats", { formats: rule.exts.join(", ") })} · {t("rules.maxSize", { maxMb: rule.maxMb })}
             {rule.link && ` · ${t("rules.orLink")}`}
+          </p>
+          <p className={`mt-1 text-xs font-semibold ${canDeposit ? "text-slate-600" : "text-red-600"}`}>
+            {canDeposit ? t("window.deadline", { date: deadlineText }) : t("window.closed")}
           </p>
         </div>
         {current ? (
@@ -207,7 +214,7 @@ export default function SubmissionSection() {
   if (error && !data) return <ErrorAlert error={error} />;
   if (!data) return <Spinner />;
 
-  // L'état de la fenêtre est recalculé chaque seconde ; le serveur reste l'autorité
+  // Fenêtre générale (date limite de dépôt) affichée en en-tête ; chaque livrable a la sienne
   const nowMs = Date.now() + offset;
   const deadline = new Date(data.window.deadline).getTime();
   const closesAt = new Date(data.window.closesAt).getTime();
@@ -222,7 +229,7 @@ export default function SubmissionSection() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Fenêtre de dépôt */}
+      {/* Fenêtre générale */}
       <section className={card}>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-start gap-3">
@@ -272,7 +279,6 @@ export default function SubmissionSection() {
                     date: format.dateTime(new Date(receipt.receivedAt), { dateStyle: "full", timeStyle: "medium" }),
                   })}
                 </p>
-             
                 {receipt.late && <p className="mt-2 text-sm font-semibold text-amber-700">{t("receipt.late")}</p>}
                 <p className="mt-2 text-xs text-emerald-700">{t("receipt.emailSent")}</p>
               </div>
@@ -287,14 +293,13 @@ export default function SubmissionSection() {
 
       <ErrorAlert error={error} />
 
-      {/* Livrables */}
+      {/* Livrables : chacun avec sa propre date de fermeture */}
       <div className="grid gap-6 lg:grid-cols-2">
         {data.items.map((item) => (
           <DeliverableCard
             key={item.kind}
             item={item}
             rule={data.rules[item.kind]}
-            canDeposit={canDeposit}
             onDeposited={onDeposited}
           />
         ))}

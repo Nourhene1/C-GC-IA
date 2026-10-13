@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import {
-  Trophy, Eye, Send, CalendarClock, Undo2, Settings2, ArrowUp, ArrowDown, X, Plus, FileSpreadsheet,
+  Trophy, Eye, Send, CalendarClock, Undo2, Settings2, ArrowUp, ArrowDown, X, FileSpreadsheet,
   FileText, Award, History, AlertTriangle, Lock, Mail, ExternalLink,
 } from "lucide-react";
 import Spinner from "@/components/ui/Spinner";
@@ -10,6 +10,7 @@ import { Alert, ErrorAlert } from "@/components/ui/Alert";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { btn, card, sectionTitle } from "@/components/ui/styles";
 import { smallInput } from "@/components/admin/content/TextPair";
+import StageWeightsCard from "@/components/evaluation/StageWeightsCard";
 import { fromDateTimeInput } from "@/lib/content";
 import {
   getResultsAdmin, saveResultsSettings, publishResults, withdrawResults, resendResults,
@@ -172,7 +173,7 @@ function SettingsCard({ data, onSaved }) {
   );
 }
 
-// F7.1 / F7.3 : classement (prévisualisation, ou version publiée figée)
+// F7.1 / F7.3 : classement avec notes pré-évaluation, finale et totale
 function RankingCard({ data }) {
   const t = useTranslations("results");
   const locale = useLocale();
@@ -180,6 +181,8 @@ function RankingCard({ data }) {
   const pub = data.publication;
   const rows = pub ? pub.rows : [...data.preview.ranked, ...data.preview.unranked];
   const source = pub ? "published" : "preview";
+  // Valeur affichée : "—" si la note n'existe pas (anciennes publications, équipe incomplète)
+  const fmt = (v) => (v === null || v === undefined ? "—" : v);
 
   return (
     <section className={card}>
@@ -190,6 +193,9 @@ function RankingCard({ data }) {
             {pub ? t("admin.officialRanking", { version: pub.version }) : t("admin.previewTitle")}
           </h2>
           <p className="mt-1 text-sm text-slate-500">{pub ? t("admin.frozenHint") : t("admin.previewHint")}</p>
+          <p className="mt-1 text-xs text-slate-500">
+            {t("admin.scores.weightsHint", { pre: data.weights.pre, final: data.weights.final })}
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <button type="button" className={btn.outline} onClick={() => exportResults("xlsx", source, locale).catch(setError)}>
@@ -211,7 +217,9 @@ function RankingCard({ data }) {
               <tr className="border-b border-slate-100 text-left text-xs uppercase tracking-wide text-slate-500">
                 <th className="py-2 pr-3">{t("rank")}</th>
                 <th className="px-3 py-2">{t("team")}</th>
-                <th className="px-3 py-2 text-right">{t("score", { scale: data.scale })}</th>
+                <th className="px-3 py-2 text-right">{t("admin.scores.pre", { scale: data.preScale })}</th>
+                <th className="px-3 py-2 text-right">{t("admin.scores.final", { scale: data.scale })}</th>
+                <th className="px-3 py-2 text-right">{t("admin.scores.total", { scale: data.scale })}</th>
                 <th className="px-3 py-2 text-center">{t("admin.evaluations")}</th>
                 <th className="px-3 py-2">{t("admin.notes")}</th>
                 <th className="px-3 py-2" />
@@ -225,7 +233,9 @@ function RankingCard({ data }) {
                     <p className="font-semibold text-primary">{r.name}</p>
                     <p className="text-xs text-slate-500">{r.etablissement}</p>
                   </td>
-                  <td className="px-3 py-3 text-right font-bold text-primary">{r.score ?? "—"}</td>
+                  <td className="px-3 py-3 text-right text-slate-600">{fmt(r.preScore)}</td>
+                  <td className="px-3 py-3 text-right font-semibold text-primary">{fmt(r.score)}</td>
+                  <td className="px-3 py-3 text-right font-bold text-accent">{fmt(r.totalScore)}</td>
                   <td className="px-3 py-3 text-center">{r.evaluations}{r.assigned !== undefined && `/${r.assigned}`}</td>
                   <td className="px-3 py-3">
                     <div className="flex flex-wrap gap-1">
@@ -251,6 +261,7 @@ function RankingCard({ data }) {
           </table>
         </div>
       )}
+      <p className="mt-3 text-xs text-slate-500">{t("admin.scores.rankNote")}</p>
     </section>
   );
 }
@@ -344,23 +355,23 @@ export default function ResultsAdmin() {
   useEffect(() => { reload(); }, [reload]);
 
   const run = async (fn, success) => {
+    // Ferme la confirmation tout de suite : elle ne doit jamais rester ouverte
+    setDialog(null);
+    setReason("");
     setBusy(true);
     setError(null);
     setMessage(null);
     try {
       const res = await fn();
-      await reload();
       setMessage(typeof success === "function" ? success(res) : success);
-      setDialog(null);
-      setReason("");
     } catch (err) {
       setError(err);
-      setDialog(null);
     } finally {
+      // Rechargement indépendant : une erreur ici ne doit pas garder le dialogue ouvert
+      await reload();
       setBusy(false);
     }
   };
-
   if (!data) return error ? <ErrorAlert error={error} /> : <Spinner />;
 
   const confirmPublish = () => run(() => publishResults(dialog.publishAt),
@@ -384,6 +395,7 @@ export default function ResultsAdmin() {
 
       <PublicationCard data={data} busy={busy} onResend={resend} onWithdraw={() => setDialog({ type: "withdraw" })} />
       {!data.publication && <Warnings warnings={warnings} />}
+      <StageWeightsCard locked={!!data.publication} onSaved={reload} />
       <RankingCard data={data} />
       {!data.publication && <PublishCard data={data} onPublish={(publishAt) => setDialog({ type: "publish", publishAt })} />}
       <SettingsCard key={JSON.stringify(data.settings) + !!data.publication} data={data} onSaved={reload} />

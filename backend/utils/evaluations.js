@@ -6,19 +6,33 @@ import Notification from "../models/Notification.js";
 import User from "../models/User.js";
 import { sendMailSafe } from "./mailer.js";
 import { assignmentMail } from "./evaluationEmails.js";
+import { STAGES } from "./stages.js";
 
-// Grille de l'édition (créée vide la première fois)
-export async function getGrid(edition) {
-  return (
-    (await EvaluationGrid.findOne({ edition: edition._id })) ||
-    EvaluationGrid.create({ edition: edition._id, criteria: [] })
-  );
+// Grille d'une édition pour une étape. Créée si absente, en une seule opération atomique.
+export async function getGrid(edition, stage = "final") {
+  const filter = { edition: edition._id, stage };
+
+  const existing = await EvaluationGrid.findOne(filter);
+  if (existing) return existing;
+
+  try {
+    return await EvaluationGrid.create({ ...filter, criteria: [] });
+  } catch (err) {
+    if (err.code !== 11000) throw err;
+
+    // Création simultanée : la grille existe déjà, on la relit
+    const again = await EvaluationGrid.findOne(filter);
+    if (again) return again;
+
+    // Sinon, un index obsolète bloque la création
+    console.error("Index bloquant sur evaluationgrids :", err.keyPattern);
+    throw new Error(`Création de la grille impossible (stage=${stage}), index bloquant : ${JSON.stringify(err.keyPattern)}`);
+  }
 }
 
-// F6.5 : dès qu'une évaluation a été validée une fois, la grille ne peut plus changer
-// (sinon les notes déjà données ne voudraient plus rien dire)
-export const isGridLocked = (edition) =>
-  Evaluation.exists({ edition: edition._id, submittedAt: { $ne: null } }).then(Boolean);
+// Une fois qu'une évaluation de l'étape a été validée, sa grille ne peut plus changer
+export const isGridLocked = (edition, stage = "final") =>
+  Evaluation.exists({ edition: edition._id, stage, submittedAt: { $ne: null } }).then(Boolean);
 
 // Équipes à évaluer : celles qui ont déposé au moins un livrable
 export async function evaluableSubmissions(edition) {
@@ -26,14 +40,15 @@ export async function evaluableSubmissions(edition) {
   return subs.filter((s) => s.team && s.items.some((i) => i.versions.length > 0));
 }
 
-// F6.2 : prévient chaque évaluateur de ses nouvelles affectations (in-app + email)
-export async function notifyAssignments(created) {
+// Prévient chaque évaluateur de ses nouvelles affectations (in-app + email)
+export async function notifyAssignments(created, stage = "final") {
   const countBy = new Map();
   for (const a of created) countBy.set(String(a.evaluator), (countBy.get(String(a.evaluator)) || 0) + 1);
   if (countBy.size === 0) return;
 
+  const { base } = STAGES[stage];
   const users = await User.find({ _id: { $in: [...countBy.keys()] } }).select("prenom nom email locale").lean();
-  const link = `${process.env.FRONTEND_URL}/jury/evaluations`;
+  const link = `${process.env.FRONTEND_URL}${base}`;
 
   await Notification.insertMany(
     users.map((u) => {
@@ -46,14 +61,16 @@ export async function notifyAssignments(created) {
           fr: n > 1 ? `${n} travaux vous ont été attribués.` : "Un travail vous a été attribué.",
           en: n > 1 ? `${n} projects have been assigned to you.` : "A project has been assigned to you.",
         },
-        link: "/jury/evaluations",
+        link: base,
       };
     })
   );
   for (const u of users) {
     await sendMailSafe({
       to: u.email,
-      ...assignmentMail({ name: `${u.prenom} ${u.nom}`, count: countBy.get(String(u._id)), locale: u.locale, link }),
+      ...assignmentMail({
+        name: `${u.prenom} ${u.nom}`, count: countBy.get(String(u._id)), locale: u.locale, link, stage,
+      }),
     });
   }
 }

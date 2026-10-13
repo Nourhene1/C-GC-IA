@@ -3,6 +3,7 @@ import { protect, authorize } from "../middleware/auth.js";
 import {
   getAdminGrid, updateGrid, updateSettings, getOverview, getEvaluationDetail,
   autoAssign, assign, unassign, reopen, setDeliberation, exportEvaluations,
+  getStageWeights, setStageWeights,
 } from "../controllers/evaluationAdminController.js";
 
 const router = Router();
@@ -16,6 +17,8 @@ router.patch("/settings", updateSettings);                      // F6.2 / F6.7 :
 router.post("/auto-assign", autoAssign);                        // F6.2 : affectation équilibrée
 router.post("/assign", assign);                                 // F6.2 : affectation manuelle
 router.get("/export", exportEvaluations);                       // F6.8 (avant "/:id" !)
+router.get("/stage-weights", getStageWeights);                  // pondération des étapes (avant "/:id")
+router.patch("/stage-weights", setStageWeights);                // pondération des étapes (avant "/:id")
 router.put("/teams/:teamId/deliberation", setDeliberation);     // F6.7
 router.get("/:id", getEvaluationDetail);
 router.delete("/:id", unassign);

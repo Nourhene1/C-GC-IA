@@ -54,16 +54,18 @@ function AddEvaluator({ team, evaluators, onAdd }) {
 
 const FILTERS = ["all", "unfinished", "finished", "unassigned"];
 
-// F6.2 + F6.6 : affectations et état d'avancement
-export default function TrackingPanel({ data, onChanged }) {
+// F6.2 + F6.6 : affectations et état d'avancement, pour une étape ("final" ou "pre")
+export default function TrackingPanel({ data, stage = "final", onChanged }) {
   const t = useTranslations("evaluation");
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
   const [filter, setFilter] = useState("all");
   const [openId, setOpenId] = useState(null);
-  const [toRemove, setToRemove] = useState(null); // affectation à retirer (confirmation)
+  const [toRemove, setToRemove] = useState(null);
   const { counts, evaluators, teams, grid } = data;
+
+  const noEvaluatorsText = stage === "pre" ? t("admin.noPilotage") : t("tracking.noJury");
 
   const run = async (fn) => {
     setBusy(true);
@@ -71,7 +73,7 @@ export default function TrackingPanel({ data, onChanged }) {
     setMessage(null);
     try {
       await fn();
-      await onChanged();
+      await onChanged?.();
     } catch (err) {
       setError(err);
     } finally {
@@ -79,12 +81,13 @@ export default function TrackingPanel({ data, onChanged }) {
     }
   };
 
+  // L'étape est transmise à chaque appel : sans elle, l'affectation partirait dans le jury
   const auto = () => run(async () => {
-    const res = await autoAssign();
+    const res = await autoAssign(stage);
     setMessage(res.created ? t("tracking.autoDone", { count: res.created }) : t("tracking.autoNothing"));
-    if (res.notEnoughJury) setError("NOT_ENOUGH_JURY");
+    if (res.notEnoughEvaluators) setError("NOT_ENOUGH_JURY");
   });
-  const add = (teamId, evaluatorId) => run(() => assignEvaluator(teamId, evaluatorId));
+  const add = (teamId, evaluatorId) => run(() => assignEvaluator(teamId, evaluatorId, stage));
   const confirmRemove = async () => {
     await run(() => unassignEvaluation(toRemove.id));
     setToRemove(null);
@@ -134,7 +137,7 @@ export default function TrackingPanel({ data, onChanged }) {
       <section className={card}>
         <h2 className={sectionTitle}><UserRound className="size-5 text-accent" /> {t("tracking.byEvaluator")}</h2>
         {evaluators.length === 0 ? (
-          <p className="mt-4 text-sm text-slate-500">{t("tracking.noJury")}</p>
+          <p className="mt-4 text-sm text-slate-500">{noEvaluatorsText}</p>
         ) : (
           <div className="mt-4 overflow-x-auto">
             <table className="w-full text-sm">

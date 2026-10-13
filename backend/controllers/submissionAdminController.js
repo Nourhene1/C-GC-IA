@@ -188,7 +188,7 @@ export const juryDownload = async (req, res) => {
   const { anonymize } = settingsOf(edition);
   await audit(req, "SUBMISSION_DOWNLOAD", {
     resource: "submission", resourceId: submission._id,
-    meta: { kind: found.kind, version: found.version.version, by: "jury" },
+    meta: { kind: found.kind, version: found.version.version, by: req.user.role },
   });
   sendVersionFile(
     res, found.version,

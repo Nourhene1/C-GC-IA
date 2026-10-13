@@ -18,6 +18,11 @@ const rowSchema = new mongoose.Schema(
     tied:          { type: Boolean, default: false }, // ex æquo (F7.2)
     decidedBy:     { type: String, default: null },  // critère qui a départagé l'équipe de la précédente
     evaluations:   { type: Number, default: 0 },     // évaluations validées
+
+    // Notes par étape, figées avec le classement (F7.4)
+    preScore:      { type: Number, default: null },  // moyenne pré-évaluation, sur preScale
+    finalScore:    { type: Number, default: null },  // moyenne évaluation finale, sur scale
+    totalScore:    { type: Number, default: null },  // note totale pondérée, sur scale
   },
   { _id: false }
 );
@@ -32,10 +37,15 @@ const rankingSchema = new mongoose.Schema(
     publishAt: { type: Date, required: true },                // date/heure de publication officielle
     rows:      [rowSchema],
     settings: {                                               // règles utilisées pour ce classement
-      scale:       Number,
-      podiumSize:  Number,
-      showScores:  Boolean,
-      tieBreakers: [String],
+      scale:            Number,
+      preScale:         { type: Number, default: 20 },        // barème de la pré-évaluation
+      weights: {                                              // pondération des étapes, en %
+        pre:   { type: Number, default: 30 },
+        final: { type: Number, default: 70 },
+      },
+      podiumSize:       Number,
+      showScores:       Boolean,
+      tieBreakers:      [String],
       sendCertificates: Boolean,
     },
     publishedBy:    { type: ObjectId, ref: "User" },

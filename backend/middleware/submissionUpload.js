@@ -29,9 +29,9 @@ const uploaders = Object.fromEntries(
   ])
 );
 
-// Refuse tout de suite (avant de recevoir le fichier) si la fenêtre est fermée
+// Refuse tout de suite (avant de recevoir le fichier) si la fenêtre du livrable est fermée
 export const requireDepositWindow = async (req, res, next) => {
-  const win = getWindow(req.edition);
+  const win = getWindow(req.edition, new Date(), req.params.kind);
   if (win.canDeposit) return next();
 
   await audit(req, "SUBMISSION_REJECTED", { meta: { kind: req.params.kind, reason: win.state } });

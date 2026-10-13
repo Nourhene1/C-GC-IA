@@ -119,6 +119,12 @@ editionSchema.pre("validate", function () {
   if (d.sessionOpen >= d.submissionDeadline) {
     this.invalidate("dates.submissionDeadline", "La date limite doit suivre l'ouverture du sujet");
   }
+  // La date d'annonce des résultats fixe la limite de dépôt des présentations
+  if (!d.resultsDate) {
+    this.invalidate("dates.resultsDate", "La date d'annonce des résultats est obligatoire (limite de dépôt des présentations)");
+  } else if (d.submissionDeadline && d.resultsDate <= d.submissionDeadline) {
+    this.invalidate("dates.resultsDate", "L'annonce des résultats doit être après la date limite de dépôt");
+  }
   if (d.evaluationStart && d.evaluationEnd && d.evaluationStart >= d.evaluationEnd) {
     this.invalidate("dates.evaluationEnd", "La fin de l'évaluation doit suivre son début");
   }

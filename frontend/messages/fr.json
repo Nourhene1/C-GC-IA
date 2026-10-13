@@ -23,7 +23,8 @@
       "admin": "Administrateur",
       "chef": "Chef d'équipe",
       "membre": "Membre",
-      "jury": "Jury"
+      "jury": "Jury",
+      "pilotage": "Pilotage"
     }
   },
   "nav": {
@@ -147,6 +148,7 @@
     "toLogin": "Aller à la connexion"
   },
   "errors": {
+    "STAGE_WEIGHTS_INVALID": "Les pondérations doivent être comprises entre 0 et 100 et totaliser 100 %",
     "FIELDS_REQUIRED": "Tous les champs obligatoires doivent être remplis",
     "CREDENTIALS_REQUIRED": "Email et mot de passe requis",
     "PASSWORD_TOO_SHORT": "Le mot de passe doit contenir au moins 8 caractères",
@@ -194,7 +196,14 @@
     "INVALID_EMAIL": "Adresse email invalide",
     "JURY_EMAIL_TAKEN": "Cet email appartient déjà à un compte équipe ou administrateur",
     "JURY_EMAIL_DUPLICATE": "Deux membres du jury ont le même email",
+    "JURY_EMAIL_OTHER_STAFF": "Cet email appartient déjà à un membre du pilotage",
+    "EMAIL_DUPLICATE": "Deux membres ont le même email",
+    "PILOTAGE_EMAIL_REQUIRED": "Chaque membre du pilotage doit avoir un email",
+    "PILOTAGE_EMAIL_TAKEN": "Cet email appartient déjà à un compte équipe ou administrateur",
+    "PILOTAGE_EMAIL_OTHER_STAFF": "Cet email appartient déjà à un membre du jury",
     "ACCOUNT_ALREADY_ACTIVE": "Ce compte est déjà activé",
+    "NO_PILOTAGE": "Aucun membre du pilotage : ajoutez-les dans Contenu → Jury",
+    "DELIBERATION_FINAL_ONLY": "La délibération ne concerne que l'évaluation finale",
     "GRID_LOCKED": "La grille est verrouillée : des évaluations ont déjà été validées",
     "GRID_INVALID_SCALE": "Le barème doit être compris entre 1 et 1000",
     "GRID_EMPTY": "Ajoutez au moins un critère",
@@ -220,6 +229,9 @@
     "NO_CERTIFICATE": "Aucune attestation n'est disponible pour votre compte"
   },
   "dashboard": {
+    "pilotageTitle": "Espace pilotage",
+    "pilotageText": "Consultez les travaux à pré-évaluer et saisissez vos notes à partir de la grille d'évaluation.",
+    "pilotageEvaluations": "Mes pré-évaluations",
     "noTeamTitle": "Vous n'avez pas encore d'équipe",
     "noTeamText": "Créez votre équipe pour participer à la compétition.",
     "createTeam": "Créer mon équipe",
@@ -740,10 +752,19 @@
     "moveUp": "Monter",
     "moveDown": "Descendre",
     "saving": "Enregistrement et traduction en cours…",
+    "juryTitle": "Jury",
+    "juryDescription": "Membres du jury affichés sur le site. Chaque membre avec un email reçoit un lien pour créer son compte.",
     "juryEmail": "Email (invitation au compte jury)",
     "juryEmailHint": "Facultatif et non affiché sur le site. À l'enregistrement, un lien d'activation est envoyé à cette adresse.",
     "juryInvited": "Invitation envoyée",
     "juryActive": "Compte activé",
+    "pilotageTitle": "Pilotage (pré-évaluation)",
+    "pilotageDescription": "Personnel de pré-évaluation créé par le comité. Ces membres ne sont jamais affichés sur le site.",
+    "addPilotage": "Ajouter un membre du pilotage",
+    "pilotageEmail": "Email (obligatoire)",
+    "pilotageEmailHint": "Un lien d'activation est envoyé à cette adresse pour créer le compte.",
+    "pilotageInvited": "Invitation envoyée",
+    "pilotageActive": "Compte activé",
     "resendInvite": "Renvoyer l'invitation",
     "inviteSending": "Envoi…",
     "inviteSent": "Invitation renvoyée"
@@ -1077,13 +1098,28 @@
     "cancel": "Annuler",
     "close": "Fermer",
     "admin": {
+      "trackingFinal": "Affectation du jury (évaluation finale)",
+      "noPilotage": "Aucun membre du pilotage. Ajoutez-les avec leur email dans Contenu → Jury.",
+      "trackingPre": "Affectation du pilotage (pré-évaluation)",
       "title": "Évaluations",
       "subtitle": "Grille, affectation des évaluateurs et suivi des notes — édition {year}.",
+      "mainTabs": {
+        "tracking": "Affectations & suivi",
+        "gridFinal": "Grille jury",
+        "gridPre": "Grille pré-évaluation",
+        "results": "Résultats"
+      },
       "tabs": {
         "tracking": "Affectations & suivi",
         "grid": "Grille d'évaluation",
         "results": "Résultats"
-      }
+      },
+      "gridStageLabel": "Choix de la grille",
+      "gridStages": {
+        "final": "Grille jury (évaluation finale)",
+        "pre": "Grille pré-évaluation (pilotage)"
+      },
+      "currentGrid": "Grille affichée"
     },
     "grid": {
       "title": "Grille d'évaluation",
@@ -1151,7 +1187,7 @@
       "noTeams": "Aucune équipe n'a encore déposé de travail.",
       "noMatch": "Aucune équipe pour ce filtre.",
       "chipHint": "Cliquez sur un évaluateur pour voir ses notes détaillées. Gris : à faire · orange : en cours · vert : terminée.",
-      "removeTitle": "Retirer cet évaluateur ?"
+      "removeTitle": "Retirer cet évaluateur ?"
     },
     "detail": {
       "title": "Évaluation",
@@ -1172,6 +1208,24 @@
       "reopenedOk": "Évaluation rouverte. L'évaluateur a été prévenu."
     },
     "results": {
+      "scores": {
+  "pre": "Pré-évaluation /{scale}",
+  "final": "Finale /{scale}",
+  "total": "Total /{scale}",
+  "weightsHint": "Pondération : pré-évaluation {pre} % · finale {final} %",
+  "rankNote": "Le classement suit la note finale. La note totale est indiquée à titre informatif."
+},
+"weights": {
+  "title": "Pondération des étapes",
+  "hint": "Part de chaque étape dans la note totale. La somme doit être égale à 100 %.",
+  "pre": "Pré-évaluation",
+  "final": "Évaluation finale",
+  "sum": "Somme : {sum} %",
+  "save": "Enregistrer la pondération",
+  "saving": "Enregistrement…",
+  "saved": "Pondération enregistrée.",
+  "lockedHint": "Verrouillée : les résultats sont publiés. Retirez la publication pour modifier."
+},
       "title": "Résultats par équipe",
       "hint": "Moyenne des évaluations terminées. Une alerte est levée quand l'écart entre évaluateurs dépasse {gap} / {scale} : le jury de délibération peut alors fixer la note retenue.",
       "done": "Terminées",
@@ -1214,7 +1268,7 @@
       "submitted": "Évaluation validée. Merci !",
       "lockedText": "Évaluation validée : la saisie est verrouillée. Contactez le comité d'organisation pour toute correction.",
       "closedText": "La période d'évaluation est terminée : la saisie n'est plus possible.",
-      "confirmTitle": "Valider définitivement cette évaluation ?",
+      "confirmTitle": "Valider définitivement cette évaluation ?",
       "confirmText": "Une fois validée, vos notes et votre commentaire seront verrouillés : vous ne pourrez plus les modifier. Seul le comité d'organisation pourra rouvrir l'évaluation.",
       "confirmOk": "Oui, valider",
       "confirmCancel": "Revenir à la saisie",
@@ -1239,106 +1293,136 @@
       "pending": "À faire",
       "draft": "En cours",
       "submitted": "Terminées"
+    },
+    "pilotage": {
+      "title": "Pré-évaluation",
+      "progress": "{done} sur {total} pré-évaluation(s) terminée(s).",
+      "anonymized": "Évaluation à l'aveugle : les équipes sont identifiées par un code.",
+      "until": "Pré-évaluations ouvertes jusqu'au {date}.",
+      "closedOn": "Période de pré-évaluation terminée le {date}.",
+      "gridNotReady": "La grille de pré-évaluation n'a pas encore été publiée par le comité d'organisation.",
+      "empty": "Aucune équipe ne vous a encore été attribuée.",
+      "notYetTitle": "Les pré-évaluations n'ont pas commencé",
+      "notYetText": "Vous pourrez pré-évaluer les travaux après la clôture des dépôts.",
+      "confidential": "Vos notes sont confidentielles : seuls les administrateurs peuvent les consulter."
     }
   },
-  "results": {
+ "results": {
+  "title": "Résultats",
+  "subtitle": "Classement officiel de la compétition.",
+  "officialSubtitle": "Classement officiel — {edition}. Publié le {date}.",
+  "podium": "Le podium",
+  "fullRanking": "Classement complet",
+  "rank": "Rang",
+  "team": "Équipe",
+  "school": "Établissement",
+  "score": "Note /{scale}",
+  "tied": "ex æquo",
+  "tiedHint": "Les équipes ex æquo partagent le même rang.",
+  "notYetTitle": "Les résultats ne sont pas encore publiés",
+  "notYetText": "Le classement officiel sera publié ici à la fin de la phase d'évaluation.",
+  "scheduledFor": "Le classement officiel sera publié le {date}.",
+  "tieBreakers": {
+    "lowestGap": "Écart le plus faible entre évaluateurs",
+    "earliestSubmission": "Dépôt le plus tôt",
+    "criterion": "Meilleure note au critère « {label} »"
+  },
+  "dashboard": {
+    "title": "Les résultats sont publiés !",
+    "text": "Consultez le classement officiel et téléchargez votre attestation.",
+    "view": "Voir le classement",
+    "certificate": "Mon attestation (PDF)"
+  },
+  "admin": {
     "title": "Résultats",
-    "subtitle": "Classement officiel de la compétition.",
-    "officialSubtitle": "Classement officiel — {edition}. Publié le {date}.",
-    "podium": "Le podium",
-    "fullRanking": "Classement complet",
-    "rank": "Rang",
-    "team": "Équipe",
-    "school": "Établissement",
-    "score": "Note /{scale}",
-    "tied": "ex æquo",
-    "tiedHint": "Les équipes ex æquo partagent le même rang.",
-    "notYetTitle": "Les résultats ne sont pas encore publiés",
-    "notYetText": "Le classement officiel sera publié ici à la fin de la phase d'évaluation.",
-    "scheduledFor": "Le classement officiel sera publié le {date}.",
-    "tieBreakers": {
-      "lowestGap": "Écart le plus faible entre évaluateurs",
-      "earliestSubmission": "Dépôt le plus tôt",
-      "criterion": "Meilleure note au critère « {label} »"
+    "subtitle": "Classement, publication officielle et attestations — édition {year}.",
+    "notPublished": "Résultats non publiés",
+    "previewHint": "Prévisualisation visible uniquement par les administrateurs. Elle se met à jour avec les évaluations validées.",
+    "publishedOn": "Publiés le {date} (version {version})",
+    "scheduledFor": "Publication programmée le {date} (version {version})",
+    "lockedHint": "Notes, délibérations et règles verrouillées tant que cette publication est active.",
+    "notifiedOn": "Équipes prévenues et attestations envoyées le {date}",
+    "viewPublic": "Voir la page publique",
+    "resend": "Renvoyer les attestations",
+    "withdraw": "Retirer la publication",
+    "cancelSchedule": "Annuler la programmation",
+    "rules": "Règles du classement",
+    "rulesLocked": "Les règles sont verrouillées pendant la publication.",
+    "tieBreakTitle": "Départage des ex æquo",
+    "tieBreakHint": "Si deux équipes ont la même note, ces critères sont appliqués dans l'ordre. Si l'égalité persiste, elles sont classées ex æquo.",
+    "noTieBreak": "Aucun critère : les égalités restent ex æquo.",
+    "addTieBreak": "Ajouter un critère de départage",
+    "up": "Monter",
+    "down": "Descendre",
+    "remove": "Retirer",
+    "podiumSize": "Équipes sur le podium",
+    "showScores": "Afficher les notes sur la page publique",
+    "sendCertificates": "Envoyer les attestations par email à la publication",
+    "saveRules": "Enregistrer les règles",
+    "rulesSaved": "Règles enregistrées.",
+    "previewTitle": "Prévisualisation du classement",
+    "officialRanking": "Classement officiel (version {version})",
+    "frozenHint": "Version figée au moment de la publication.",
+    "empty": "Aucune équipe à classer pour l'instant.",
+    "evaluations": "Évaluations",
+    "notes": "Remarques",
+    "decidedBy": "départagée : {rule}",
+    "deliberated": "note délibérée",
+    "unranked": "non classée",
+    "certificates": "Attestations",
+    "certificatesHint": "Télécharger les attestations des membres de l'équipe (PDF)",
+    "checkTitle": "À vérifier avant de publier",
+    "warnings": {
+      "alerts": "Écart de notation non tranché : {teams}",
+      "incomplete": "Évaluations pas toutes validées : {teams}",
+      "unranked": "Sans note validée (non classées) : {teams}"
     },
-    "dashboard": {
-      "title": "Les résultats sont publiés !",
-      "text": "Consultez le classement officiel et téléchargez votre attestation.",
-      "view": "Voir le classement",
-      "certificate": "Mon attestation (PDF)"
+    "publishTitle": "Publication officielle",
+    "publishHint": "Le classement est figé au moment de la publication. Ensuite, les notes ne peuvent plus être modifiées sans retirer la publication (motif obligatoire, tracé).",
+    "now": "Publier maintenant",
+    "later": "Programmer à une date",
+    "publishNow": "Publier maintenant",
+    "schedule": "Programmer la publication",
+    "confirmPublishTitle": "Publier le classement officiel ?",
+    "confirmScheduleTitle": "Programmer la publication ?",
+    "confirmPublishText": "{count, plural, one {# équipe classée} other {# équipes classées}}. Le classement sera figé et les notes verrouillées. Les équipes seront prévenues à l'heure de publication.",
+    "confirmWarnings": "Attention : certains points sont encore à vérifier (voir l'encadré).",
+    "confirmWithdrawTitle": "Retirer la publication ?",
+    "confirmWithdrawText": "Le classement ne sera plus visible et les notes seront de nouveau modifiables. Le retrait et son motif sont enregistrés dans l'historique.",
+    "reason": "Motif du retrait (obligatoire)",
+    "cancel": "Annuler",
+    "publishedOk": "Classement publié. Les équipes ont été prévenues.",
+    "scheduledOk": "Publication programmée.",
+    "withdrawnOk": "Publication retirée.",
+    "resentOk": "{count} email(s) envoyé(s) avec les attestations.",
+    "history": "Publication history",
+    "historyLine": "Publication du {date} par {name}",
+    "withdrawnLine": "Retirée le {date} par {name} — « {reason} »",
+    "status": {
+      "scheduled": "Programmée",
+      "published": "Publiée",
+      "withdrawn": "Retirée"
     },
-    "admin": {
-      "title": "Résultats",
-      "subtitle": "Classement, publication officielle et attestations — édition {year}.",
-      "notPublished": "Résultats non publiés",
-      "previewHint": "Prévisualisation visible uniquement par les administrateurs. Elle se met à jour avec les évaluations validées.",
-      "publishedOn": "Publiés le {date} (version {version})",
-      "scheduledFor": "Publication programmée le {date} (version {version})",
-      "lockedHint": "Notes, délibérations et règles verrouillées tant que cette publication est active.",
-      "notifiedOn": "Équipes prévenues et attestations envoyées le {date}",
-      "viewPublic": "Voir la page publique",
-      "resend": "Renvoyer les attestations",
-      "withdraw": "Retirer la publication",
-      "cancelSchedule": "Annuler la programmation",
-      "rules": "Règles du classement",
-      "rulesLocked": "Les règles sont verrouillées pendant la publication.",
-      "tieBreakTitle": "Départage des ex æquo",
-      "tieBreakHint": "Si deux équipes ont la même note, ces critères sont appliqués dans l'ordre. Si l'égalité persiste, elles sont classées ex æquo.",
-      "noTieBreak": "Aucun critère : les égalités restent ex æquo.",
-      "addTieBreak": "Ajouter un critère de départage",
-      "up": "Monter",
-      "down": "Descendre",
-      "remove": "Retirer",
-      "podiumSize": "Équipes sur le podium",
-      "showScores": "Afficher les notes sur la page publique",
-      "sendCertificates": "Envoyer les attestations par email à la publication",
-      "saveRules": "Enregistrer les règles",
-      "rulesSaved": "Règles enregistrées.",
-      "previewTitle": "Prévisualisation du classement",
-      "officialRanking": "Classement officiel (version {version})",
-      "frozenHint": "Version figée au moment de la publication.",
-      "empty": "Aucune équipe à classer pour l'instant.",
-      "evaluations": "Évaluations",
-      "notes": "Remarques",
-      "decidedBy": "départagée : {rule}",
-      "deliberated": "note délibérée",
-      "unranked": "non classée",
-      "certificates": "Attestations",
-      "certificatesHint": "Télécharger les attestations des membres de l'équipe (PDF)",
-      "checkTitle": "À vérifier avant de publier",
-      "warnings": {
-        "alerts": "Écart de notation non tranché : {teams}",
-        "incomplete": "Évaluations pas toutes validées : {teams}",
-        "unranked": "Sans note validée (non classées) : {teams}"
-      },
-      "publishTitle": "Publication officielle",
-      "publishHint": "Le classement est figé au moment de la publication. Ensuite, les notes ne peuvent plus être modifiées sans retirer la publication (motif obligatoire, tracé).",
-      "now": "Publier maintenant",
-      "later": "Programmer à une date",
-      "publishNow": "Publier maintenant",
-      "schedule": "Programmer la publication",
-      "confirmPublishTitle": "Publier le classement officiel ?",
-      "confirmScheduleTitle": "Programmer la publication ?",
-      "confirmPublishText": "{count, plural, one {# équipe classée} other {# équipes classées}}. Le classement sera figé et les notes verrouillées. Les équipes seront prévenues à l'heure de publication.",
-      "confirmWarnings": "Attention : certains points sont encore à vérifier (voir l'encadré).",
-      "confirmWithdrawTitle": "Retirer la publication ?",
-      "confirmWithdrawText": "Le classement ne sera plus visible et les notes seront de nouveau modifiables. Le retrait et son motif sont enregistrés dans l'historique.",
-      "reason": "Motif du retrait (obligatoire)",
-      "cancel": "Annuler",
-      "publishedOk": "Classement publié. Les équipes ont été prévenues.",
-      "scheduledOk": "Publication programmée.",
-      "withdrawnOk": "Publication retirée.",
-      "resentOk": "{count} email(s) envoyé(s) avec les attestations.",
-      "history": "Historique des publications",
-      "historyLine": "Publication du {date} par {name}",
-      "withdrawnLine": "Retirée le {date} par {name} — « {reason} »",
-      "status": {
-        "scheduled": "Programmée",
-        "published": "Publiée",
-        "withdrawn": "Retirée"
-      }
+    "scores": {
+      "pre": "Pré-évaluation /{scale}",
+      "final": "Finale /{scale}",
+      "total": "Total /{scale}",
+      "weightsHint": "Pondération : pré-évaluation {pre} % · finale {final} %",
+      "rankNote": "Le classement suit la note finale. La note totale est indiquée à titre informatif."
+    },
+    "weights": {
+      "title": "Pondération des étapes",
+      "hint": "Part de chaque étape dans la note totale. La somme doit être égale à 100 %.",
+      "pre": "Pré-évaluation",
+      "final": "Évaluation finale",
+      "sum": "Somme : {sum} %",
+      "save": "Enregistrer la pondération",
+      "saving": "Enregistrement…",
+      "saved": "Pondération enregistrée.",
+      "lockedHint": "Verrouillée : les résultats sont publiés. Retirez la publication pour modifier."
     }
-  },
+  }
+},
   "adminEventSponsors": {
     "title": "Sponsors de l'événement",
     "subtitle": "Logos affichés sur la page publique « Nos sponsors », regroupés par niveau.",
@@ -1389,5 +1473,14 @@
       "argent": "Sponsors argent",
       "bronze": "Sponsors bronze"
     }
+  },
+  "pilotageSubmissions": {
+    "title": "Dépôts des équipes",
+    "description": "Consultez les travaux déposés par les équipes pour la pré-évaluation.",
+    "anonymized": "Évaluation à l'aveugle : les équipes sont identifiées par un code.",
+    "notYetTitle": "Les dépôts ne sont pas encore clos",
+    "notYetDescription": "Les travaux seront consultables dès la fermeture des dépôts.",
+    "closesAt": "Clôture : {date}",
+    "empty": "Aucun dépôt pour le moment."
   }
 }

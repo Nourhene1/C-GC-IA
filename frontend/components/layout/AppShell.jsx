@@ -41,7 +41,7 @@ export default function AppShell({ user, children }) {
     { href: "/admin/faq", label: t("faq"), Icon: CircleHelp },
     { href: "/admin/messages", label: t("messages"), Icon: Mail },
     { href: "/admin/sponsors", label: t("partners"), Icon: Handshake },
-     { href: "/admin/event-sponsors", label: t("sponsors"), Icon: Medal },
+    { href: "/admin/event-sponsors", label: t("sponsors"), Icon: Medal },
     { href: "/admin/editions", label: t("editions"), Icon: CalendarRange },
     { href: "/admin/subject", label: t("subject"), Icon: BookOpen },
     { href: "/admin/submissions", label: t("submission"), Icon: FileCheck },
@@ -53,6 +53,13 @@ export default function AppShell({ user, children }) {
     { href: "/dashboard", label: t("dashboard"), Icon: LayoutDashboard },
     { href: "/jury/submissions", label: t("submission"), Icon: FileCheck },
     { href: "/jury/evaluations", label: t("evaluations"), Icon: ClipboardCheck }, // Module 6
+  ];
+
+  // Pilotage : pré-évaluation (lecture des dépôts et notation)
+  const pilotageLinks = [
+    { href: "/dashboard", label: t("dashboard"), Icon: LayoutDashboard },
+    { href: "/pilotage/submissions", label: t("submission"), Icon: FileCheck },
+    { href: "/pilotage/evaluations", label: t("evaluations"), Icon: ClipboardCheck },
   ];
 
   const teamLinks = [
@@ -69,6 +76,7 @@ export default function AppShell({ user, children }) {
   const linksByRole = {
     admin: adminLinks,
     jury: juryLinks,
+    pilotage: pilotageLinks,
   };
 
   const links = linksByRole[user.role] ?? teamLinks;

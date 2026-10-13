@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Users, Plus, ArrowRight, Gavel } from "lucide-react";
+import { Users, Plus, ArrowRight, Gavel, ClipboardCheck } from "lucide-react";
 import RequireAuth from "@/components/auth/RequireAuth";
 import AppShell from "@/components/layout/AppShell";
 import StatusBadge from "@/components/ui/StatusBadge";
@@ -86,7 +86,7 @@ export default function DashboardPage() {
   const t = useTranslations("dashboard");
 
   return (
-    <RequireAuth roles={["chef", "membre", "jury"]}>
+    <RequireAuth roles={["chef", "membre", "jury", "pilotage"]}>
       {(user) => (
         <AppShell user={user}>
           <div className="mx-auto max-w-3xl">
@@ -95,7 +95,7 @@ export default function DashboardPage() {
               {tc("role")} : <span className="font-semibold text-accent">{tc(`roles.${user.role}`)}</span>
             </p>
 
-            {user.role === "jury" ? (
+            {user.role === "jury" && (
               <div className={`${card} flex items-start gap-4`}>
                 <Gavel className="size-8 shrink-0 text-accent" />
                 <div>
@@ -106,7 +106,22 @@ export default function DashboardPage() {
                   </Link>
                 </div>
               </div>
-            ) : (
+            )}
+
+            {user.role === "pilotage" && (
+              <div className={`${card} flex items-start gap-4`}>
+                <ClipboardCheck className="size-8 shrink-0 text-accent" />
+                <div>
+                  <h2 className="text-xl font-bold text-primary">{t("pilotageTitle")}</h2>
+                  <p className="mt-1 text-slate-600">{t("pilotageText")}</p>
+                  <Link href="/pilotage/evaluations" className={`${btn.primary} mt-4`}>
+                    {t("pilotageEvaluations")} <ArrowRight className="size-4" />
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {(user.role === "chef" || user.role === "membre") && (
               <div className="flex flex-col gap-6">
                 <MyResultsCard />
                 <TeamCard user={user} />

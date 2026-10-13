@@ -21,7 +21,7 @@ export const getMySubmission = async (req, res) => {
       state: win.state, opensAt: win.opensAt, deadline: win.deadline,
       closesAt: win.closesAt, toleranceMinutes: win.toleranceMin,
     },
-    rules: publicRules(),
+    rules: publicRules(req.edition, now),
     status: teamStatus(submission, req.edition, now),
     items: presentItems(submission?.items),
   });
@@ -47,7 +47,8 @@ async function sendReceipt(req, receipt) {
 // Enregistre une nouvelle version (fichier ou lien) : commun aux deux routes de dépôt
 async function commit(req, res, kind, { file = null, url = null }) {
   const receivedAt = new Date(); // heure serveur, prise une fois le fichier entièrement reçu
-  const win = getWindow(req.edition, receivedAt);
+  // Fenêtre propre au livrable : une présentation se ferme à l'annonce des résultats
+  const win = getWindow(req.edition, receivedAt, kind);
 
   const reject = async (status, body) => {
     if (file) await removeFile(file.path);

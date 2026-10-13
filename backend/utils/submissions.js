@@ -7,12 +7,19 @@ import { DELIVERABLES, DELIVERABLE_KINDS, REQUIRED_KINDS } from "./submissionCon
 export const SUBMISSION_DIR = path.resolve("uploads", "private", "submissions");
 export const submissionFilePath = (fileName) => path.join(SUBMISSION_DIR, path.basename(fileName));
 
-// --- F5.1 / F5.2 : fenêtre de dépôt (toujours calculée avec l'heure du serveur) ---
+// Champ de l'édition qui fixe la fermeture d'un livrable
+export const depositDateKey = (kind) =>
+  DELIVERABLES[kind]?.deadline === "results" ? "resultsDate" : "submissionDeadline";
+
+// --- F5.1 / F5.2 : fenêtre de dépôt d'un livrable (heure du serveur) ---
 // not_open → open → grace (tolérance, dépôt "en retard") → closed
-export function getWindow(edition, now = new Date()) {
+// kind absent : fenêtre standard (date limite de dépôt)
+export function getWindow(edition, now = new Date(), kind = null) {
   const opensAt = new Date(edition.dates.sessionOpen);
-  const deadline = new Date(edition.dates.submissionDeadline);
-  const toleranceMin = edition.submission?.toleranceMinutes ?? 0;
+  const key = depositDateKey(kind);
+  const deadline = new Date(edition.dates[key]);
+  // La tolérance ne s'applique qu'à la date limite de dépôt, pas à l'annonce des résultats
+  const toleranceMin = key === "submissionDeadline" ? (edition.submission?.toleranceMinutes ?? 0) : 0;
   const closesAt = new Date(deadline.getTime() + toleranceMin * 60_000);
 
   let state = "open";
@@ -107,11 +114,16 @@ export const presentItems = (items = []) =>
     };
   });
 
-export const publicRules = () =>
+// Règles par livrable, avec la fenêtre de dépôt propre à chaque type
+export const publicRules = (edition, now = new Date()) =>
   Object.fromEntries(
     DELIVERABLE_KINDS.map((k) => {
       const { exts, maxMb, link, required } = DELIVERABLES[k];
-      return [k, { exts, maxMb, link, required }];
+      const win = getWindow(edition, now, k);
+      return [k, {
+        exts, maxMb, link, required,
+        window: { state: win.state, deadline: win.deadline, closesAt: win.closesAt, canDeposit: win.canDeposit },
+      }];
     })
   );
 

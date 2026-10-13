@@ -1,16 +1,15 @@
 "use client";
-
 import RequireAuth from "@/components/auth/RequireAuth";
 import AppShell from "@/components/layout/AppShell";
-import JuryEvaluationList from "@/components/evaluation/JuryEvaluationList";
+import StageEvaluationList from "@/components/evaluation/StageEvaluationList";
+import { getMyEvaluations } from "@/lib/evaluation";
 
-// Module 6 : équipes attribuées à l'évaluateur connecté
 export default function JuryEvaluationsPage() {
   return (
     <RequireAuth roles={["jury"]}>
       {(user) => (
         <AppShell user={user}>
-          <JuryEvaluationList />
+          <StageEvaluationList ns="jury" detailBase="/jury/evaluations" fetchList={getMyEvaluations} />
         </AppShell>
       )}
     </RequireAuth>

@@ -16,13 +16,13 @@ import {
   listEditions, getEdition, createEdition, updateEdition, setCurrent, uploadPoster, deletePoster,
 } from "../controllers/editionController.js";
 import {
-  getAdminContent, updateContent, uploadRulesPdf, deleteRulesPdf, uploadJuryPhoto, resendJuryInvite,
+  getAdminContent, updateContent, uploadRulesPdf, deleteRulesPdf, uploadJuryPhoto, resendStaffInvite,
 } from "../controllers/contentController.js";
 import { listAdminFaq, createFaq, updateFaq, deleteFaq } from "../controllers/faqController.js";
 import { listMessages, markMessage, deleteMessage } from "../controllers/contactController.js";
 import { translate } from "../utils/translate.js";
-
 import { editionVideoUpload } from "../middleware/editionVideoUpload.js";
+
 const router = Router();
 
 // Toutes les routes de ce fichier : connecté ET admin
@@ -54,17 +54,19 @@ router.delete("/sponsors/:id", deleteSponsor);
 router.get("/editions", listEditions);
 router.post("/editions", editionVideoUpload, createEdition);
 router.get("/editions/:id", getEdition);
-router.put("/editions/:id", editionVideoUpload, updateEdition);router.patch("/editions/:id/current", setCurrent);
+router.put("/editions/:id", editionVideoUpload, updateEdition);
+router.patch("/editions/:id/current", setCurrent);
 router.post("/editions/:id/poster", uploadPosterFile, uploadPoster);
 router.delete("/editions/:id/poster", deletePoster);
 
-// Module 3 — contenu (règlement, éligibilité, prix, jury, contacts, calendrier)
+// Module 3 — contenu (règlement, éligibilité, prix, jury, pilotage, contacts, calendrier)
 router.get("/content", getAdminContent);
 router.put("/content", updateContent);
 router.post("/content/rules-pdf", uploadRulesPdfFile, uploadRulesPdf);
 router.delete("/content/rules-pdf", deleteRulesPdf);
 router.post("/content/jury-photo", uploadJuryPhotoFile, uploadJuryPhoto);
-router.post("/content/jury/:id/invite", resendJuryInvite); // renvoyer l'invitation d'un juré
+router.post("/content/jury/:id/invite", resendStaffInvite);     // renvoyer l'invitation d'un juré
+router.post("/content/pilotage/:id/invite", resendStaffInvite); // renvoyer l'invitation d'un membre du pilotage
 
 // Module 3 — FAQ (F3.3)
 router.get("/faq", listAdminFaq);
