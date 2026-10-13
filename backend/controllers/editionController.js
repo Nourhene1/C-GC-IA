@@ -104,6 +104,13 @@ function referencedFiles(edition) {
   return new Set(videos.filter((v) => v?.provider === "file").map((v) => v.videoId));
 }
 
+// Transforme une erreur de validation Mongoose en { champ: message }
+function validationFields(err) {
+  return Object.fromEntries(
+    Object.entries(err.errors).map(([path, e]) => [path, e.message])
+  );
+}
+
 // Copie les champs du formulaire dans l'édition.
 // Renvoie un code d'erreur, ou null si tout est valide.
 async function applyBody(edition, body, files) {
@@ -192,6 +199,9 @@ export const createEdition = async (req, res) => {
     await edition.save();
   } catch (err) {
     await discardEditionFiles(files);
+    if (err.name === "ValidationError") {
+      return res.status(400).json({ code: "VALIDATION_ERROR", fields: validationFields(err) });
+    }
     throw err;
   }
   res.status(201).json({ edition });
@@ -221,6 +231,9 @@ export const updateEdition = async (req, res) => {
     await edition.save();
   } catch (err) {
     await discardEditionFiles(files);
+    if (err.name === "ValidationError") {
+      return res.status(400).json({ code: "VALIDATION_ERROR", fields: validationFields(err) });
+    }
     throw err;
   }
 

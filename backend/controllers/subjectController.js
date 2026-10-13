@@ -22,20 +22,41 @@ const publicAddendum = (a) => ({
   publishedAt: a.publishedAt, updatedAt: a.updatedAt, history: a.history || [],
 });
 
+// La session est-elle ouverte pour les équipes ?
+const sessionIsOpen = (req) => new Date() >= req.edition.dates.sessionOpen;
+
+// Refus uniforme avant ouverture (même forme que l'écran d'attente côté front)
+const notOpen = (req, res) =>
+  res.status(403).json({ code: "SUBJECT_NOT_OPEN", opensAt: req.edition.dates.sessionOpen });
+
 // ---------------------------------------------------------------------------
 // Équipes validées, jury et admin (après subjectAccess)
 // ---------------------------------------------------------------------------
 
 // GET /api/subject — F4.2 / F4.3 / F4.7
+// Avant l'ouverture : on renvoie la date, sans fichiers ni addenda.
 export const getSubject = async (req, res) => {
   const now = new Date();
+  const isOpen = sessionIsOpen(req);
+
+  if (!isOpen) {
+    return res.json({
+      now,
+      opensAt: req.edition.dates.sessionOpen,
+      submissionDeadline: req.edition.dates.submissionDeadline,
+      isOpen: false,
+      files: [],
+      addenda: [],
+    });
+  }
+
   const subject = await Subject.findOne({ edition: req.edition._id }).lean();
   await audit(req, "SUBJECT_VIEW");
   res.json({
     now,
     opensAt: req.edition.dates.sessionOpen,
     submissionDeadline: req.edition.dates.submissionDeadline,
-    isOpen: now >= req.edition.dates.sessionOpen,
+    isOpen: true,
     files: (subject?.files ?? []).map(publicFile),
     addenda: (subject?.addenda ?? []).map(publicAddendum),
   });
@@ -43,6 +64,8 @@ export const getSubject = async (req, res) => {
 
 // GET /api/subject/files/:fileId/download — F4.3 / F4.4 / F4.5
 export const downloadFile = async (req, res) => {
+  if (!sessionIsOpen(req)) return notOpen(req, res);
+
   const subject = await Subject.findOne({ edition: req.edition._id }).select("files");
   const file = subject?.files.id(req.params.fileId);
   if (!file) return res.status(404).json({ code: "NOT_FOUND" });
@@ -58,6 +81,8 @@ export const downloadFile = async (req, res) => {
 
 // GET /api/subject/download.zip — F4.5 : tous les documents dans un ZIP
 export const downloadZip = async (req, res) => {
+  if (!sessionIsOpen(req)) return notOpen(req, res);
+
   const subject = await Subject.findOne({ edition: req.edition._id }).select("files").lean();
   if (!subject?.files.length) return res.status(404).json({ code: "NO_FILES" });
 
@@ -244,6 +269,23 @@ export const updateAddendum = async (req, res) => {
   res.json({ addendum: publicAddendum(addendum) });
 };
 
+// DELETE /api/admin/subject/addenda/:id
+export const deleteAddendum = async (req, res) => {
+  const subject = await Subject.findOne({ "addenda._id": req.params.id });
+  const addendum = subject?.addenda.id(req.params.id);
+  if (!addendum) return res.status(404).json({ code: "NOT_FOUND" });
+
+  const { _id, version } = addendum;
+  const title = addendum.title.fr;
+  subject.addenda.pull(_id);
+  await subject.save();
+
+  await audit(req, "ADDENDUM_DELETE", {
+    resource: "addendum", resourceId: _id, meta: { version, title },
+  });
+  res.json({ ok: true });
+};
+
 // --- F4.4 : consultation et export du journal -----------------------------
 
 const MAX_EXPORT = 10000;
@@ -334,20 +376,4 @@ export const exportAudit = async (req, res) => {
   res.attachment(filename);
   res.type("application/pdf");
   pipeAuditPdf(logs, res, { lang, filtersText, truncatedAt: truncated ? MAX_EXPORT : null });
-};
-// DELETE /api/admin/subject/addenda/:id
-export const deleteAddendum = async (req, res) => {
-  const subject = await Subject.findOne({ "addenda._id": req.params.id });
-  const addendum = subject?.addenda.id(req.params.id);
-  if (!addendum) return res.status(404).json({ code: "NOT_FOUND" });
-
-  const { _id, version } = addendum;
-  const title = addendum.title.fr;
-  subject.addenda.pull(_id);
-  await subject.save();
-
-  await audit(req, "ADDENDUM_DELETE", {
-    resource: "addendum", resourceId: _id, meta: { version, title },
-  });
-  res.json({ ok: true });
 };
