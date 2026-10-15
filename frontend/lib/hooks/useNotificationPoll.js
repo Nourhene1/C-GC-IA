@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { getToken } from "../auth";
+import { isAuthError } from "../api";
 import { getNotifications } from "../notifications";
 
 export default function useNotificationPoll(
@@ -16,6 +17,14 @@ export default function useNotificationPoll(
 
   useEffect(() => {
     let cancelled = false;
+    let timer = null;
+
+    const stop = () => {
+      if (timer) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+    };
 
     const poll = async () => {
       // Pas de token (déconnexion, session expirée) : aucun appel
@@ -36,11 +45,11 @@ export default function useNotificationPoll(
 
         onUpdateRef.current?.(notifications);
       } catch (error) {
-        // Requête partie pendant la déconnexion : sans importance
-        if (
-          error?.code === "UNAUTHENTICATED" ||
-          error?.code === "UNAUTHORIZED"
-        ) {
+        // Session expirée / non authentifié : api() a déjà vidé la
+        // session et lancé la redirection vers /login. On arrête le
+        // polling et on ne logge rien.
+        if (isAuthError(error)) {
+          stop();
           return;
         }
 
@@ -51,11 +60,13 @@ export default function useNotificationPoll(
       }
     };
 
-    const timer = window.setInterval(poll, interval);
+    // Premier appel immédiat, puis toutes les `interval` ms
+    poll();
+    timer = window.setInterval(poll, interval);
 
     return () => {
       cancelled = true;
-      window.clearInterval(timer);
+      stop();
     };
   }, [interval]);
 }

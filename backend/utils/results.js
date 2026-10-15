@@ -8,6 +8,7 @@ import Notification from "../models/Notification.js";
 import { sendMailSafe } from "./mailer.js";
 import { resultsMail } from "./resultsEmails.js";
 import { certificatesBuffer, certificateRef } from "./certificates.js";
+import { teamEvaluationDetail, evaluationReportBuffer } from "./evaluationReport.js";
 
 export const ACTIVE = ["scheduled", "published"];
 
@@ -60,11 +61,20 @@ export async function certificateEntries(pub, edition, filter = {}) {
         email: m.email,
         fullName: `${m.prenom} ${m.nom}`,
         teamName: team.name,
+        teamId: String(team._id),
         etablissement: team.etablissement,
         kind: award ? "award" : "participation",
         rank: award ? row.rank : null, // pas de rang pour les non-gagnants
         prizeTitle: prize?.title ?? null, // { fr, en } : choisi selon la langue
         ref: certificateRef(edition.year, pub._id, m.email, award ? row.rank : null),
+        scores: {
+          total: row.totalScore ?? null,
+          pre: row.preScore ?? null,
+          final: row.finalScore ?? null,
+          scale: pub.settings?.scale ?? 20,
+          preScale: pub.settings?.preScale ?? 20,
+          weights: pub.settings?.weights ?? { pre: 30, final: 70 },
+        },
       };
 
       const current = best.get(key);
@@ -91,7 +101,8 @@ async function updateWinners(pub, edition) {
   await edition.save();
 }
 
-// Prévient TOUS les participants (in-app + email) et envoie leur attestation en pièce jointe
+// Prévient TOUS les participants (in-app + email) avec leur note globale,
+// leur attestation et leur rapport d'évaluation complet en pièces jointes
 export async function notifyResults(pub, edition) {
   const entries = await certificateEntries(pub, edition);
   if (entries.length === 0) return 0;
@@ -115,24 +126,34 @@ export async function notifyResults(pub, edition) {
   for (const entry of entries) {
     try {
       const locale = userOf.get(norm(entry.email))?.locale === "en" ? "en" : "fr";
-      const attachments = withCertificate
-        ? [{
-            filename: locale === "en" ? "certificate.pdf" : "attestation.pdf",
-            content: await certificatesBuffer(localizeEntries([entry], locale), { lang: locale, editionTitle: title[locale], date: pub.publishAt }),
-            contentType: "application/pdf",
-          }]
-        : undefined;
+
+      const attachments = [];
+      if (withCertificate) {
+        attachments.push({
+          filename: locale === "en" ? "certificate.pdf" : "attestation.pdf",
+          content: await certificatesBuffer(localizeEntries([entry], locale), { lang: locale, editionTitle: title[locale], date: pub.publishAt }),
+          contentType: "application/pdf",
+        });
+      }
+      const detail = await teamEvaluationDetail(edition._id, entry.teamId);
+      attachments.push({
+        filename: locale === "en" ? "evaluation-report.pdf" : "rapport-evaluation.pdf",
+        content: await evaluationReportBuffer({ entry, detail, lang: locale, editionTitle: title[locale] }),
+        contentType: "application/pdf",
+      });
+
       await sendMailSafe({
         to: entry.email,
         attachments,
         ...resultsMail({
           name: entry.fullName, teamName: entry.teamName, rank: entry.rank,
-          award: entry.kind === "award", withCertificate, locale, link,
+          award: entry.kind === "award", score: entry.scores.total, scale: entry.scores.scale,
+          withCertificate, locale, link,
         }),
       });
       sent++;
     } catch (err) {
-      // une attestation en échec ne doit pas bloquer les autres participants
+      // un envoi en échec ne doit pas bloquer les autres participants
       console.error(`Envoi des résultats à ${entry.email} :`, err.message);
     }
   }

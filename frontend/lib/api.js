@@ -1,12 +1,35 @@
-import { getToken } from "./auth";
+import { getToken, logout } from "./auth";
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+// Codes renvoyés par le backend quand le token n'est plus valable
+const AUTH_ERRORS = [
+  "SESSION_EXPIRED",
+  "INVALID_TOKEN",
+  "UNAUTHORIZED",
+  "UNAUTHENTICATED",
+];
 
 function apiError(code, data = {}) {
   const err = new Error(code);
   err.code = code;
   err.data = data;
   return err;
+}
+
+// Supprime le token et renvoie vers la page de connexion.
+function handleExpiredSession() {
+  logout();
+
+  if (typeof window === "undefined") return;
+
+  // Évite une boucle de redirection si on est déjà sur /login
+  if (!window.location.pathname.startsWith("/login")) {
+    const next = encodeURIComponent(
+      window.location.pathname + window.location.search
+    );
+    window.location.href = `/login?expired=1&next=${next}`;
+  }
 }
 
 // Appel à l'API.
@@ -57,7 +80,18 @@ export async function api(
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
 
-    throw apiError(data.code || "SERVER_ERROR", data);
+    const code =
+      data.code ||
+      (res.status === 401 ? "SESSION_EXPIRED" : "SERVER_ERROR");
+
+    // 401 sur un appel authentifié = token expiré ou invalide.
+    // Sans token (ex. mauvais mot de passe au login), on laisse
+    // simplement remonter l'erreur au composant.
+    if (token && (res.status === 401 || AUTH_ERRORS.includes(code))) {
+      handleExpiredSession();
+    }
+
+    throw apiError(code, data);
   }
 
   if (raw) {
@@ -73,6 +107,10 @@ export async function api(
 
   return null;
 }
+
+// Indique si une erreur vient d'une session expirée
+// (utile dans les catch des composants pour ne pas la logger).
+export const isAuthError = (err) => AUTH_ERRORS.includes(err?.code);
 
 // Ouvre un fichier protégé dans un nouvel onglet.
 export async function openProtectedFile(path) {

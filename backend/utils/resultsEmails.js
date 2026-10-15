@@ -1,11 +1,13 @@
 // Emails du Module 7
 import { build } from "./emailTemplates.js";
 
-// F7.4 / F7.6 : résultats publiés (+ attestation en pièce jointe)
+const fmt = (n) => String(Math.round(Number(n) * 100) / 100);
+
+// F7.4 / F7.6 : résultats publiés, note globale, attestation et rapport d'évaluation en pièces jointes.
 // Le rang n'est mentionné QUE pour les équipes récompensées (award = true).
-// Toutes les autres reçoivent un message de remerciement pour leur participation.
-export function resultsMail({ name, teamName, rank, award, withCertificate, locale, link }) {
+export function resultsMail({ name, teamName, rank, award, score, scale, withCertificate, locale, link }) {
   const showRank = Boolean(award && rank);
+  const hasScore = score !== null && score !== undefined;
 
   const fr = {
     subject: "Les résultats de la Compétition IA & Génie Civil sont publiés",
@@ -15,11 +17,13 @@ export function resultsMail({ name, teamName, rank, award, withCertificate, loca
       showRank
         ? `Félicitations ! Votre équipe « ${teamName} » termine à la ${rank === 1 ? "1re" : `${rank}e`} place.`
         : `Merci pour la participation de votre équipe « ${teamName} ».`,
+      ...(hasScore ? [`Votre note globale : ${fmt(score)} / ${scale}.`] : []),
       ...(withCertificate
         ? [showRank
-            ? "Vous trouverez votre certificat de récompense en pièce jointe (PDF)."
-            : "Vous trouverez votre attestation de participation en pièce jointe (PDF)."]
+            ? "Votre certificat de récompense est joint (PDF)."
+            : "Votre attestation de participation est jointe (PDF)."]
         : []),
+      "Le rapport d'évaluation détaillé (pré-évaluation et évaluation finale) est joint (PDF).",
     ],
     button: { label: "Voir le classement", url: link },
   };
@@ -37,11 +41,13 @@ export function resultsMail({ name, teamName, rank, award, withCertificate, loca
       showRank
         ? `Congratulations! Your team "${teamName}" won ${ordinalEn(rank)} place.`
         : `Thank you for your team "${teamName}"'s participation.`,
+      ...(hasScore ? [`Your overall score: ${fmt(score)} / ${scale}.`] : []),
       ...(withCertificate
         ? [showRank
             ? "Your certificate of achievement is attached (PDF)."
             : "Your certificate of participation is attached (PDF)."]
         : []),
+      "The detailed evaluation report (pre-evaluation and final evaluation) is attached (PDF).",
     ],
     button: { label: "View the ranking", url: link },
   };

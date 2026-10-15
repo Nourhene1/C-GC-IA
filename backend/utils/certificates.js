@@ -12,6 +12,9 @@ const GREY = "#6B7280";
 const LOGO = path.resolve("..", "frontend", "public", "logo.png");
 const LOGO_ISET = path.resolve("..", "frontend", "public", "logo_iset.png");
 
+// Modèle graphique fourni (attestation de participation) : le nom est écrit sur la ligne prévue
+const TEMPLATE = path.resolve("assets", "certificate-template.png");
+
 const TEXTS = {
   fr: {
     participation: "ATTESTATION DE PARTICIPATION",
@@ -52,10 +55,22 @@ export const certificateRef = (year, pubId, email, rank) =>
   `IAGC-${year}-${rank ? `R${rank}` : "P"}-${crypto.createHash("sha256").update(`${pubId}:${email}`).digest("hex").slice(0, 8).toUpperCase()}`;
 
 // Dessine une page d'attestation
-function drawPage(doc, entry, { lang, editionTitle, dateText }) {
+function drawPage(doc, entry, { lang, editionTitle, dateText, year }) {
   const T = TEXTS[lang] ?? TEXTS.fr;
   const { width: W, height: H } = doc.page;
   const award = entry.kind === "award";
+
+  // Participants : on utilise le modèle fourni
+  if (!award && fs.existsSync(TEMPLATE)) {
+    doc.image(TEMPLATE, 0, 0, { width: W, height: H });
+    // efface l'année imprimée dans le modèle (2025) et la remplace par l'année de la publication
+    doc.rect(108, 500, 60, 20).fill("#FFFFFF");
+    doc.fillColor(NAVY).font("Helvetica-Bold").fontSize(13).text(String(year), 115, 503);
+    // nom et prénom sur la ligne prévue
+    doc.fillColor(NAVY).font("Helvetica-Bold").fontSize(30)
+      .text(entry.fullName, 60, 325, { width: W - 120, align: "center" });
+    return;
+  }
 
   // Cadre : bandeau bleu, filet orange
   doc.rect(0, 0, W, H).fill("#FFFFFF");
@@ -94,9 +109,10 @@ export function certificatesPdf(entries, { lang = "fr", editionTitle, date = new
   const doc = new PDFDocument({ size: "A4", layout: "landscape", margin: 0, autoFirstPage: false,
     info: { Title: lang === "en" ? "Certificate" : "Attestation", Author: "Compétition IA & Génie Civil" } });
   const dateText = new Intl.DateTimeFormat(lang === "en" ? "en-GB" : "fr-FR", { dateStyle: "long", timeZone: "Africa/Tunis" }).format(date);
+  const year = date.getFullYear();
   for (const entry of entries) {
     doc.addPage();
-    drawPage(doc, entry, { lang, editionTitle, dateText });
+    drawPage(doc, entry, { lang, editionTitle, dateText, year });
   }
   doc.end();
   return doc;
