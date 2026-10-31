@@ -5,12 +5,12 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon server.js",
-    "start": "node server.js",
-    "create-admin": "node scripts/createAdmin.js",
-    "create-edition": "node scripts/createEdition.js",
-        "seed-demo": "node scripts/seedDemo.js",
-    "remove-autorisation": "node scripts/removeAutorisation.js"
+    "dev": "cross-env NODE_ENV=development DOTENV_PATH=.env.development nodemon server.js",
+    "start": "cross-env NODE_ENV=production DOTENV_PATH=.env.production node server.js",
+    "create-admin": "cross-env NODE_ENV=development DOTENV_PATH=.env.development node scripts/createAdmin.js",
+    "create-edition": "cross-env NODE_ENV=development DOTENV_PATH=.env.development node scripts/createEdition.js",
+    "seed-demo": "cross-env NODE_ENV=development DOTENV_PATH=.env.development node scripts/seedDemo.js",
+    "remove-autorisation": "cross-env NODE_ENV=development DOTENV_PATH=.env.development node scripts/removeAutorisation.js"
   },
   "author": "Eya",
   "license": "ISC",
@@ -27,6 +27,7 @@
     "pdfkit": "^0.20.2"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "nodemon": "^3.1.14"
   }
 }
