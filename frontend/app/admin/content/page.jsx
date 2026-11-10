@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ScrollText, BadgeCheck, CalendarDays, Gavel, Contact, FileText, ExternalLink } from "lucide-react";
+import { ScrollText, BadgeCheck, CalendarDays, Gavel, Contact, FileText, ExternalLink, Users } from "lucide-react";
 import RequireAuth from "@/components/auth/RequireAuth";
 import AppShell from "@/components/layout/AppShell";
 import Spinner from "@/components/ui/Spinner";
@@ -11,6 +11,7 @@ import RulesTab from "@/components/admin/content/RulesTab";
 import EligibilityTab from "@/components/admin/content/EligibilityTab";
 import EventsTab from "@/components/admin/content/EventsTab";
 import JuryTab from "@/components/admin/content/JuryTab";
+import OrganizationTab from "@/components/admin/content/OrganizationTab"; // NOUVEAU
 import ContactsTab from "@/components/admin/content/ContactsTab";
 import { api } from "@/lib/api";
 
@@ -20,6 +21,7 @@ const TABS = [
   { key: "eligibility", Icon: BadgeCheck, Tab: EligibilityTab, page: "/eligibilite" }, // F3.5
   { key: "calendar", Icon: CalendarDays, Tab: EventsTab, page: "/calendrier" },    // F3.2
   { key: "jury", Icon: Gavel, Tab: JuryTab, page: "/jury" },                       // F3.6
+  { key: "organization", Icon: Users, Tab: OrganizationTab, page: "/" },           // NOUVEAU : comité d'organisation (accueil)
   { key: "contacts", Icon: Contact, Tab: ContactsTab, page: "/contact" },          // F3.4
 ];
 

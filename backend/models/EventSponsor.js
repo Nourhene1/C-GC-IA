@@ -7,7 +7,7 @@ const eventSponsorSchema = new mongoose.Schema(
     website: { type: String, trim: true, default: "" },
     tier: {
       type: String,
-      enum: ["titre", "or", "argent", "bronze"],
+      enum: ["titre", "diamond", "platine", "or", "argent", "bronze"],
       default: "bronze",
     },
     edition: { type: mongoose.Schema.Types.ObjectId, ref: "Edition", default: null },

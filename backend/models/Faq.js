@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-export const FAQ_CATEGORIES = ["inscription", "equipe", "sujet", "depot", "evaluation", "autre"];
+export const FAQ_CATEGORIES = ["apropos", "inscription", "deroulement", "projets", "prix"];
 
 // F3.3 : une question de la FAQ
 const faqSchema = new mongoose.Schema(

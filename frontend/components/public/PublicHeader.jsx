@@ -69,6 +69,7 @@ export default function PublicHeader() {
     { href: "/eligibilite", label: t("eligibility"), icon: ShieldCheck },
     { href: "/calendrier", label: t("calendar"), icon: CalendarDays },
     { href: "/jury", label: t("jury"), icon: Gavel },
+    { href: "/organisation", label: t("organisation"), icon: Gavel },
     { href: "/partenaires", label: t("partners"), icon: Handshake },
     { href: "/sponsors", label: t("sponsors"), icon: Award },
   ];
@@ -85,29 +86,25 @@ export default function PublicHeader() {
 
   // Lien du menu desktop : texte + petit trait animé sous le lien actif
   const navLink = (active) =>
-    `group relative whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
-      active ? "text-accent" : "text-primary/80 hover:text-primary"
+    `group relative whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${active ? "text-accent" : "text-primary/80 hover:text-primary"
     }`;
   const Underline = ({ active }) => (
     <span
-      className={`absolute inset-x-3.5 -bottom-0.5 h-0.5 origin-left rounded-full bg-accent transition-transform duration-300 ${
-        active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100 group-hover:bg-primary/30"
-      }`}
+      className={`absolute inset-x-3.5 -bottom-0.5 h-0.5 origin-left rounded-full bg-accent transition-transform duration-300 ${active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100 group-hover:bg-primary/30"
+        }`}
     />
   );
 
   return (
     <header
-      className={`sticky top-0 z-30 border-b transition-all duration-300 ${
-        scrolled
+      className={`sticky top-0 z-30 border-b transition-all duration-300 ${scrolled
           ? "border-slate-200/80 bg-white/90 shadow-lg shadow-primary/5 backdrop-blur-xl"
           : "border-transparent bg-white"
-      }`}
+        }`}
     >
       <div
-        className={`mx-auto flex max-w-6xl items-center gap-4 px-4 transition-all duration-300 ${
-          scrolled ? "py-2" : "py-3.5"
-        }`}
+        className={`mx-auto flex max-w-6xl items-center gap-4 px-4 transition-all duration-300 ${scrolled ? "py-2" : "py-3.5"
+          }`}
       >
         {/* Logo */}
         <Link href="/" className="flex shrink-0 items-center gap-2.5">
@@ -147,11 +144,10 @@ export default function PublicHeader() {
 
             {/* Sous-menu : toujours rendu pour pouvoir animer l'apparition */}
             <div
-              className={`absolute left-1/2 top-full z-40 mt-3 w-64 -translate-x-1/2 origin-top transition-all duration-200 ${
-                dropdown
+              className={`absolute left-1/2 top-full z-40 mt-3 w-64 -translate-x-1/2 origin-top transition-all duration-200 ${dropdown
                   ? "visible translate-y-0 opacity-100"
                   : "invisible -translate-y-2 opacity-0"
-              }`}
+                }`}
             >
               {/* petite flèche */}
               <span className="absolute -top-1.5 left-1/2 size-3 -translate-x-1/2 rotate-45 rounded-sm bg-white ring-1 ring-slate-200" />
@@ -163,16 +159,14 @@ export default function PublicHeader() {
                     <Link
                       key={l.href}
                       href={l.href}
-                      className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${
-                        active ? "bg-accent-light text-accent" : "text-primary hover:bg-surface"
-                      }`}
+                      className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${active ? "bg-accent-light text-accent" : "text-primary hover:bg-surface"
+                        }`}
                     >
                       <span
-                        className={`flex size-8 items-center justify-center rounded-lg transition-colors ${
-                          active
+                        className={`flex size-8 items-center justify-center rounded-lg transition-colors ${active
                             ? "bg-accent text-white"
                             : "bg-surface text-primary group-hover:bg-accent group-hover:text-white"
-                        }`}
+                          }`}
                       >
                         <Icon className="size-4" />
                       </span>
@@ -240,9 +234,8 @@ export default function PublicHeader() {
         <nav className="flex max-h-[80vh] flex-col gap-1 overflow-y-auto border-t border-slate-100 bg-white px-4 pb-5 pt-3 shadow-xl lg:hidden">
           <Link
             href="/"
-            className={`rounded-xl px-3 py-3 font-semibold ${
-              isActive("/") ? "bg-accent-light text-accent" : "text-primary hover:bg-surface"
-            }`}
+            className={`rounded-xl px-3 py-3 font-semibold ${isActive("/") ? "bg-accent-light text-accent" : "text-primary hover:bg-surface"
+              }`}
           >
             {t("home")}
           </Link>
@@ -256,9 +249,8 @@ export default function PublicHeader() {
               <Link
                 key={l.href}
                 href={l.href}
-                className={`flex items-center gap-3 rounded-xl px-3 py-3 font-semibold ${
-                  isActive(l.href) ? "bg-accent-light text-accent" : "text-primary hover:bg-surface"
-                }`}
+                className={`flex items-center gap-3 rounded-xl px-3 py-3 font-semibold ${isActive(l.href) ? "bg-accent-light text-accent" : "text-primary hover:bg-surface"
+                  }`}
               >
                 <Icon className="size-4" />
                 {l.label}
@@ -272,9 +264,8 @@ export default function PublicHeader() {
             <Link
               key={l.href}
               href={l.href}
-              className={`rounded-xl px-3 py-3 font-semibold ${
-                isActive(l.href) ? "bg-accent-light text-accent" : "text-primary hover:bg-surface"
-              }`}
+              className={`rounded-xl px-3 py-3 font-semibold ${isActive(l.href) ? "bg-accent-light text-accent" : "text-primary hover:bg-surface"
+                }`}
             >
               {l.label}
             </Link>

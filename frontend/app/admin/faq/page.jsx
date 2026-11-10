@@ -22,18 +22,10 @@ import { ErrorAlert } from "@/components/ui/Alert";
 import { btn, card } from "@/components/ui/styles";
 import { api } from "@/lib/api";
 import { pick } from "@/lib/content";
-
-const CATEGORIES = [
-  "inscription",
-  "equipe",
-  "sujet",
-  "depot",
-  "evaluation",
-  "autre",
-];
+const CATEGORIES = ["apropos", "inscription", "deroulement", "projets", "prix", "autre"];
 
 const EMPTY = {
-  category: "inscription",
+  category: "apropos",
   question: { fr: "", en: "" },
   answer: { fr: "", en: "" },
   order: 0,

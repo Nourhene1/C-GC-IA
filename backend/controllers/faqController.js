@@ -18,7 +18,7 @@ export const listAdminFaq = async (req, res) => {
 
 // previous : la question déjà enregistrée (pour ne retraduire que ce qui a changé)
 async function readBody(body, previous = {}) {
-  const { category = "autre", question = {}, answer = {}, order = 0, published = true } = body;
+  const { category = "apropos", question = {}, answer = {}, order = 0, published = true } = body;
   if (!question.fr?.trim() || !answer.fr?.trim()) return { error: "FIELDS_REQUIRED" };
   if (!FAQ_CATEGORIES.includes(category)) return { error: "VALIDATION_ERROR" };
   return {

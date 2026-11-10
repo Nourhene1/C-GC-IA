@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
@@ -27,10 +28,14 @@ import { api, publicFileUrl } from "@/lib/api";
 
 const BASE = "/api/admin/event-sponsors";
 const JSON_HEADERS = { "Content-Type": "application/json" };
-const TIERS = ["titre", "or", "argent", "bronze"];
+
+// Toutes les catégories de sponsors
+const TIERS = ["titre", "diamond", "platine", "or", "argent", "bronze"];
 
 const TIER_STYLES = {
   titre: "bg-primary text-white",
+  diamond: "bg-cyan-100 text-cyan-800",
+  platine: "bg-indigo-100 text-indigo-800",
   or: "bg-amber-100 text-amber-800",
   argent: "bg-slate-200 text-slate-700",
   bronze: "bg-orange-100 text-orange-800",
@@ -233,7 +238,7 @@ function EventSponsorsAdmin() {
 
                   <div className="mt-1 flex flex-wrap items-center gap-2">
                     <span
-                      className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${TIER_STYLES[s.tier]}`}
+                      className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${TIER_STYLES[s.tier] || "bg-slate-100 text-slate-700"}`}
                     >
                       {t(`tiers.${s.tier}`)}
                     </span>

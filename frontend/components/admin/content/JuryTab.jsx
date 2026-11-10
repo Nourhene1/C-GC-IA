@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { UserRound, ImagePlus, Mail, MailCheck, BadgeCheck, Send, ClipboardCheck } from "lucide-react";
+import { UserRound, ImagePlus, Mail, MailCheck, BadgeCheck, Send, ClipboardCheck, Trash2 } from "lucide-react";
 import { btn } from "@/components/ui/styles";
 import { api, publicFileUrl } from "@/lib/api";
 import { LOGO_MAX_MB } from "@/lib/constants";
 import RepeatableList from "./RepeatableList";
 import TextPair, { smallInput } from "./TextPair";
 
+// Photo d'un juré : envoyée tout de suite, son chemin est gardé dans la liste
 // Photo d'un juré : envoyée tout de suite, son chemin est gardé dans la liste
 function PhotoPicker({ photo, onChange, onError }) {
   const t = useTranslations("adminContent");
@@ -32,19 +33,30 @@ function PhotoPicker({ photo, onChange, onError }) {
   };
 
   return (
-    <label className="group relative flex size-20 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-accent-light"
-      title={t("changePhoto")}>
-      {photo ? (
-        // eslint-disable-next-line @next/next/no-img-element -- image servie par l'API
-        <img src={publicFileUrl(photo)} alt="" className="size-full object-cover" />
-      ) : (
-        <UserRound className="size-9 text-accent" />
+    <div className="flex shrink-0 flex-col items-center gap-2 sm:w-28">
+      <div className="flex size-20 items-center justify-center overflow-hidden rounded-full bg-accent-light">
+        {photo ? (
+          // eslint-disable-next-line @next/next/no-img-element -- image servie par l'API
+          <img src={publicFileUrl(photo)} alt="" className="size-full object-cover" />
+        ) : (
+          <UserRound className="size-9 text-accent" />
+        )}
+      </div>
+
+      <label className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-primary transition hover:border-accent hover:text-accent">
+        <ImagePlus className="size-3.5" />
+        {busy ? t("photoUploading") : photo ? t("changePhoto") : t("addPhoto")}
+        <input type="file" accept=".png,.jpg,.jpeg,.webp" className="sr-only"
+          disabled={busy} onChange={upload} />
+      </label>
+
+      {photo && !busy && (
+        <button type="button" onClick={() => onChange(null)}
+          className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-700">
+          <Trash2 className="size-3.5" /> {t("removePhoto")}
+        </button>
       )}
-      <span className={`absolute inset-0 flex items-center justify-center bg-primary/60 text-white transition ${busy ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
-        <ImagePlus className="size-5" />
-      </span>
-      <input type="file" accept=".png,.jpg,.jpeg,.webp" className="sr-only" onChange={upload} />
-    </label>
+    </div>
   );
 }
 

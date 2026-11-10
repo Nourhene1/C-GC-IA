@@ -11,8 +11,7 @@ import { api, publicFileUrl } from "@/lib/api";
 import { LOGO_ACCEPT, LOGO_MAX_MB } from "@/lib/constants";
 
 const BASE = "/api/admin/event-sponsors";
-const TIERS = ["titre", "or", "argent", "bronze"];
-
+const TIERS = ["titre", "diamond", "platine", "or", "argent", "bronze"];
 const EMPTY = {
   name: "",
   website: "",

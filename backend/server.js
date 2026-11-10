@@ -29,6 +29,7 @@ import adminEventSponsorRoutes from "./routes/adminEventSponsorRoutes.js";
 import eventSponsorRoutes from "./routes/eventSponsorRoutes.js";
 import pilotageSubmissionRoutes from "./routes/pilotageSubmission.js";
 import evaluationPilotageRoutes from "./routes/evaluationPilotage.js";
+import organizationRoutes from "./routes/organizationRoutes.js";
 
 
 
@@ -55,6 +56,7 @@ app.use("/api/admin/submissions", adminSubmissionRoutes);   // F5.7 / F5.2 / F5.
 app.use("/api/admin/evaluations", evaluationAdminRoutes);   // Module 6
 app.use("/api/admin/results", resultsAdminRoutes);           // Module 7
 app.use("/api/admin", adminRoutes);
+app.use("/api", organizationRoutes);
 
 app.use("/api/editions", editionRoutes);
 app.use("/api/teams", teamRoutes);

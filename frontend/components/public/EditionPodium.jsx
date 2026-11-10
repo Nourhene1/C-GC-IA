@@ -8,6 +8,23 @@ const SLOTS = {
   3: { order: "md:order-3", height: "h-28 md:h-36", bar: "bg-orange-300 text-orange-950", Icon: Medal },
 };
 
+// Couleur selon la filière : GC en orange, TI en bleu
+const FILIERE_STYLE = {
+  GC: "text-accent",
+  TI: "text-primary",
+};
+
+// Une ligne de membres, ex. "Yessine Karray / Melik Bouchoucha (GC)"
+function MemberLine({ text }) {
+  if (!text) return null;
+  const code = text.match(/\((GC|TI)\)\s*$/i)?.[1]?.toUpperCase();
+  return (
+    <p className={`text-lg font-extrabold leading-snug ${FILIERE_STYLE[code] || "text-primary"}`}>
+      {text}
+    </p>
+  );
+}
+
 // Podium des trois premières équipes d'une édition
 export default async function EditionPodium({ winners = [] }) {
   const t = await getTranslations("archives");
@@ -26,10 +43,10 @@ export default async function EditionPodium({ winners = [] }) {
         {top.map((w) => {
           const { order, height, bar, Icon } = SLOTS[w.rank];
           return (
-            <div key={w.rank} className={`${order} flex flex-col items-center text-center`}>
+            <div key={w.rank} className={`${order} flex flex-col items-center gap-1 text-center`}>
               <Icon className="mb-3 size-8 text-accent" />
-              <p className="text-lg font-extrabold text-primary">{w.teamName}</p>
-              {w.etablissement && <p className="text-sm text-slate-500">{w.etablissement}</p>}
+              <MemberLine text={w.teamName} />
+              <MemberLine text={w.etablissement} />
 
               <div
                 className={`mt-4 flex w-full items-start justify-center rounded-t-2xl pt-4 text-4xl font-black shadow-lg ${bar} ${height}`}

@@ -64,10 +64,12 @@ export const fetchPublicEventSponsors = (params = {}) => {
 };
 
 export const TIERS = [
-  { value: "titre", label: "Titre" },
-  { value: "or", label: "Or" },
-  { value: "argent", label: "Argent" },
-  { value: "bronze", label: "Bronze" },
+  { value: "titre" },
+  { value: "diamond" },
+  { value: "platine" },
+  { value: "or" },
+  { value: "argent" },
+  { value: "bronze" },
 ];
 
 // Charge les éditions et renvoie toujours un tableau
