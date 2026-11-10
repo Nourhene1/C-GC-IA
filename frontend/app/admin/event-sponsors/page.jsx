@@ -296,15 +296,7 @@ function EventSponsorsAdmin() {
                 </div>
 
                 <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => toggle(s)}
-                    title={t("toggleVisibility")}
-                    aria-label={t("toggleVisibility")}
-                    className={btn.ghost}
-                  >
-                    {s.active ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
-                  </button>
-
+            
                   <button
                     onClick={() => setEditing(s)}
                     aria-label={tc("edit")}

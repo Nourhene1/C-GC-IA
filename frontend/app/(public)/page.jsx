@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import Link from "next/link";
 import { getLocale, getTranslations, getFormatter } from "next-intl/server";
@@ -11,6 +10,8 @@ import {
   CircleCheck,
   Trophy,
   ImageOff,
+  Download,
+  Maximize2,
 } from "lucide-react";
 import Countdown from "@/components/public/Countdown";
 import NewsCard from "@/components/public/NewsCard";
@@ -55,6 +56,9 @@ export default async function HomePage() {
     edition &&
     now >= new Date(edition.dates.registrationOpen) &&
     now <= new Date(edition.dates.registrationClose);
+
+  // Affiche de l'édition en cours
+  const posterUrl = edition?.poster ? publicFileUrl(edition.poster) : null;
 
   const news = newsData?.news || [];
   const sponsors = sponsorsData?.sponsors || [];
@@ -240,6 +244,89 @@ export default async function HomePage() {
         <p className="mx-auto mt-10 max-w-3xl px-4 text-center text-slate-500">
           {t("unavailable")}
         </p>
+      )}
+
+      {/* ---------- Affiche de l'édition en cours ---------- */}
+      {posterUrl && (
+        <section className="mx-auto mt-20 max-w-6xl px-4">
+          <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary to-slate-900 px-6 py-14 text-white sm:px-12">
+            {/* Trame de fond */}
+            <span
+              aria-hidden
+              className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.08)_1px,transparent_1px)] bg-[size:36px_36px] [mask-image:radial-gradient(ellipse_at_25%_50%,#000,transparent_70%)]"
+            />
+
+            {/* Petite pièce décorative */}
+            <span
+              aria-hidden
+              className="absolute right-10 top-10 hidden size-4 rotate-45 bg-accent motion-safe:animate-bounce md:block"
+            />
+
+            <div className="relative grid items-center gap-14 md:grid-cols-[auto_1fr]">
+              {/* Affiche */}
+              <a
+                href={posterUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={t("posterOpen")}
+                className="group relative mx-auto block w-64 sm:w-72"
+              >
+                {/* Halo */}
+                <span
+                  aria-hidden
+                  className="absolute -inset-8 rounded-full bg-accent/30 blur-3xl motion-safe:animate-[pulse_5s_ease-in-out_infinite]"
+                />
+
+                {/* Panneau orange décalé derrière */}
+                <span
+                  aria-hidden
+                  className="absolute inset-0 translate-x-4 translate-y-4 rotate-3 rounded-2xl bg-accent transition-transform duration-500 group-hover:translate-x-5 group-hover:translate-y-5 group-hover:rotate-6"
+                />
+
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={posterUrl}
+                  alt={t("posterAlt", { year: edition.year })}
+                  className="relative aspect-[3/4] w-full -rotate-2 rounded-2xl bg-white object-cover shadow-2xl shadow-black/50 ring-4 ring-white transition duration-500 group-hover:rotate-0 group-hover:scale-[1.03]"
+                />
+
+                {/* Bouton agrandir au survol */}
+                <span className="absolute bottom-4 right-4 flex size-10 items-center justify-center rounded-full bg-white text-primary opacity-0 shadow-lg transition group-hover:opacity-100 group-focus-visible:opacity-100">
+                  <Maximize2 className="size-5" />
+                </span>
+              </a>
+
+              {/* Texte */}
+              <div className="text-center md:text-start">
+                <span className="inline-block rounded-full bg-accent px-4 py-1 text-sm font-bold">
+                  {t("edition", { year: edition.year })}
+                </span>
+
+                <h2 className="mt-4 text-3xl font-black uppercase leading-tight sm:text-4xl">
+                  {t("posterTitle")}
+                </h2>
+
+                <p className="mx-auto mt-4 max-w-lg text-white/80 md:mx-0">
+                  {pick(edition.theme, locale)}
+                </p>
+
+                <div className="mt-8 flex flex-wrap justify-center gap-4 md:justify-start">
+                  {registrationOpen && (
+                    <Link
+                      href="/register"
+                      className="group/btn inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 font-bold text-white transition hover:-translate-y-1 hover:bg-white hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    >
+                      {t("cta")}
+                      <ArrowRight className="size-5 transition-transform group-hover/btn:translate-x-0.5" />
+                    </Link>
+                  )}
+
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       )}
 
       {/* ---------- Dates clés ---------- */}

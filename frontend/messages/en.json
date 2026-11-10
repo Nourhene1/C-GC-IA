@@ -437,7 +437,11 @@
     "see": "View edition",
     "title": "Organizing Committee",
     "subtitle": "Meet the members organizing this competition.",
-    "empty": "No members at the moment."
+    "empty": "No members at the moment.",
+    "posterTitle": "Official poster",
+    "posterAlt": "Poster of the {year} edition",
+    "posterOpen": "Open the poster full size",
+    "posterDownload": "Download the poster"
   },
   "countdown": {
     "days": "Days",

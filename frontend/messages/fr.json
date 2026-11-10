@@ -437,7 +437,11 @@
     "see": "Voir l'édition",
     "title": "Comité d'organisation",
     "subtitle": "Découvrez les membres qui organisent cette compétition.",
-    "empty": "Aucun membre pour le moment."
+    "empty": "Aucun membre pour le moment.",
+    "posterTitle": "Affiche officielle",
+    "posterAlt": "Affiche de l'édition {year}",
+    "posterOpen": "Ouvrir l'affiche en grand",
+    "posterDownload": "Télécharger l'affiche"
   },
   "countdown": {
     "days": "Jours",
