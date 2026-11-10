@@ -2,16 +2,13 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.js");
 
-// Adresse interne du backend : reste côté serveur, jamais envoyée au navigateur
-const API_URL = process.env.API_URL || "http://localhost:5000";
+const API = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(/\/+$/, "");
 
 const nextConfig = {
   async rewrites() {
     return [
-      {
-        source: "/files/:path*",
-        destination: `${API_URL}/uploads/:path*`,
-      },
+      // Les fichiers publics passent par Next : même origine, backend caché
+      { source: "/uploads/:path*", destination: `${API}/uploads/:path*` },
     ];
   },
 };

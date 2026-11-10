@@ -18,7 +18,18 @@ const handle = async (res) => {
 };
 
 // Transforme /uploads/... en URL absolue
-export const assetUrl = (path) => (path?.startsWith("http") ? path : `${API}${path}`);
+export const assetUrl = (path) => {
+  if (!path) return null;
+  if (/^https?:\/\//.test(path)) return path;
+
+  const clean = String(path)
+    .replace(/\\/g, "/")        // chemins Windows
+    .replace(/^\/+/, "")        // slash initial
+    .replace(/^uploads\//, "")  // "uploads/..."
+    .replace(/^public\//, "");  // "public/..."
+
+  return `/uploads/${clean}`;
+};
 
 export const eventSponsorsApi = {
   list(params = {}) {
@@ -57,10 +68,10 @@ export const eventSponsorsApi = {
   },
 };
 
-// Public : aucun token
+// Public : aucun token, toujours les données à jour
 export const fetchPublicEventSponsors = (params = {}) => {
   const qs = new URLSearchParams(params).toString();
-  return fetch(`${PUBLIC_BASE}${qs ? `?${qs}` : ""}`, { next: { revalidate: 300 } }).then(handle);
+  return fetch(`${PUBLIC_BASE}${qs ? `?${qs}` : ""}`, { cache: "no-store" }).then(handle);
 };
 
 export const TIERS = [
