@@ -10,10 +10,9 @@ import {
   CircleCheck,
   Trophy,
   ImageOff,
-  Download,
-  Maximize2,
 } from "lucide-react";
 import Countdown from "@/components/public/Countdown";
+import PosterLightbox from "@/components/public/PosterLightbox";
 import NewsCard from "@/components/public/NewsCard";
 import SponsorGrid from "@/components/public/SponsorGrid";
 import { serverApi, publicFileUrl } from "@/lib/server-api";
@@ -57,7 +56,7 @@ export default async function HomePage() {
     now >= new Date(edition.dates.registrationOpen) &&
     now <= new Date(edition.dates.registrationClose);
 
-  // Affiche de l'édition en cours
+  // Affiche de l'édition en cours (servie via le proxy /files)
   const posterUrl = edition?.poster ? publicFileUrl(edition.poster) : null;
 
   const news = newsData?.news || [];
@@ -79,9 +78,7 @@ export default async function HomePage() {
     ? archivesData
     : archivesData?.editions || [];
 
-  const archives = archivesList
-    .filter((e) => !e.isCurrent)
-    .slice(0, 3);
+  const archives = archivesList.filter((e) => !e.isCurrent).slice(0, 3);
 
   return (
     <>
@@ -263,38 +260,12 @@ export default async function HomePage() {
             />
 
             <div className="relative grid items-center gap-14 md:grid-cols-[auto_1fr]">
-              {/* Affiche */}
-              <a
-                href={posterUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={t("posterOpen")}
-                className="group relative mx-auto block w-64 sm:w-72"
-              >
-                {/* Halo */}
-                <span
-                  aria-hidden
-                  className="absolute -inset-8 rounded-full bg-accent/30 blur-3xl motion-safe:animate-[pulse_5s_ease-in-out_infinite]"
-                />
-
-                {/* Panneau orange décalé derrière */}
-                <span
-                  aria-hidden
-                  className="absolute inset-0 translate-x-4 translate-y-4 rotate-3 rounded-2xl bg-accent transition-transform duration-500 group-hover:translate-x-5 group-hover:translate-y-5 group-hover:rotate-6"
-                />
-
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={posterUrl}
-                  alt={t("posterAlt", { year: edition.year })}
-                  className="relative aspect-[3/4] w-full -rotate-2 rounded-2xl bg-white object-cover shadow-2xl shadow-black/50 ring-4 ring-white transition duration-500 group-hover:rotate-0 group-hover:scale-[1.03]"
-                />
-
-                {/* Bouton agrandir au survol */}
-                <span className="absolute bottom-4 right-4 flex size-10 items-center justify-center rounded-full bg-white text-primary opacity-0 shadow-lg transition group-hover:opacity-100 group-focus-visible:opacity-100">
-                  <Maximize2 className="size-5" />
-                </span>
-              </a>
+              {/* Affiche (s'ouvre en grand sans exposer l'URL) */}
+              <PosterLightbox
+                src={posterUrl}
+                alt={t("posterAlt", { year: edition.year })}
+                openLabel={t("posterOpen")}
+              />
 
               {/* Texte */}
               <div className="text-center md:text-start">
@@ -310,8 +281,8 @@ export default async function HomePage() {
                   {pick(edition.theme, locale)}
                 </p>
 
-                <div className="mt-8 flex flex-wrap justify-center gap-4 md:justify-start">
-                  {registrationOpen && (
+                {registrationOpen && (
+                  <div className="mt-8 flex flex-wrap justify-center gap-4 md:justify-start">
                     <Link
                       href="/register"
                       className="group/btn inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 font-bold text-white transition hover:-translate-y-1 hover:bg-white hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
@@ -319,10 +290,8 @@ export default async function HomePage() {
                       {t("cta")}
                       <ArrowRight className="size-5 transition-transform group-hover/btn:translate-x-0.5" />
                     </Link>
-                  )}
-
-                  
-                </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -416,9 +385,7 @@ export default async function HomePage() {
                 </span>
 
                 <p className="mt-3 font-bold text-primary">{m.name}</p>
-                <p className="text-sm text-slate-500">
-                  {pick(m.role, locale)}
-                </p>
+                <p className="text-sm text-slate-500">{pick(m.role, locale)}</p>
               </li>
             ))}
           </ul>
@@ -434,9 +401,7 @@ export default async function HomePage() {
                 {to("title")}
               </h2>
 
-              <p className="mt-2 text-sm text-slate-500">
-                {to("subtitle")}
-              </p>
+              <p className="mt-2 text-sm text-slate-500">{to("subtitle")}</p>
             </div>
 
             <Link
@@ -470,9 +435,7 @@ export default async function HomePage() {
                   {m.firstName} {m.lastName}
                 </p>
 
-                <p className="mt-1 text-sm text-slate-500">
-                  {m.role}
-                </p>
+                <p className="mt-1 text-sm text-slate-500">{m.role}</p>
               </li>
             ))}
           </ul>
