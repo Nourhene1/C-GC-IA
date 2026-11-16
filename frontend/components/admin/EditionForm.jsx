@@ -12,8 +12,25 @@ import { btn, card, sectionTitle } from "@/components/ui/styles";
 import { api, publicFileUrl } from "@/lib/api";
 import { toDateTimeInput, fromDateTimeInput } from "@/lib/content";
 
-const DATE_KEYS = ["registrationOpen", "registrationClose", "sessionOpen", "submissionDeadline", "evaluationStart", "evaluationEnd", "resultsDate"];
-const OPTIONAL_DATES = ["evaluationStart", "evaluationEnd", "resultsDate"];
+// submissionDeadline = rapport + code source
+const DATE_KEYS = [
+  "registrationOpen",
+  "registrationClose",
+  "sessionOpen",
+  "submissionDeadline",
+  "videoDeadline",
+  "presentationDeadline",
+  "evaluationStart",
+  "evaluationEnd",
+  "resultsDate",
+];
+const OPTIONAL_DATES = [
+  "videoDeadline",
+  "presentationDeadline",
+  "evaluationStart",
+  "evaluationEnd",
+  "resultsDate",
+];
 const MAX_VIDEO_BYTES = 200 * 1024 * 1024;
 const VIDEO_ACCEPT = "video/mp4,video/webm,video/quicktime";
 const numberInput =

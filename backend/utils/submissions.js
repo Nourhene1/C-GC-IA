@@ -3,24 +3,20 @@ import path from "path";
 import crypto from "crypto";
 import Submission from "../models/Submission.js";
 import { DELIVERABLES, DELIVERABLE_KINDS, REQUIRED_KINDS } from "./submissionConfig.js";
+import { deadlineFor, closeAtFor } from "./deadlines.js";
 
 export const SUBMISSION_DIR = path.resolve("uploads", "private", "submissions");
 export const submissionFilePath = (fileName) => path.join(SUBMISSION_DIR, path.basename(fileName));
 
-// Champ de l'édition qui fixe la fermeture d'un livrable
-export const depositDateKey = (kind) =>
-  DELIVERABLES[kind]?.deadline === "results" ? "resultsDate" : "submissionDeadline";
-
-// --- F5.1 / F5.2 : fenêtre de dépôt d'un livrable (heure du serveur) ---
+// --- F5.1 / F5.2 : fenêtre de dépôt (heure du serveur) ---
 // not_open → open → grace (tolérance, dépôt "en retard") → closed
-// kind absent : fenêtre standard (date limite de dépôt)
-export function getWindow(edition, now = new Date(), kind = null) {
+
+// Fenêtre d'un livrable précis
+function kindWindow(edition, now, kind) {
   const opensAt = new Date(edition.dates.sessionOpen);
-  const key = depositDateKey(kind);
-  const deadline = new Date(edition.dates[key]);
-  // La tolérance ne s'applique qu'à la date limite de dépôt, pas à l'annonce des résultats
-  const toleranceMin = key === "submissionDeadline" ? (edition.submission?.toleranceMinutes ?? 0) : 0;
-  const closesAt = new Date(deadline.getTime() + toleranceMin * 60_000);
+  const deadline = new Date(deadlineFor(edition, kind));
+  const closesAt = new Date(closeAtFor(edition, kind));
+  const toleranceMin = Math.round((closesAt - deadline) / 60_000);
 
   let state = "open";
   if (now < opensAt) state = "not_open";
@@ -30,16 +26,42 @@ export function getWindow(edition, now = new Date(), kind = null) {
   return { state, opensAt, deadline, closesAt, toleranceMin, canDeposit: state === "open" || state === "grace" };
 }
 
+// kind fourni : fenêtre propre au livrable.
+// kind absent : fenêtre globale = ouverte tant qu'un livrable peut encore être déposé,
+// fermée seulement quand le dernier livrable est clos.
+export function getWindow(edition, now = new Date(), kind = null) {
+  if (kind) return kindWindow(edition, now, kind);
+
+  const wins = DELIVERABLE_KINDS.map((k) => kindWindow(edition, now, k));
+  const byDate = (key) => (a, b) => a[key] - b[key];
+
+  const open = wins.filter((w) => w.state === "open");
+  if (open.length) return [...open].sort(byDate("deadline"))[0];
+
+  const grace = wins.filter((w) => w.state === "grace");
+  if (grace.length) return [...grace].sort(byDate("closesAt"))[0];
+
+  const notOpen = wins.filter((w) => w.state === "not_open");
+  if (notOpen.length) return [...notOpen].sort(byDate("deadline"))[0];
+
+  // Tout est clos : on renvoie la dernière échéance
+  return [...wins].sort(byDate("closesAt")).at(-1);
+}
+
 // --- F5.7 : statut de dépôt d'une équipe ---
 export function teamStatus(submission, edition, now = new Date()) {
   const items = submission?.items ?? [];
   const has = (kind) => (items.find((i) => i.kind === kind)?.versions.length ?? 0) > 0;
   const lateDeposit = items.some((i) => i.versions.at(-1)?.late);
-  const pastDeadline = now > new Date(edition.dates.submissionDeadline);
+
+  // Un livrable obligatoire manquant dont la date limite est dépassée
+  const missingPastDeadline = REQUIRED_KINDS.some(
+    (kind) => !has(kind) && now > new Date(deadlineFor(edition, kind))
+  );
 
   if (lateDeposit) return "late";
   if (REQUIRED_KINDS.every(has)) return "submitted";
-  return pastDeadline ? "late" : "not_submitted";
+  return missingPastDeadline ? "late" : "not_submitted";
 }
 
 // --- F5.8 : code anonyme (sans I, O, 0, 1 pour éviter les confusions) ---

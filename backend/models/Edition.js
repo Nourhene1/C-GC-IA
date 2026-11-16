@@ -63,7 +63,9 @@ const editionSchema = new mongoose.Schema(
       registrationOpen: { type: Date, required: true },
       registrationClose: { type: Date, required: true },
       sessionOpen: { type: Date, required: true },
-      submissionDeadline: { type: Date, required: true },
+      submissionDeadline: { type: Date, required: true }, // rapport + code source
+      videoDeadline: { type: Date },                      // vidéo
+      presentationDeadline: { type: Date },               // présentation
       evaluationStart: { type: Date },
       evaluationEnd: { type: Date },
       resultsDate: { type: Date },
@@ -113,18 +115,37 @@ const editionSchema = new mongoose.Schema(
 // Refuse une édition incohérente
 editionSchema.pre("validate", function () {
   const d = this.dates;
+  if (!d) return;
+
   if (d.registrationOpen >= d.registrationClose) {
     this.invalidate("dates.registrationClose", "La clôture doit suivre l'ouverture des inscriptions");
   }
   if (d.sessionOpen >= d.submissionDeadline) {
     this.invalidate("dates.submissionDeadline", "La date limite doit suivre l'ouverture du sujet");
   }
-  // La date d'annonce des résultats fixe la limite de dépôt des présentations
-  if (!d.resultsDate) {
-    this.invalidate("dates.resultsDate", "La date d'annonce des résultats est obligatoire (limite de dépôt des présentations)");
-  } else if (d.submissionDeadline && d.resultsDate <= d.submissionDeadline) {
-    this.invalidate("dates.resultsDate", "L'annonce des résultats doit être après la date limite de dépôt");
+
+  // Date limite de la vidéo et de la présentation (facultatives)
+  if (d.videoDeadline && d.sessionOpen && d.videoDeadline <= d.sessionOpen) {
+    this.invalidate("dates.videoDeadline", "La date limite de la vidéo doit suivre l'ouverture du sujet");
   }
+  if (d.presentationDeadline && d.sessionOpen && d.presentationDeadline <= d.sessionOpen) {
+    this.invalidate("dates.presentationDeadline", "La date limite de la présentation doit suivre l'ouverture du sujet");
+  }
+
+  // La date d'annonce des résultats reste obligatoire (repli pour la présentation)
+  if (!d.resultsDate) {
+    this.invalidate("dates.resultsDate", "La date d'annonce des résultats est obligatoire");
+  } else {
+    if (d.submissionDeadline && d.resultsDate <= d.submissionDeadline) {
+      this.invalidate("dates.resultsDate", "L'annonce des résultats doit être après la date limite de dépôt");
+    }
+    for (const k of ["videoDeadline", "presentationDeadline"]) {
+      if (d[k] && d[k] > d.resultsDate) {
+        this.invalidate(`dates.${k}`, "Cette date limite doit précéder l'annonce des résultats");
+      }
+    }
+  }
+
   if (d.evaluationStart && d.evaluationEnd && d.evaluationStart >= d.evaluationEnd) {
     this.invalidate("dates.evaluationEnd", "La fin de l'évaluation doit suivre son début");
   }

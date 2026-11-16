@@ -154,6 +154,8 @@
     "toLogin": "Aller à la connexion"
   },
   "errors": {
+    "CANNOT_DELETE_CURRENT": "Impossible de supprimer l'édition en cours : définissez d'abord une autre édition comme en cours",
+    "EDITION_HAS_TEAMS": "Impossible de supprimer cette édition : des équipes y sont déjà inscrites",
     "STAGE_WEIGHTS_INVALID": "Les pondérations doivent être comprises entre 0 et 100 et totaliser 100 %",
     "FIELDS_REQUIRED": "Tous les champs obligatoires doivent être remplis",
     "CREDENTIALS_REQUIRED": "Email et mot de passe requis",
@@ -408,7 +410,24 @@
     "confirm_revision": " Demander des modifications pour ce dossier ?",
     "close": "Fermer",
     "successTitle": "Statut mis à jour !",
-    "confirm_validate": " Valider ce dossier ?"
+    "confirm_validate": " Valider ce dossier ?",
+    "deleteTitle": "Supprimer l'équipe",
+    "deleteDescription": "Cette action supprimera définitivement le dossier de cette équipe.",
+    "deleteButton": "Supprimer cette équipe",
+    "deleteConfirmTitle": "Confirmer la suppression",
+    "deleteConfirmMessage": "Voulez-vous vraiment supprimer définitivement l'équipe {name} ?",
+    "deleteWarning": "Cette opération est irréversible. Le dossier ne sera plus accessible.",
+    "deleteCancel": "Annuler",
+    "deleteConfirm": "Confirmer",
+    "deleteLoading": "Suppression...",
+    "currentStatus": "État actuel de l'équipe",
+    "statuses": {
+      "brouillon": "Brouillon",
+      "en_attente": "En attente",
+      "valide": "Validée",
+      "rejete": "Rejetée",
+      "en_revision": "En révision"
+    }
   },
   "footer": {
     "navigation": "Navigation",
@@ -456,10 +475,12 @@
       "submissionDeadline": "Dépôt des travaux dans"
     },
     "label": {
+      "submissionDeadline": "Date de dépôt des travaux",
+      "videoDeadline": "Date limite : vidéo",
+      "presentationDeadline": "Date limite : présentation",
       "registrationOpen": "Ouverture des inscriptions",
       "registrationClose": "Clôture des inscriptions",
       "sessionOpen": "Ouverture de la session",
-      "submissionDeadline": "Date limite de dépôt",
       "resultsDate": "Annonce des résultats",
       "evaluationStart": "Début de l'évaluation",
       "evaluationEnd": "Fin de l'évaluation"
@@ -592,6 +613,9 @@
     }
   },
   "adminEditions": {
+    "deleteTitle": "Supprimer l'édition",
+    "confirmDelete": "Supprimer définitivement l'édition {year} ?",
+    "deleteWarning": "Cette action est irréversible : l'affiche, les vidéos, le contenu et les partenaires de cette édition seront supprimés.",
     "winnerVideo": "Vidéo de présentation de l'équipe",
     "winnerVideoPick": "Importer une vidéo",
     "winnerVideoLink": "Ou lien YouTube / Vimeo",

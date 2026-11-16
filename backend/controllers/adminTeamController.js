@@ -90,9 +90,6 @@ export const updateStatus = async (req, res) => {
 
   const team = await Team.findById(req.params.id);
   if (!team) return res.status(404).json({ code: "NOT_FOUND" });
-  if (team.status === "brouillon") {
-    return res.status(400).json({ code: "TEAM_NOT_SUBMITTED" });
-  }
   if (team.status === status) {
     return res.status(400).json({ code: "SAME_STATUS" });
   }
@@ -237,4 +234,28 @@ export const exportTeams = async (req, res) => {
     return sendPdf(res, headers, rows, title, footer);
   }
   return sendCsv(res, headers, rows);
+};
+
+// DELETE /api/admin/teams/:id — Supprimer une équipe
+export const deleteTeam = async (req, res) => {
+  try {
+    const team = await Team.findById(req.params.id);
+
+    if (!team) {
+      return res.status(404).json({ code: "NOT_FOUND" });
+    }
+
+    await Team.findByIdAndDelete(req.params.id);
+
+    return res.json({
+      success: true,
+      message: "TEAM_DELETED",
+    });
+  } catch (error) {
+    console.error("Erreur suppression équipe :", error);
+
+    return res.status(500).json({
+      code: "DELETE_TEAM_FAILED",
+    });
+  }
 };

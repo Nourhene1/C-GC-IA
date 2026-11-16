@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useTranslations, useFormatter } from "next-intl";
 import {
   ArrowLeft,
@@ -14,13 +14,14 @@ import {
   ClipboardCheck,
   X,
   AlertTriangle,
+  Trash2,
 } from "lucide-react";
 
 import RequireAuth from "@/components/auth/RequireAuth";
 import AppShell from "@/components/layout/AppShell";
 import Spinner from "@/components/ui/Spinner";
 import TextArea from "@/components/ui/TextArea";
-import { Alert, ErrorAlert } from "@/components/ui/Alert";
+import { ErrorAlert } from "@/components/ui/Alert";
 import { card, sectionTitle } from "@/components/ui/styles";
 import TeamInfoSection from "@/components/team/TeamInfoSection";
 import MembersSection from "@/components/team/MembersSection";
@@ -30,8 +31,9 @@ import HistoryList from "@/components/team/HistoryList";
 import { api } from "@/lib/api";
 import { DATE_TIME } from "@/lib/format";
 
-// `style` = bouton, `header` = bandeau coloré des popups,
-// `confirm` = bouton de confirmation
+// Actions de décision
+// - style / header : boutons pleins utilisés dans les modales
+// - button : style compact "soft" utilisé dans le panneau de décision
 const ACTIONS = [
   {
     status: "valide",
@@ -40,6 +42,8 @@ const ACTIONS = [
     needsReason: false,
     style: "bg-green-600 hover:bg-green-700",
     header: "bg-green-600",
+    button:
+      "border-green-200 bg-green-50 text-green-700 hover:border-green-600 hover:bg-green-600 hover:text-white",
   },
   {
     status: "en_revision",
@@ -48,6 +52,8 @@ const ACTIONS = [
     needsReason: true,
     style: "bg-blue-600 hover:bg-blue-700",
     header: "bg-blue-600",
+    button:
+      "border-blue-200 bg-blue-50 text-blue-700 hover:border-blue-600 hover:bg-blue-600 hover:text-white",
   },
   {
     status: "rejete",
@@ -56,6 +62,8 @@ const ACTIONS = [
     needsReason: true,
     style: "bg-red-600 hover:bg-red-700",
     header: "bg-red-600",
+    button:
+      "border-red-200 bg-red-50 text-red-700 hover:border-red-600 hover:bg-red-600 hover:text-white",
   },
   {
     status: "en_attente",
@@ -64,8 +72,34 @@ const ACTIONS = [
     needsReason: false,
     style: "bg-slate-500 hover:bg-slate-600",
     header: "bg-slate-600",
+    button:
+      "border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-600 hover:bg-slate-600 hover:text-white",
   },
 ];
+
+// Libellés du statut actuel
+const STATUS_INFO = {
+  brouillon: {
+    label: "Brouillon",
+    style: "bg-slate-100 text-slate-700",
+  },
+  en_attente: {
+    label: "En attente",
+    style: "bg-amber-100 text-amber-700",
+  },
+  valide: {
+    label: "Validée",
+    style: "bg-green-100 text-green-700",
+  },
+  rejete: {
+    label: "Rejetée",
+    style: "bg-red-100 text-red-700",
+  },
+  en_revision: {
+    label: "En révision",
+    style: "bg-blue-100 text-blue-700",
+  },
+};
 
 // Popup générique
 function Modal({
@@ -120,7 +154,7 @@ function Modal({
   );
 }
 
-// F2.6 : panneau de décision de l'admin
+// F2.6 — Panneau de décision de l'administrateur
 function DecisionPanel({ team, onDone }) {
   const t = useTranslations("adminTeam");
   const tc = useTranslations("common");
@@ -143,6 +177,7 @@ function DecisionPanel({ team, onDone }) {
     setPending(action);
   };
 
+  // Changer le statut
   const decide = async (action) => {
     if (action.needsReason && !reason.trim()) {
       setError({
@@ -175,6 +210,12 @@ function DecisionPanel({ team, onDone }) {
     }
   };
 
+  const currentStatus =
+    STATUS_INFO[team.status] || {
+      label: team.status,
+      style: "bg-slate-100 text-slate-700",
+    };
+
   return (
     <section className={card}>
       <h2 className={sectionTitle}>
@@ -182,35 +223,50 @@ function DecisionPanel({ team, onDone }) {
         {t("decision")}
       </h2>
 
-      {team.status === "brouillon" ? (
-        <Alert type="info" className="mt-4">
-          {t("notSubmitted")}
-        </Alert>
-      ) : (
-        <div className="mt-4 flex flex-col gap-3">
-          <TextArea
-            label={t("reason")}
-            placeholder={t("reasonPlaceholder")}
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-          />
+      {/* Statut actuel */}
+      <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          {t("currentStatus")}
+        </p>
 
-          {ACTIONS.filter((a) => a.status !== team.status).map((action) => (
-            <button
-              key={action.status}
-              type="button"
-              onClick={() => ask(action)}
-              disabled={!!busy}
-              className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition disabled:opacity-50 ${action.style}`}
-            >
-              <action.Icon className="size-4" />
-              {t(action.key)}
-            </button>
-          ))}
+        <span
+          className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold ${currentStatus.style}`}
+        >
+          {t(`statuses.${team.status}`)}
+        </span>
+      </div>
+
+      {/* Décisions disponibles pour tous les statuts */}
+      <div className="mt-4 flex flex-col gap-3">
+        <TextArea
+          label={t("reason")}
+          placeholder={t("reasonPlaceholder")}
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+        />
+
+        <div className="grid grid-cols-2 gap-2 [&>*:last-child:nth-child(odd)]:col-span-2">
+         <div className="flex flex-wrap gap-2">
+  {ACTIONS.filter((a) => a.status !== team.status).map((action) => (
+    <button
+      key={action.status}
+      type="button"
+      onClick={() => ask(action)}
+      disabled={!!busy}
+      title={t(action.key)}
+      className={`inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border px-3 py-2 text-[13px] font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:cursor-not-allowed disabled:opacity-50 ${action.button}`}
+    >
+      <action.Icon className="size-4 shrink-0" />
+      {busy === action.status ? tc("loading") : t(action.key)}
+    </button>
+  ))}
+</div>
         </div>
-      )}
+      </div>
 
-      {/* Popup de confirmation */}
+      <ErrorAlert error={error} />
+
+      {/* Confirmation de décision */}
       {pending && (
         <Modal
           header={pending.header}
@@ -255,7 +311,7 @@ function DecisionPanel({ team, onDone }) {
         </Modal>
       )}
 
-      {/* Popup de succès */}
+      {/* Succès */}
       {result && (
         <Modal
           header={result.header}
@@ -280,20 +336,30 @@ function DecisionPanel({ team, onDone }) {
   );
 }
 
+// Page de consultation d'une équipe
 function TeamReview() {
   const t = useTranslations("adminTeam");
   const tc = useTranslations("checklist");
+  const common = useTranslations("common");
   const format = useFormatter();
 
   const { id } = useParams();
+  const router = useRouter();
 
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
+
   const load = useCallback(
     () =>
       api(`/api/admin/teams/${id}`)
-        .then(setData)
+        .then((response) => {
+          setData(response);
+          setError(null);
+        })
         .catch(setError),
     [id]
   );
@@ -301,6 +367,26 @@ function TeamReview() {
   useEffect(() => {
     load();
   }, [load]);
+
+  // Suppression de l'équipe
+  const handleDelete = async () => {
+    setDeleteBusy(true);
+    setDeleteError(null);
+
+    try {
+      await api(`/api/admin/teams/${id}`, {
+        method: "DELETE",
+      });
+
+      setShowDeleteConfirm(false);
+      router.push("/admin/teams");
+      router.refresh();
+    } catch (err) {
+      setDeleteError(err);
+    } finally {
+      setDeleteBusy(false);
+    }
+  };
 
   if (error) {
     return <ErrorAlert error={error} />;
@@ -344,11 +430,46 @@ function TeamReview() {
         </div>
 
         <aside className="flex flex-col gap-6">
+
+          {/* Décision */}
           <DecisionPanel
             team={team}
             onDone={load}
           />
 
+          {/* Suppression juste sous Décision */}
+          <section className="rounded-2xl border border-red-200 bg-white p-5 shadow-sm">
+            <div className="flex items-start gap-3">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-600">
+                <Trash2 className="size-5" />
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <h2 className="font-bold text-red-700">
+                  {t("deleteTitle")}
+                </h2>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  {t("deleteDescription")}
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setDeleteError(null);
+                setShowDeleteConfirm(true);
+              }}
+              disabled={deleteBusy}
+              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Trash2 className="size-4" />
+              {t("deleteButton")}
+            </button>
+          </section>
+
+          {/* Checklist */}
           <section className={card}>
             <h2 className={sectionTitle}>
               <ClipboardCheck className="size-5 text-accent" />
@@ -368,9 +489,65 @@ function TeamReview() {
             </p>
           </section>
 
+          {/* Historique */}
           <HistoryList history={team.history} />
+
         </aside>
       </div>
+
+      {/* Confirmation de suppression */}
+      {showDeleteConfirm && (
+        <Modal
+          header="bg-red-600"
+          Icon={AlertTriangle}
+          title={t("deleteConfirmTitle")}
+          onClose={() => {
+            if (!deleteBusy) {
+              setShowDeleteConfirm(false);
+              setDeleteError(null);
+            }
+          }}
+          closable={!deleteBusy}
+          footer={
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  setDeleteError(null);
+                }}
+                disabled={deleteBusy}
+                className="rounded-full bg-slate-200 px-5 py-2.5 text-sm font-semibold text-primary transition hover:bg-slate-300 disabled:opacity-50"
+              >
+                {common("cancel")}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleteBusy}
+                autoFocus
+                className="inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
+              >
+                <Trash2 className="size-4" />
+                {deleteBusy
+                  ? t("deleteLoading")
+                  : t("deleteConfirm")}
+              </button>
+            </>
+          }
+        >
+          <p>
+            {t("deleteConfirmMessage", { name: team.name })}
+          </p>
+
+          <p className="rounded-xl bg-red-50 px-4 py-3 text-red-700">
+            {t("deleteWarning")}
+          </p>
+
+          <ErrorAlert error={deleteError} />
+        </Modal>
+      )}
     </div>
   );
 }

@@ -6,6 +6,8 @@ import { withEnglish } from "../utils/autoTranslate.js";
 import {
   parseVideoUrl, removeStoredEditionVideo, discardEditionFiles,
 } from "../utils/video.js";
+import EditionContent from "../models/EditionContent.js";
+import Team from "../models/Team.js";
 
 // Champs visibles par le public
 const PUBLIC_FIELDS = "year title theme dates stats poster subjectSummary winners teamSize video testimonials";
@@ -280,4 +282,29 @@ export const deletePoster = async (req, res) => {
   edition.poster = null;
   await edition.save();
   res.json({ poster: null });
+};
+// DELETE /api/admin/editions/:id
+export const deleteEdition = async (req, res) => {
+  const edition = await Edition.findById(req.params.id);
+  if (!edition) return res.status(404).json({ code: "NOT_FOUND" });
+
+  if (edition.isCurrent) {
+    return res.status(409).json({ code: "CANNOT_DELETE_CURRENT" });
+  }
+  if (await Team.exists({ edition: edition._id })) {
+    return res.status(409).json({ code: "EDITION_HAS_TEAMS" });
+  }
+
+  // Fichiers : affiche + vidéos importées
+  await removeFile(publicPath(edition.poster));
+  for (const name of referencedFiles(edition)) {
+    await removeStoredEditionVideo(name);
+  }
+
+  // Données liées
+  await EditionContent.deleteMany({ edition: edition._id });
+  await Sponsor.deleteMany({ edition: edition._id });
+
+  await edition.deleteOne();
+  res.json({ ok: true });
 };

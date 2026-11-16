@@ -6,7 +6,7 @@ import {
 } from "../middleware/upload.js";
 import { newsVideoUpload } from "../middleware/newsVideoUpload.js";
 import {
-  getStats, listTeams, getTeam, updateStatus, exportTeams,
+  getStats, listTeams, getTeam, updateStatus, exportTeams,deleteTeam
 } from "../controllers/adminTeamController.js";
 import {
   listAdminNews, getAdminNews, createNews, updateNews, publishNews, unpublishNews, deleteNews,
@@ -14,6 +14,7 @@ import {
 import { createSponsor, updateSponsor, deleteSponsor } from "../controllers/sponsorController.js";
 import {
   listEditions, getEdition, createEdition, updateEdition, setCurrent, uploadPoster, deletePoster,
+  deleteEdition,
 } from "../controllers/editionController.js";
 import {
   getAdminContent, updateContent, uploadRulesPdf, deleteRulesPdf, uploadJuryPhoto, resendStaffInvite,
@@ -32,9 +33,10 @@ router.get("/stats", getStats);
 
 // Module 2 — dossiers des équipes
 router.get("/teams", listTeams);
-router.get("/teams/export", exportTeams); // avant "/teams/:id" !
+router.get("/teams/export", exportTeams); 
 router.get("/teams/:id", getTeam);
 router.patch("/teams/:id/status", updateStatus);
+router.delete("/teams/:id", deleteTeam);
 
 // Module 1 — actualités (F1.2, F1.4, F1.6) + vidéo importée
 router.get("/news", listAdminNews);
@@ -58,6 +60,7 @@ router.put("/editions/:id", editionVideoUpload, updateEdition);
 router.patch("/editions/:id/current", setCurrent);
 router.post("/editions/:id/poster", uploadPosterFile, uploadPoster);
 router.delete("/editions/:id/poster", deletePoster);
+router.delete("/editions/:id", deleteEdition);   // ← ajouter
 
 // Module 3 — contenu (règlement, éligibilité, prix, jury, pilotage, contacts, calendrier)
 router.get("/content", getAdminContent);

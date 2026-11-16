@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations, useFormatter } from "next-intl";
-import { CalendarRange, Plus, Pencil, Star, X } from "lucide-react";
+import { CalendarRange, Plus, Pencil, Star, X, Trash2 } from "lucide-react";
 import RequireAuth from "@/components/auth/RequireAuth";
 import AppShell from "@/components/layout/AppShell";
 import Spinner from "@/components/ui/Spinner";
@@ -21,6 +21,8 @@ function EditionsAdmin() {
   const [editions, setEditions] = useState(null);
   const [error, setError] = useState(null);
   const [editionToMakeCurrent, setEditionToMakeCurrent] = useState(null);
+  const [editionToDelete, setEditionToDelete] = useState(null);
+  const [deleteError, setDeleteError] = useState(null);
   const [busy, setBusy] = useState(false);
 
   const load = useCallback(
@@ -49,6 +51,26 @@ function EditionsAdmin() {
       await load();
     } catch (err) {
       setError(err);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const closeDelete = () => {
+    if (busy) return;
+    setEditionToDelete(null);
+    setDeleteError(null);
+  };
+
+  const deleteEdition = async (e) => {
+    setBusy(true);
+    setDeleteError(null);
+    try {
+      await api(`/api/admin/editions/${e._id}`, { method: "DELETE" });
+      setEditionToDelete(null);
+      await load();
+    } catch (err) {
+      setDeleteError(err);
     } finally {
       setBusy(false);
     }
@@ -110,7 +132,7 @@ function EditionsAdmin() {
                 </p>
               </div>
 
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-1">
                 {!e.isCurrent && (
                   <button type="button" onClick={() => setEditionToMakeCurrent(e)} className={btn.ghost}>
                     <Star className="size-4" />
@@ -122,12 +144,27 @@ function EditionsAdmin() {
                   <Pencil className="size-4" />
                   {tc("edit")}
                 </Link>
+
+                {!e.isCurrent && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDeleteError(null);
+                      setEditionToDelete(e);
+                    }}
+                    className={btn.danger}
+                  >
+                    <Trash2 className="size-4" />
+                    {tc("delete")}
+                  </button>
+                )}
               </div>
             </li>
           ))}
         </ul>
       )}
 
+      {/* Confirmation : définir comme édition en cours */}
       {editionToMakeCurrent && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
@@ -175,6 +212,67 @@ function EditionsAdmin() {
               >
                 <Star className="size-4" />
                 {busy ? tc("saving") : t("makeCurrent")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation : suppression */}
+      {editionToDelete && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="delete-edition-title"
+          onClick={closeDelete}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl"
+            onClick={(ev) => ev.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 id="delete-edition-title" className="text-lg font-bold text-red-700">
+                  {t("deleteTitle")}
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  {t("confirmDelete", { year: editionToDelete.year })}
+                </p>
+                <p className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {t("deleteWarning")}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={closeDelete}
+                disabled={busy}
+                className="rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+                aria-label={tc("cancel")}
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+
+            <div className="mt-4">
+              <ErrorAlert error={deleteError} />
+            </div>
+
+            <div className="mt-6 flex justify-end gap-2">
+              <button type="button" onClick={closeDelete} disabled={busy} className={btn.outline}>
+                {tc("cancel")}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => deleteEdition(editionToDelete)}
+                disabled={busy}
+                autoFocus
+                className="inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
+              >
+                <Trash2 className="size-4" />
+                {busy ? tc("loading") : tc("delete")}
               </button>
             </div>
           </div>

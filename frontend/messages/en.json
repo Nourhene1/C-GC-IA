@@ -154,6 +154,8 @@
     "subtitleJury": "Hello {name}, you have been invited as a jury member. Choose your password to activate your account."
   },
   "errors": {
+    "CANNOT_DELETE_CURRENT": "The current edition cannot be deleted: set another edition as current first",
+    "EDITION_HAS_TEAMS": "This edition cannot be deleted: teams are already registered in it",
     "STAGE_WEIGHTS_INVALID": "Weights must be between 0 and 100 and total 100%",
     "FIELDS_REQUIRED": "All required fields must be filled in",
     "CREDENTIALS_REQUIRED": "Email and password are required",
@@ -408,7 +410,24 @@
     "confirm_revision": " Request changes for this application?",
     "close": "Close",
     "successTitle": "Status updated",
-    "confirm_validate": " Approve this application?"
+    "confirm_validate": " Approve this application?",
+    "deleteTitle": "Delete team",
+    "deleteDescription": "This action will permanently delete this team's application.",
+    "deleteButton": "Delete this team",
+    "deleteConfirmTitle": "Confirm deletion",
+    "deleteConfirmMessage": "Are you sure you want to permanently delete the team {name}?",
+    "deleteWarning": "This action is irreversible. The application will no longer be accessible.",
+    "deleteCancel": "Cancel",
+    "deleteConfirm": "Confirm",
+    "deleteLoading": "Deleting...",
+    "currentStatus": "Current team status",
+    "statuses": {
+      "brouillon": "Draft",
+      "en_attente": "Pending",
+      "valide": "Approved",
+      "rejete": "Rejected",
+      "en_revision": "Under review"
+    }
   },
   "footer": {
     "navigation": "Navigation",
@@ -456,10 +475,12 @@
       "submissionDeadline": "Submission deadline in"
     },
     "label": {
+      "videoDeadline": "Deadline: video",
+      "presentationDeadline": "Deadline: presentation",
       "registrationOpen": "Registration opens",
       "registrationClose": "Registration closes",
       "sessionOpen": "Session opens",
-      "submissionDeadline": "Submission deadline",
+      "submissionDeadline": "Submission deadline ",
       "resultsDate": "Results announcement",
       "evaluationStart": "Evaluation starts",
       "evaluationEnd": "Evaluation ends"
@@ -592,6 +613,9 @@
     }
   },
   "adminEditions": {
+    "deleteTitle": "Delete edition",
+    "confirmDelete": "Permanently delete the {year} edition?",
+    "deleteWarning": "This action is irreversible: the poster, videos, content and partners of this edition will be deleted.",
     "winnerVideo": "Team presentation video",
     "winnerVideoPick": "Import a video",
     "winnerVideoLink": "Or YouTube / Vimeo link",
