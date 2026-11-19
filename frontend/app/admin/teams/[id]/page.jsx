@@ -77,28 +77,13 @@ const ACTIONS = [
   },
 ];
 
-// Libellés du statut actuel
-const STATUS_INFO = {
-  brouillon: {
-    label: "Brouillon",
-    style: "bg-slate-100 text-slate-700",
-  },
-  en_attente: {
-    label: "En attente",
-    style: "bg-amber-100 text-amber-700",
-  },
-  valide: {
-    label: "Validée",
-    style: "bg-green-100 text-green-700",
-  },
-  rejete: {
-    label: "Rejetée",
-    style: "bg-red-100 text-red-700",
-  },
-  en_revision: {
-    label: "En révision",
-    style: "bg-blue-100 text-blue-700",
-  },
+// Styles du badge de statut (le libellé vient des traductions : adminTeam.statuses.*)
+const STATUS_STYLES = {
+  brouillon: "bg-slate-100 text-slate-700",
+  en_attente: "bg-amber-100 text-amber-700",
+  valide: "bg-green-100 text-green-700",
+  rejete: "bg-red-100 text-red-700",
+  en_revision: "bg-blue-100 text-blue-700",
 };
 
 // Popup générique
@@ -179,10 +164,11 @@ function DecisionPanel({ team, onDone }) {
 
   // Changer le statut
   const decide = async (action) => {
+    // Le motif est saisi dans la modale pour les actions qui l'exigent.
+    // On utilise un code d'erreur (errors.REASON_REQUIRED) pour que
+    // ErrorAlert affiche le bon message traduit.
     if (action.needsReason && !reason.trim()) {
-      setError({
-        message: t("reasonRequired"),
-      });
+      setError({ code: "REASON_REQUIRED" });
       return;
     }
 
@@ -194,7 +180,7 @@ function DecisionPanel({ team, onDone }) {
         method: "PATCH",
         body: {
           status: action.status,
-          reason,
+          reason: action.needsReason ? reason.trim() : "",
         },
       });
 
@@ -210,11 +196,8 @@ function DecisionPanel({ team, onDone }) {
     }
   };
 
-  const currentStatus =
-    STATUS_INFO[team.status] || {
-      label: team.status,
-      style: "bg-slate-100 text-slate-700",
-    };
+  const currentStyle =
+    STATUS_STYLES[team.status] || "bg-slate-100 text-slate-700";
 
   return (
     <section className={card}>
@@ -230,41 +213,31 @@ function DecisionPanel({ team, onDone }) {
         </p>
 
         <span
-          className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold ${currentStatus.style}`}
+          className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold ${currentStyle}`}
         >
           {t(`statuses.${team.status}`)}
         </span>
       </div>
 
-      {/* Décisions disponibles pour tous les statuts */}
-      <div className="mt-4 flex flex-col gap-3">
-        <TextArea
-          label={t("reason")}
-          placeholder={t("reasonPlaceholder")}
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
-        />
-
-        <div className="grid grid-cols-2 gap-2 [&>*:last-child:nth-child(odd)]:col-span-2">
-         <div className="flex flex-wrap gap-2">
-  {ACTIONS.filter((a) => a.status !== team.status).map((action) => (
-    <button
-      key={action.status}
-      type="button"
-      onClick={() => ask(action)}
-      disabled={!!busy}
-      title={t(action.key)}
-      className={`inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border px-3 py-2 text-[13px] font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:cursor-not-allowed disabled:opacity-50 ${action.button}`}
-    >
-      <action.Icon className="size-4 shrink-0" />
-      {busy === action.status ? tc("loading") : t(action.key)}
-    </button>
-  ))}
-</div>
-        </div>
+      {/* Décisions disponibles (toutes sauf le statut actuel) */}
+      <div className="mt-4 flex flex-wrap gap-2">
+        {ACTIONS.filter((a) => a.status !== team.status).map((action) => (
+          <button
+            key={action.status}
+            type="button"
+            onClick={() => ask(action)}
+            disabled={!!busy}
+            title={t(action.key)}
+            className={`inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border px-3 py-2 text-[13px] font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:cursor-not-allowed disabled:opacity-50 ${action.button}`}
+          >
+            <action.Icon className="size-4 shrink-0" />
+            {busy === action.status ? tc("loading") : t(action.key)}
+          </button>
+        ))}
       </div>
 
-      <ErrorAlert error={error} />
+      {/* Erreur affichée ici seulement si aucune modale n'est ouverte */}
+      {!pending && <ErrorAlert error={error} />}
 
       {/* Confirmation de décision */}
       {pending && (
@@ -289,7 +262,7 @@ function DecisionPanel({ team, onDone }) {
                 type="button"
                 onClick={() => decide(pending)}
                 disabled={!!busy}
-                autoFocus
+                autoFocus={!pending.needsReason}
                 className={`rounded-full px-6 py-2.5 text-sm font-semibold text-white transition disabled:opacity-50 ${pending.style}`}
               >
                 {busy === pending.status
@@ -301,10 +274,16 @@ function DecisionPanel({ team, onDone }) {
         >
           <p>{t(`confirm_${pending.key}`)}</p>
 
-          {pending.needsReason && reason.trim() && (
-            <p className="rounded-xl bg-slate-50 px-4 py-3 text-slate-700">
-              « {reason.trim()} »
-            </p>
+          {/* Motif : saisi directement dans la modale */}
+          {pending.needsReason && (
+            <TextArea
+              label={t("reason")}
+              placeholder={t("reasonPlaceholder")}
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              disabled={!!busy}
+              autoFocus
+            />
           )}
 
           <ErrorAlert error={error} />
@@ -410,32 +389,16 @@ function TeamReview() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="flex flex-col gap-6 lg:col-span-2">
-          <TeamInfoSection
-            team={team}
-            canEdit={false}
-            onChange={load}
-          />
+          <TeamInfoSection team={team} canEdit={false} onChange={load} />
 
-          <MembersSection
-            team={team}
-            canEdit={false}
-            onChange={load}
-          />
+          <MembersSection team={team} canEdit={false} onChange={load} />
 
-          <DocumentsSection
-            team={team}
-            canEdit={false}
-            onChange={load}
-          />
+          <DocumentsSection team={team} canEdit={false} onChange={load} />
         </div>
 
         <aside className="flex flex-col gap-6">
-
           {/* Décision */}
-          <DecisionPanel
-            team={team}
-            onDone={load}
-          />
+          <DecisionPanel team={team} onDone={load} />
 
           {/* Suppression juste sous Décision */}
           <section className="rounded-2xl border border-red-200 bg-white p-5 shadow-sm">
@@ -445,9 +408,7 @@ function TeamReview() {
               </div>
 
               <div className="min-w-0 flex-1">
-                <h2 className="font-bold text-red-700">
-                  {t("deleteTitle")}
-                </h2>
+                <h2 className="font-bold text-red-700">{t("deleteTitle")}</h2>
 
                 <p className="mt-1 text-sm text-slate-500">
                   {t("deleteDescription")}
@@ -482,16 +443,12 @@ function TeamReview() {
 
             <p className="mt-4 text-xs text-slate-500">
               {t("createdAt")}{" "}
-              {format.dateTime(
-                new Date(team.createdAt),
-                DATE_TIME
-              )}
+              {format.dateTime(new Date(team.createdAt), DATE_TIME)}
             </p>
           </section>
 
           {/* Historique */}
           <HistoryList history={team.history} />
-
         </aside>
       </div>
 
@@ -530,16 +487,12 @@ function TeamReview() {
                 className="inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
               >
                 <Trash2 className="size-4" />
-                {deleteBusy
-                  ? t("deleteLoading")
-                  : t("deleteConfirm")}
+                {deleteBusy ? t("deleteLoading") : t("deleteConfirm")}
               </button>
             </>
           }
         >
-          <p>
-            {t("deleteConfirmMessage", { name: team.name })}
-          </p>
+          <p>{t("deleteConfirmMessage", { name: team.name })}</p>
 
           <p className="rounded-xl bg-red-50 px-4 py-3 text-red-700">
             {t("deleteWarning")}

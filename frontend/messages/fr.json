@@ -392,6 +392,7 @@
     "empty": "Aucune équipe ne correspond à ces critères."
   },
   "adminTeam": {
+    "reasonRequired": "Veuillez indiquer un motif pour demander une révision ou rejeter ce dossier.",
     "back": "Retour aux dossiers",
     "decision": "Décision",
     "reason": "Motif (obligatoire pour une révision ou un rejet)",

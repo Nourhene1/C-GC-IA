@@ -10,10 +10,10 @@ import EvaluationsHeader from "@/components/evaluation/EvaluationsHeader";
 import EvaluationsNav from "@/components/evaluation/EvaluationsNav";
 import TrackingPanel from "@/components/evaluation/TrackingPanel";
 
-// Les deux étapes affichées sur la page de suivi, chacune avec ses évaluateurs
+// Les deux étapes affichées sur la page de suivi : pré-évaluation d'abord, puis finale
 const STAGE_SECTIONS = [
-  { stage: "final", titleKey: "admin.trackingFinal" },
   { stage: "pre", titleKey: "admin.trackingPre" },
+  { stage: "final", titleKey: "admin.trackingFinal" },
 ];
 
 export default function EvaluationsTrackingPage() {
@@ -22,21 +22,28 @@ export default function EvaluationsTrackingPage() {
   const [error, setError] = useState(null);
 
   // Charge l'aperçu des deux étapes en parallèle
+  // (indexé par "stage" : ne dépend pas de l'ordre de STAGE_SECTIONS)
   const reload = useCallback(async () => {
     setError(null);
     try {
-      const [final, pre] = await Promise.all(
+      const results = await Promise.all(
         STAGE_SECTIONS.map(({ stage }) => getEvaluationOverview(stage))
       );
-      setOverviews({ final, pre });
+      setOverviews(
+        Object.fromEntries(
+          STAGE_SECTIONS.map(({ stage }, i) => [stage, results[i]])
+        )
+      );
     } catch (err) {
       setError(err);
     }
   }, []);
 
-  useEffect(() => { reload(); }, [reload]);
+  useEffect(() => {
+    reload();
+  }, [reload]);
 
-  const subtitleSource = overviews.final ?? overviews.pre;
+  const subtitleSource = overviews.pre ?? overviews.final;
 
   return (
     <RequireAuth roles={["admin"]}>
@@ -44,7 +51,10 @@ export default function EvaluationsTrackingPage() {
         <AppShell user={user}>
           <div className="flex flex-col gap-10">
             <EvaluationsHeader
-              subtitle={subtitleSource && t("admin.subtitle", { year: subtitleSource.edition.year })}
+              subtitle={
+                subtitleSource &&
+                t("admin.subtitle", { year: subtitleSource.edition.year })
+              }
             />
             <EvaluationsNav />
             <ErrorAlert error={error} />

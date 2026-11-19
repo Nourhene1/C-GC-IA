@@ -392,6 +392,7 @@
     "empty": "No team matches these criteria."
   },
   "adminTeam": {
+    "reasonRequired": "Please give a reason for requesting changes or rejecting this application.",
     "back": "Back to applications",
     "decision": "Decision",
     "reason": "Reason (required for changes or rejection)",
