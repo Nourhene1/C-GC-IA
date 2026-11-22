@@ -20,7 +20,7 @@ import evaluationAdminRoutes from "./routes/evaluationAdmin.js";
 import evaluationJuryRoutes from "./routes/evaluationJury.js";
 import resultsAdminRoutes from "./routes/resultsAdmin.js";
 import resultsRoutes from "./routes/results.js";
-import { PUBLIC_DIR } from "./utils/files.js";
+import { PUBLIC_DIR, UPLOAD_ROOT, ensureUploadDirs } from "./utils/files.js";
 import { startNewsScheduler } from "./utils/newsNotifier.js";
 import { startSubjectScheduler } from "./utils/subjectNotifier.js";
 import { startResultsScheduler } from "./utils/results.js";
@@ -92,6 +92,14 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
+
+try {
+  ensureUploadDirs();
+  console.log(`Fichiers publics et privés : ${UPLOAD_ROOT}`);
+} catch (err) {
+  console.error(`Impossible d'écrire dans ${UPLOAD_ROOT} : ${err.message}`);
+  process.exit(1);
+}
 
 for (const key of ["MONGO_URI", "JWT_SECRET", "FRONTEND_URL"]) {
   if (!process.env[key]) {

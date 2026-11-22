@@ -1,9 +1,8 @@
 import fs from "fs";
 import path from "path";
-import { PUBLIC_DIR } from "./files.js";
+import { NEWS_VIDEO_DIR, EDITION_VIDEO_DIR } from "./files.js";
 
-export const NEWS_VIDEO_DIR = path.join(PUBLIC_DIR, "news-videos");
-export const EDITION_VIDEO_DIR = path.join(PUBLIC_DIR, "edition-videos");
+export { NEWS_VIDEO_DIR, EDITION_VIDEO_DIR };
 
 const YOUTUBE_ID = /^[\w-]{11}$/;
 const VIMEO_ID = /^\d+$/;

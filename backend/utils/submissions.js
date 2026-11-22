@@ -4,8 +4,9 @@ import crypto from "crypto";
 import Submission from "../models/Submission.js";
 import { DELIVERABLES, DELIVERABLE_KINDS, REQUIRED_KINDS } from "./submissionConfig.js";
 import { deadlineFor, closeAtFor } from "./deadlines.js";
+import { SUBMISSIONS_DIR } from "./files.js";
 
-export const SUBMISSION_DIR = path.resolve("uploads", "private", "submissions");
+export const SUBMISSION_DIR = SUBMISSIONS_DIR;
 export const submissionFilePath = (fileName) => path.join(SUBMISSION_DIR, path.basename(fileName));
 
 // --- F5.1 / F5.2 : fenêtre de dépôt (heure du serveur) ---
